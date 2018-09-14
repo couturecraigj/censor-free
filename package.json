@@ -1,0 +1,67 @@
+{
+    "name": "censor-free",
+    "version": "1.0.0",
+    "description": "What could possibly go wrong",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "concurrently \"npm run client:dev\" \"npm run server:dev\"",
+        "start:prod": "npm run client:prod && npm run server:prod && npm run prod:server",
+        "prod:server": "node server/index.0.js",
+        "client:dev": "webpack-dev-server --config utilities/bundling/development/client/webpack.config.js",
+        "client:prod": "webpack --config utilities/bundling/production/client/webpack.config.js",
+        "server:dev": "node-hot --config utilities/bundling/development/server/webpack.config.js",
+        "server:prod": "webpack --config utilities/bundling/production/server/webpack.config.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/couturecraigj/censor-free.git"
+    },
+    "author": "Craig Couture <craigjcouture@gmail.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/couturecraigj/censor-free/issues"
+    },
+    "homepage": "https://github.com/couturecraigj/censor-free#readme",
+    "dependencies": {
+        "@babel/core": "^7.0.1",
+        "@babel/plugin-proposal-class-properties": "^7.0.0",
+        "@babel/polyfill": "^7.0.0",
+        "@babel/preset-env": "^7.0.0",
+        "@babel/preset-react": "^7.0.0",
+        "apollo-cache-inmemory": "^1.2.10",
+        "apollo-client": "^2.4.2",
+        "apollo-link": "^1.2.2",
+        "apollo-link-error": "^1.1.0",
+        "apollo-link-http": "^1.5.4",
+        "apollo-link-state": "^0.4.1",
+        "apollo-server": "^2.0.8",
+        "assets-webpack-plugin": "^3.9.6",
+        "babel": "^6.23.0",
+        "babel-loader": "^8.0.2",
+        "babel-preset-env": "^1.7.0",
+        "clean-webpack-plugin": "^0.1.19",
+        "express": "^4.16.3",
+        "express-video": "^1.0.4",
+        "graphql": "^14.0.2",
+        "jest": "^23.6.0",
+        "node-fetch": "^2.2.0",
+        "node-hot-loader": "^1.11.1",
+        "react": "^16.5.0",
+        "react-apollo": "^2.1.11",
+        "react-dom": "^16.5.1",
+        "react-helmet": "^5.2.0",
+        "react-hot-loader": "^4.3.7",
+        "redux": "^4.0.0",
+        "redux-thunk": "^2.3.0",
+        "styled-components": "^3.4.6",
+        "webpack": "^4.18.1",
+        "webpack-cli": "^3.1.0",
+        "webpack-dev-server": "^3.1.8",
+        "webpack-node-externals": "^1.7.2"
+    },
+    "devDependencies": {
+        "babel-plugin-dynamic-import-node": "^2.1.0",
+        "concurrently": "^4.0.1"
+    }
+}
