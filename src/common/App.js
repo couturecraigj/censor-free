@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Route, Switch } from "react-router";
+import { hot } from "react-hot-loader";
 import { Helmet } from "react-helmet";
 import * as Routes from "./pages/Routes";
 import { injectGlobal } from "styled-components";
@@ -15,11 +16,16 @@ const Div = styled.div`
   height: 100%;
 `;
 
-export default ({ client }) => (
+const App = ({ client }) => (
   <Div>
     <Helmet>
       <title>Hello</title>
     </Helmet>
-    <Route exact path="/" component={Routes.Home} />
+    <Switch>
+      <Route exact path="/" component={Routes.Home} />
+      <Route exact path="/about" component={Routes.About} />
+    </Switch>
   </Div>
 );
+
+export default hot(module)(App);

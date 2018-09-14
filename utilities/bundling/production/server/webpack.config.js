@@ -25,7 +25,8 @@ module.exports = {
             plugins: [
               // ["@babel/plugin-proposal-decorators", { legacy: true }],
               "dynamic-import-node",
-              ["@babel/plugin-proposal-class-properties", { loose: true }]
+              ["@babel/plugin-proposal-class-properties", { loose: true }],
+              "loadable-components/babel"
               // "react-hot-loader/babel"
             ]
           }
