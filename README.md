@@ -53,18 +53,21 @@ I am not alone in hating that people are being censored just because they have a
 
 ## Known Errors
 
-When using `ApolloProvider` we get an error like this
+Using `React-Router` with `loadable-components` is throwing a error
 
 ```javascript
-Uncaught ReferenceError: regeneratorRuntime is not defined
-    at eval (apollo.js:45)
-    at _default (apollo.js:73)
-    at _default (App.js:53)
-    at ProxyFacade (react-hot-loader.development.js:675)
-    at mountIndeterminateComponent (react-dom.development.js:13744)
-    at beginWork (react-dom.development.js:14068)
-    at performUnitOfWork (react-dom.development.js:16415)
-    at workLoop (react-dom.development.js:16453)
-    at renderRoot (react-dom.development.js:16532)
-    at performWorkOnRoot (react-dom.development.js:17386)
+loadable-component client modules: {}
+loadable-component server modules: {children: Array(1)}
+
+Uncaught (in promise) Error: loadable-components: module "./Home" is not found, client and server modules are not sync. You are probably not using the same resolver on server and client.
+    at eval (loadable-components.es.js:105)
+    at Array.map (<anonymous>)
+    at loadState (loadable-components.es.js:96)
+    at loadComponents (loadable-components.es.js:130)
+    at load (index.js:33)
+    at Module.eval (index.js:41)
+    at eval (index.js:68)
+    at Module../src/client/index.js (app.js:3483)
+    at __webpack_require__ (app.js:768)
+    at fn (app.js:131)
 ```

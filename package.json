@@ -45,6 +45,7 @@
         "express-video": "^1.0.4",
         "graphql": "^14.0.2",
         "jest": "^23.6.0",
+        "loadable-components": "^2.2.3",
         "node-fetch": "^2.2.0",
         "node-hot-loader": "^1.11.1",
         "react": "^16.5.0",
@@ -52,6 +53,7 @@
         "react-dom": "^16.5.1",
         "react-helmet": "^5.2.0",
         "react-hot-loader": "^4.3.7",
+        "react-router-dom": "^4.3.1",
         "redux": "^4.0.0",
         "redux-thunk": "^2.3.0",
         "styled-components": "^3.4.6",
@@ -61,6 +63,7 @@
         "webpack-node-externals": "^1.7.2"
     },
     "devDependencies": {
+        "@babel/plugin-syntax-dynamic-import": "^7.0.0",
         "babel-plugin-dynamic-import-node": "^2.1.0",
         "concurrently": "^4.0.1"
     }

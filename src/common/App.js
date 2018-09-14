@@ -1,8 +1,8 @@
 import React from "react";
-// import { ApolloProvider } from "react-apollo";
-import client from "./apollo";
 import styled from "styled-components";
+import { Route, Switch } from "react-router";
 import { Helmet } from "react-helmet";
+import * as Routes from "./pages/Routes";
 import { injectGlobal } from "styled-components";
 
 const GlobalStyle = injectGlobal`
@@ -15,11 +15,11 @@ const Div = styled.div`
   height: 100%;
 `;
 
-export default ({ state, uri, ssrMode, req }) => (
+export default ({ client }) => (
   <Div>
     <Helmet>
       <title>Hello</title>
     </Helmet>
-    Hello
+    <Route exact path="/" component={Routes.Home} />
   </Div>
 );

@@ -35,7 +35,8 @@ module.exports = {
               // ["@babel/plugin-proposal-decorators", { legacy: true }],
               "dynamic-import-node",
               ["@babel/plugin-proposal-class-properties", { loose: true }],
-              "react-hot-loader/babel"
+              "react-hot-loader/babel",
+              "loadable-components/babel"
             ]
           }
         }
@@ -43,7 +44,7 @@ module.exports = {
     ]
   },
   plugins: [
-    new CleanWebpackPlugin(["server"], {
+    new CleanWebpackPlugin(["server", "dist"], {
       root: process.cwd()
     })
   ],
