@@ -18,6 +18,7 @@ I am not alone in hating that people are being censored just because they have a
   - Comments
   - Stories
 - Create a walk-through that makes people provide filters to their content like who can view it
+- Keep the data decentralized to prevent anyone person from having it
 - Allow users to link to Patreon
 - Build a Patreon for this site
 - Allow users to link to YouTube
