@@ -8,7 +8,7 @@ const cwd = process.cwd();
 module.exports = {
   mode: "production",
   entry: {
-    app: "./src/client/index.js"
+    app: "./src/client/index.jsx"
   },
   resolve: {
     extensions: [".webpack.js", ".web.js", ".js", ".json", ".jsx"]
@@ -21,13 +21,13 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            cacheDirectory: true,
             presets: ["@babel/preset-env", "@babel/preset-react"],
             plugins: [
               // ["@babel/plugin-proposal-decorators", { legacy: true }],
               ["@babel/plugin-proposal-class-properties", { loose: true }],
-              "@babel/plugin-syntax-dynamic-import",
-              "react-hot-loader/babel"
+              "@babel/plugin-syntax-dynamic-import"
+              // "@babel/plugin-transform-runtime",
+              // "react-hot-loader/babel"
             ]
           }
         }

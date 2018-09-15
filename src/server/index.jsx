@@ -43,12 +43,11 @@ app.get("*", (req, res, next) => {
     .catch(err => next(err));
 });
 
-// app.listen(port, () => {
-//   console.info(`server listening on http://localhost:${port}`);
-// });
-
 if (module === require.main) {
-  app.listen(app.get("port"));
+  app.listen(app.get("port"), () => {
+    // eslint-disable-next-line no-console
+    console.info(`server listening on http://localhost:${app.get("port")}`);
+  });
 }
 
 module.exports = app;
