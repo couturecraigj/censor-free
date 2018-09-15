@@ -65,9 +65,3 @@ have a certain point of view.
   - Connect with Prettier so that they work together
 
 ## Known Errors
-
-Production Build shows:
-
-```error
-Uncaught ReferenceError: regeneratorRuntime is not defined
-```

@@ -30,8 +30,8 @@ module.exports = {
               "dynamic-import-node",
               ["@babel/plugin-proposal-class-properties", { loose: true }],
               // "@babel/plugin-transform-runtime",
+              // "react-hot-loader/babel",
               "loadable-components/babel"
-              // "react-hot-loader/babel"
             ]
           }
         }
