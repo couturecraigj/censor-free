@@ -43,6 +43,7 @@ I am not alone in hating that people are being censored just because they have a
   - Smoking
   - Drugs/Alcohol
   - Language
+- Allow users to filter out content based on what they have in them
 - Allow Users to give a rating on content using video game system
 - Allow users to build a profile about themselves
   - Allow a main pic
