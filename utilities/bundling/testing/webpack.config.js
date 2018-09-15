@@ -1,5 +1,8 @@
 module.exports = {
   mode: "production",
+  resolve: {
+    extensions: [".webpack.js", ".web.js", ".js", ".json", ".jsx"]
+  },
   module: {
     rules: [
       {

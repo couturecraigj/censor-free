@@ -10,6 +10,9 @@ module.exports = {
   entry: {
     app: "./src/client/index.js"
   },
+  resolve: {
+    extensions: [".webpack.js", ".web.js", ".js", ".json", ".jsx"]
+  },
   module: {
     rules: [
       {

@@ -6,15 +6,24 @@ const path = require("path");
 module.exports = {
   mode: "development",
   entry: {
-    app: "./src/client/index.js"
+    app: "./src/client/index.jsx"
   },
   devServer: {
     contentBase: "./dist",
     headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
     hot: true
   },
+  resolve: {
+    extensions: [".webpack.js", ".web.js", ".js", ".json", ".jsx"]
+  },
   module: {
     rules: [
+      {
+        enforce: "pre",
+        test: /\.jsx?$/,
+        exclude: /(node_modules|bower_components)/,
+        loader: "eslint-loader"
+      },
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,

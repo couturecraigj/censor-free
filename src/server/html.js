@@ -1,8 +1,10 @@
 const { compress } = require("./utils/strings");
+
 const __PROD__ = process.env.NODE_ENV === "production";
 const script = !__PROD__
   ? `<script defer async src="http://localhost:8080/app.js"></script>`
   : `<script defer async src="${
+      // eslint-disable-next-line node/no-unpublished-require
       require("../../webpack-assets.json").app.js
     }"></script>`;
 

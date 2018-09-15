@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // require("@babel/polyfill");
 import app from ".";
 

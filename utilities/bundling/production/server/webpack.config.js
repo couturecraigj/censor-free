@@ -5,12 +5,15 @@ const cwd = process.cwd();
 
 module.exports = {
   entry: {
-    index: "./src/server/index.js"
+    index: "./src/server/index.jsx"
   },
   mode: "production",
   output: {
     filename: "[name].[id].js",
     path: path.resolve(cwd, "server")
+  },
+  resolve: {
+    extensions: [".webpack.js", ".web.js", ".js", ".json", ".jsx"]
   },
   module: {
     rules: [

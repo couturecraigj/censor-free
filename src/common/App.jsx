@@ -1,12 +1,11 @@
 import React from "react";
-import styled from "styled-components";
 import { Route, Switch } from "react-router";
 import { hot } from "react-hot-loader";
 import { Helmet } from "react-helmet";
+import styled, { injectGlobal } from "styled-components";
 import * as Routes from "./pages/Routes";
-import { injectGlobal } from "styled-components";
 
-const GlobalStyle = injectGlobal`
+injectGlobal`
    html {
     background: papayawhip;
   }
@@ -16,7 +15,7 @@ const Div = styled.div`
   height: 100%;
 `;
 
-const App = ({ client }) => (
+const App = () => (
   <Div>
     <Helmet>
       <title>Hello</title>

@@ -1,7 +1,7 @@
-const { ApolloServer, gql } = require("apollo-server-express");
+const { ApolloServer } = require("apollo-server-express");
 
-const typeDefs = require("./typeDefs");
 const resolvers = require("./resolvers");
+const typeDefs = require("./typeDefs");
 
 module.exports = app => {
   const server = new ApolloServer({ typeDefs, resolvers });

@@ -1,20 +1,22 @@
-const React = require("react");
 const express = require("express");
-const { Helmet } = require("react-helmet");
-const { StaticRouter } = require("react-router-dom");
-const { getLoadableState } = require("loadable-components/server");
-const { ServerStyleSheet } = require("styled-components");
-const html = require("./html");
-const config = require("./config");
 const fetch = require("node-fetch");
-const app = express();
+const React = require("react");
 const ReactDOMServer = require("react-dom/server");
-const App = require("../common/App").default;
-const apollo = require("../common/apollo").default;
+const { getLoadableState } = require("loadable-components/server");
+const { Helmet } = require("react-helmet");
+const { ServerStyleSheet } = require("styled-components");
+const { StaticRouter } = require("react-router-dom");
 
+const apollo = require("../common/apollo").default;
+const App = require("../common/App").default;
+const config = require("./config");
+const html = require("./html");
+
+const app = express();
 app.use(express.static("public"));
 config(app);
 app.get("*", (req, res, next) => {
+  // eslint-disable-next-line prefer-const
   let context = {};
   const sheet = new ServerStyleSheet();
   const client = apollo(fetch, { req, ssrMode: true });
