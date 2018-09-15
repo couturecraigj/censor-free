@@ -23,11 +23,9 @@ app.get("*", (req, res, next) => {
       <App client={client} />
     </StaticRouter>
   );
-  return Promise.all([
-    ReactDOMServer.renderToString(spaApp),
-    getLoadableState(spaApp)
-  ])
-    .then(([body, loadableState]) => {
+  return getLoadableState(spaApp)
+    .then(loadableState => {
+      const body = ReactDOMServer.renderToString(spaApp);
       const reactHelmet = Helmet.renderStatic();
       res.send(
         html({

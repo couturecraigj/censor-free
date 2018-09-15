@@ -23,7 +23,8 @@ const App = ({ client }) => (
     </Helmet>
     <Switch>
       <Route exact path="/" component={Routes.Home} />
-      <Route exact path="/about" component={Routes.About} />
+      <Route path="/about" component={Routes.About} />
+      <Route path="/user/:userId" component={Routes.User} />
     </Switch>
   </Div>
 );

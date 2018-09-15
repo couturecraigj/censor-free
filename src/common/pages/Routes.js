@@ -7,6 +7,15 @@ export const Home = loadable(
     LoadingComponent
   }
 );
-export const About = loadable(() => import("./About"), {
-  LoadingComponent
-});
+export const User = loadable(
+  () => import(/* webpackChunkName: 'user' */ "./User"),
+  {
+    LoadingComponent
+  }
+);
+export const About = loadable(
+  () => import(/* webpackChunkName: 'about' */ "./About"),
+  {
+    LoadingComponent
+  }
+);

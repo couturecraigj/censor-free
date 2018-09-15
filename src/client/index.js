@@ -11,12 +11,12 @@ const rootElement = document.getElementById("root");
 async function render(ele) {
   await loadComponents();
   const client = apollo(fetch, {});
-  component();
+  // component();
   ReactDOM.hydrate(
     <BrowserRouter>
-      <ApolloProvide client={client}>
+      <ApolloProvider client={client}>
         <App />
-      </ApolloProvide>
+      </ApolloProvider>
     </BrowserRouter>,
     ele
   );

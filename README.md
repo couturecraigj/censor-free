@@ -50,24 +50,10 @@ I am not alone in hating that people are being censored just because they have a
 - Allow a way to build circles (rename for copyright)
 - Provide a suggestion box on the site that creates new GitHub Issues
 - Save certain Posts (like Pinterest)
+- Setup Testing
+  - Jest
+- Setup Linting
+  - Eslint
+  - Connect with Prettier so that they work together
 
 ## Known Errors
-
-Using `React-Router` with `loadable-components` is throwing a error
-
-```javascript
-loadable-component client modules: {}
-loadable-component server modules: {children: Array(1)}
-
-Uncaught (in promise) Error: loadable-components: module "./Home" is not found, client and server modules are not sync. You are probably not using the same resolver on server and client.
-    at eval (loadable-components.es.js:105)
-    at Array.map (<anonymous>)
-    at loadState (loadable-components.es.js:96)
-    at loadComponents (loadable-components.es.js:130)
-    at load (index.js:33)
-    at Module.eval (index.js:41)
-    at eval (index.js:68)
-    at Module../src/client/index.js (app.js:3483)
-    at __webpack_require__ (app.js:768)
-    at fn (app.js:131)
-```
