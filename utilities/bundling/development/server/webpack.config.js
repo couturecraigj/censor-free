@@ -1,51 +1,51 @@
-const CleanWebpackPlugin = require("clean-webpack-plugin");
-const nodeExternals = require("webpack-node-externals");
-const path = require("path");
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const nodeExternals = require('webpack-node-externals');
+// const path = require('path');
 
 module.exports = {
   entry: {
-    index: "./src/server/dev.js"
+    index: './src/server/dev.js'
   },
-  mode: "development",
+  mode: 'development',
   output: {
-    filename: "[name].js"
+    filename: '[name].js'
   },
   resolve: {
-    extensions: [".webpack.js", ".web.js", ".js", ".json", ".jsx"]
+    extensions: ['.webpack.js', '.web.js', '.js', '.json', '.jsx']
   },
   module: {
     rules: [
       {
-        enforce: "pre",
+        enforce: 'pre',
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
-        loader: "eslint-loader"
+        loader: 'eslint-loader'
       },
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
           options: {
             cacheDirectory: true,
             presets: [
               [
-                "@babel/preset-env",
+                '@babel/preset-env',
                 {
                   targets: {
-                    node: "current",
+                    node: 'current',
                     esmodules: true
                   }
                 }
               ],
-              "@babel/preset-react"
+              '@babel/preset-react'
             ],
             plugins: [
               // ["@babel/plugin-proposal-decorators", { legacy: true }],
-              "dynamic-import-node",
-              ["@babel/plugin-proposal-class-properties", { loose: true }],
-              "react-hot-loader/babel",
-              "loadable-components/babel"
+              'dynamic-import-node',
+              ['@babel/plugin-proposal-class-properties', { loose: true }],
+              'react-hot-loader/babel',
+              'loadable-components/babel'
             ]
           }
         }
@@ -53,10 +53,10 @@ module.exports = {
     ]
   },
   plugins: [
-    new CleanWebpackPlugin(["server", "dist"], {
+    new CleanWebpackPlugin(['server', 'dist'], {
       root: process.cwd()
     })
   ],
-  target: "node",
+  target: 'node',
   externals: [nodeExternals()]
 };

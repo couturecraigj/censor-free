@@ -1,13 +1,13 @@
-import { ApolloClient } from "apollo-client";
-import { InMemoryCache } from "apollo-cache-inmemory";
-import { HttpLink } from "apollo-link-http";
+import { ApolloClient } from 'apollo-client';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { HttpLink } from 'apollo-link-http';
 // import { onError } from "apollo-link-error";
 // import { withClientState } from "apollo-link-state";
-import { ApolloLink } from "apollo-link";
+import { ApolloLink } from 'apollo-link';
 
 export default (
   fetch,
-  { state = {}, uri = "/", ssrMode = false, req } = {}
+  { state = {}, uri = '/', ssrMode = false, req } = {}
 ) => {
   const cache = new InMemoryCache();
 
@@ -17,10 +17,10 @@ export default (
       new HttpLink({
         uri,
         fetch,
-        credentials: "same-origin",
+        credentials: 'same-origin',
         headers: req
           ? {
-              cookie: req.header("Cookie")
+              cookie: req.header('Cookie')
             }
           : undefined
       })

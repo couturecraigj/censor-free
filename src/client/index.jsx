@@ -1,13 +1,13 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-import { ApolloProvider } from "react-apollo";
-import { loadComponents } from "loadable-components";
-import { BrowserRouter } from "react-router-dom";
-import App from "../common/App";
-import apollo from "../common/apollo";
+import { ApolloProvider } from 'react-apollo';
+import { loadComponents } from 'loadable-components';
+import { BrowserRouter } from 'react-router-dom';
+import App from '../common/App';
+import apollo from '../common/apollo';
 
-const rootElement = document.getElementById("root");
+const rootElement = document.getElementById('root');
 // import component from "../common";
 async function render(ele) {
   await loadComponents();
@@ -26,9 +26,9 @@ async function render(ele) {
 render(rootElement);
 
 if (module.hot) {
-  module.hot.accept("../common", function() {
+  module.hot.accept('../common', function() {
     // eslint-disable-next-line
-    console.log("Accepting the updated printMe module!");
+    console.log('Accepting the updated printMe module!');
     render(rootElement);
   });
 }

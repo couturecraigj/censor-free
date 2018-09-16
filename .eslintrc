@@ -26,6 +26,7 @@
         "usePrettierrc": true
       }
     ],
+    "node/no-unpublished-require": "off",
     "node/no-unsupported-features": "off",
     "node/no-unsupported-features/es-syntax": "off",
     "node/no-missing-require": [
@@ -86,6 +87,7 @@
           "**/*.spec.js",
           "**/*.spec.jsx",
           "**/tools/jest/*.js",
+          "**/utilities/**/*.js",
           "jest.setup.js",
           "tools/**/*.js",
           "/gulpfile.js",

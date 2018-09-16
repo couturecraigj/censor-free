@@ -1,7 +1,7 @@
 module.exports = {
-  mode: "production",
+  mode: 'production',
   resolve: {
-    extensions: [".webpack.js", ".web.js", ".js", ".json", ".jsx"]
+    extensions: ['.webpack.js', '.web.js', '.js', '.json', '.jsx']
   },
   module: {
     rules: [
@@ -9,9 +9,9 @@ module.exports = {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
           options: {
-            presets: ["@babel/preset-env"]
+            presets: ['@babel/preset-env']
           }
         }
       }

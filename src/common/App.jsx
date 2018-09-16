@@ -1,9 +1,9 @@
-import React from "react";
-import { Route, Switch } from "react-router";
-import { hot } from "react-hot-loader";
-import { Helmet } from "react-helmet";
-import styled, { injectGlobal } from "styled-components";
-import * as Routes from "./pages/Routes";
+import React from 'react';
+import { Route, Switch } from 'react-router';
+import { hot } from 'react-hot-loader';
+import { Helmet } from 'react-helmet';
+import styled, { injectGlobal } from 'styled-components';
+import * as Routes from './pages/Routes';
 
 injectGlobal`
    html {

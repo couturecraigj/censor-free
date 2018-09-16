@@ -1,17 +1,18 @@
-const webpack = require("webpack");
-const CleanWebpackPlugin = require("clean-webpack-plugin");
-const AssetsPlugin = require("assets-webpack-plugin");
+const AssetsPlugin = require('assets-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+// const webpack = require('webpack');
 
-const path = require("path");
+const path = require('path');
+
 const cwd = process.cwd();
 
 module.exports = {
-  mode: "production",
+  mode: 'production',
   entry: {
-    app: "./src/client/index.jsx"
+    app: './src/client/index.jsx'
   },
   resolve: {
-    extensions: [".webpack.js", ".web.js", ".js", ".json", ".jsx"]
+    extensions: ['.webpack.js', '.web.js', '.js', '.json', '.jsx']
   },
   module: {
     rules: [
@@ -19,16 +20,16 @@ module.exports = {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
           options: {
-            presets: ["@babel/preset-env", "@babel/preset-react"],
+            presets: ['@babel/preset-env', '@babel/preset-react'],
             plugins: [
               // ["@babel/plugin-proposal-decorators", { legacy: true }],
-              ["@babel/plugin-proposal-class-properties", { loose: true }],
+              ['@babel/plugin-proposal-class-properties', { loose: true }],
               // "@babel/plugin-syntax-dynamic-import",
-              "@babel/plugin-transform-runtime",
+              '@babel/plugin-transform-runtime',
               // "react-hot-loader/babel",
-              "loadable-components/babel"
+              'loadable-components/babel'
             ]
           }
         }
@@ -37,14 +38,14 @@ module.exports = {
   },
   plugins: [
     new AssetsPlugin(),
-    new CleanWebpackPlugin(["dist", "public"], {
+    new CleanWebpackPlugin(['dist', 'public'], {
       root: cwd
     })
     // new webpack.HotModuleReplacementPlugin({ quiet: true })
   ],
   output: {
-    filename: "[name].[hash].js",
-    path: path.resolve(cwd, "public"),
-    publicPath: "/"
+    filename: '[name].[hash].js',
+    path: path.resolve(cwd, 'public'),
+    publicPath: '/'
   }
 };

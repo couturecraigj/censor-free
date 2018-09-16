@@ -63,5 +63,24 @@ have a certain point of view.
 - Setup Linting
   - Eslint
   - Connect with Prettier so that they work together
+- Marketing
+  - Create a Page for each Network you are replacing
+    - Facebook
+      - Does it make you scared that Facebook can deactivate your account?
+      - Is it concerning that Facebook can send your data to people
+        without your consent?
+    - DeviantArt
+      - Do you wish that you could post and view art of any form on DeviantArt?
+      - Do you find the 18+ filter slightly redundant with DeviantArts
+        terms of use?
+    - Twitter
+      - Have you heard how people are getting their accounts deactivated
+        on twittier?
+    - YouTube
+      - Did you watch the controversy around the Joe Rogan
+        interview with Elon Musk?
+      - Have you noticed that YouTube is pushing an agenda?
+    - Pinterest
+      - Pinterest seems open but have you ever noticed how difficult it is to get certain things on boards?
 
 ## Known Errors
