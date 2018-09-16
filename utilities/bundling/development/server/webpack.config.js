@@ -13,6 +13,11 @@ module.exports = {
   resolve: {
     extensions: ['.webpack.js', '.web.js', '.js', '.json', '.jsx']
   },
+  stats: 'errors-only',
+  devServer: {
+    noInfo: true
+    // contentBase: './dist',
+  },
   module: {
     rules: [
       {

@@ -10,8 +10,11 @@ module.exports = {
   },
   devServer: {
     contentBase: './dist',
+    noInfo: true,
+    // quiet: true,
     headers: { 'Access-Control-Allow-Origin': 'http://localhost:3000' },
-    hot: true
+    hot: true,
+    stats: 'errors-only'
   },
   resolve: {
     extensions: ['.webpack.js', '.web.js', '.js', '.json', '.jsx']

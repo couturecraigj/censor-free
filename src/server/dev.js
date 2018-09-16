@@ -2,6 +2,8 @@
 // require("@babel/polyfill");
 import app from '.';
 
+const chalk = require('chalk');
+
 function startServer() {
   return new Promise((resolve, reject) => {
     const httpServer = app.listen(app.get('port'));
@@ -16,11 +18,20 @@ function startServer() {
   }).then(httpServer => {
     const { port } = httpServer.address();
     console.info(
-      `==> 🌎  Open up http://localhost:${port}/ in your browser.
-==> For GraphQL use Open up http://localhost:${port}${
-        app.get('apollo').graphqlPath
-      } in your browser.
       `
+
+${chalk.italic.red(
+        'Everything loaded just fine now you can navigate to one of the below options'
+      )}
+${chalk.underline.red(
+        '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
+      )}
+
+Website ==> ${chalk.blue.bold(`http://localhost:${port}/`)}
+GraphQL ==> ${chalk.blue.bold(
+        `http://localhost:${port}${app.get('apollo').graphqlPath}`
+      )}
+`
     );
 
     // Hot Module Replacement API

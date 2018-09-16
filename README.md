@@ -2,7 +2,8 @@
 
 What could possibly go wrong
 
-Imagine something that allows you to find friends post anything and have certain filters to protect prying eyes.
+Imagine something that allows you to find friends post anything and have certain ratings to protect people from seeing things that they do not
+want to see.
 
 <!-- markdownlint-disable MD026 -->
 
@@ -11,7 +12,9 @@ Imagine something that allows you to find friends post anything and have certain
 <!-- markdownlint-enable -->
 
 I am not alone in hating that people are being censored just because they
-have a certain point of view.
+have a certain point of view. Also, we all hate that a certain social
+network gave away what should have been private data to certain groups.
+Lets also not forget that we want to have an open and free internet.
 
 ## TODOs
 
@@ -75,12 +78,13 @@ have a certain point of view.
         terms of use?
     - Twitter
       - Have you heard how people are getting their accounts deactivated
-        on twittier?
+        on twitter?
     - YouTube
       - Did you watch the controversy around the Joe Rogan
         interview with Elon Musk?
       - Have you noticed that YouTube is pushing an agenda?
     - Pinterest
-      - Pinterest seems open but have you ever noticed how difficult it is to get certain things on boards?
+      - Pinterest seems open but have you ever noticed how difficult
+        it is to get certain things on boards?
 
 ## Known Errors
