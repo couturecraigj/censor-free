@@ -66,6 +66,11 @@ Lets also not forget that we want to have an open and free internet.
 - Setup Linting
   - Eslint
   - Connect with Prettier so that they work together
+- Convert everything to TypeScript
+  <!--
+  Eslint cannot parse TypeScript Files currently
+  so it is not currently possible
+  -->
 - Marketing
   - Create a Page for each Network you are replacing
     - Facebook

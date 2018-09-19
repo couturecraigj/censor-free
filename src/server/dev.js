@@ -4,6 +4,8 @@ import app from '.';
 
 const chalk = require('chalk');
 
+const setup = require('./setup');
+
 function startServer() {
   return new Promise((resolve, reject) => {
     const httpServer = app.listen(app.get('port'));
@@ -23,6 +25,10 @@ function startServer() {
 ${chalk.italic.red(
         'Everything loaded just fine now you can navigate to one of the below options'
       )}
+
+${chalk.underline.red(
+        '****************************************************************************'
+      )}
 ${chalk.underline.red(
         '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
       )}
@@ -31,8 +37,17 @@ Website ==> ${chalk.blue.bold(`http://localhost:${port}/`)}
 GraphQL ==> ${chalk.blue.bold(
         `http://localhost:${port}${app.get('apollo').graphqlPath}`
       )}
+
+${chalk.underline.red(
+        '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
+      )}
+${chalk.underline.red(
+        '****************************************************************************'
+      )}
 `
     );
+
+    setup(app);
 
     // Hot Module Replacement API
     if (module.hot) {
@@ -42,6 +57,7 @@ GraphQL ==> ${chalk.blue.bold(
         import('.')
           .then(({ default: nextApp }) => {
             currentApp = nextApp;
+            setup(currentApp);
             httpServer.on('request', currentApp);
             console.log('HttpServer reloaded!');
           })

@@ -7,6 +7,7 @@
   "parser": "babel-eslint",
   "parserOptions": {
     "sourceType": "module",
+    "typescript": true,
     "ecmaVersion": 2018,
     "ecmaFeatures": {
       "experimentalObjectRestSpread": true,
@@ -26,6 +27,12 @@
         "usePrettierrc": true
       }
     ],
+    "jsx-a11y/label-has-associated-control": [2, {
+      // "labelComponents": ["CustomLabel"],
+      "labelAttributes": ["htmlFor"],
+      // "controlComponents": ["CustomInput"],
+      "depth": 3,
+    }],
     "node/no-unpublished-require": "off",
     "node/no-unsupported-features": "off",
     "node/no-unsupported-features/es-syntax": "off",
@@ -80,6 +87,7 @@
       {
         "devDependencies": [
           "**/*.test.js",
+          "**/mocks/**/*.js",
           "test_utilities/**/*.js",
           "**/*.dev.js",
           "**/dev.js",

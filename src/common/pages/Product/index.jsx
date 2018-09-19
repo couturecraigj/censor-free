@@ -1,10 +1,37 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import loadable from 'loadable-components';
+import { Route, Switch } from 'react-router';
 
-export default () => (
-  <div>
-    <Link to="/">Home</Link>
-    <Link to="/about">About</Link>
-    User
-  </div>
+import LoadingComponent from '../../components/Loader';
+import Product from './Single';
+
+export const ProductList = loadable(
+  () => import(/* webpackChunkName: 'product-list' */ './List'),
+  {
+    LoadingComponent
+  }
 );
+
+const Chooser = ({ match }) =>
+  match.params.id === 'list' ? (
+    <Switch>
+      <Route exact path="/product/list" component={ProductList} />
+    </Switch>
+  ) : (
+    <Product />
+  );
+
+Chooser.propTypes = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      id: PropTypes.string.isRequired
+    })
+  }).isRequired
+};
+
+Chooser.load = () => {
+  ProductList.load();
+};
+
+export default Chooser;

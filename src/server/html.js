@@ -20,6 +20,7 @@ module.exports = ({ head, body, foot, attrs = {} }) => compress`
 </head>
 <body ${attrs.body}>
   <div id="root">${body}</div>
+  <div id="modal"></div>
   <div id="portal"></div>
   ${foot}
 </body>

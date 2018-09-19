@@ -1,11 +1,13 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 
-export default () => (
+const User = () => (
   <div>
     <Helmet>
-      <title>Home</title>
+      <title>User</title>
     </Helmet>
-    <div>Home</div>
+    <div>User</div>
   </div>
 );
+
+export default User;

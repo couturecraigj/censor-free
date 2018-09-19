@@ -1,11 +1,13 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 
-export default () => (
+const Product = () => (
   <div>
     <Helmet>
-      <title>Home</title>
+      <title>Product</title>
     </Helmet>
-    <div>Home</div>
+    <div>Product</div>
   </div>
 );
+
+export default Product;

@@ -1,7 +1,33 @@
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const webpack = require('webpack');
-
 const path = require('path');
+const webpack = require('webpack');
+const { CheckerPlugin } = require('awesome-typescript-loader');
+
+const babelOptions = require('../babelOptions');
+// {
+//   presets: ['@babel/preset-env', '@babel/preset-react'],
+//   plugins: [
+//     // ["@babel/plugin-proposal-decorators", { legacy: true }],
+//     ['@babel/plugin-proposal-class-properties', { loose: true }],
+//     // "@babel/plugin-transform-runtime",
+//     // "react-hot-loader/babel",
+//     'loadable-components/babel'
+//   ]
+// };
+// {
+//   cacheDirectory: true,
+//   presets: ['@babel/preset-env', '@babel/preset-react'],
+//   plugins: [
+//     // ["@babel/plugin-proposal-decorators", { legacy: true }],
+//     ['@babel/plugin-proposal-class-properties', { loose: true }],
+//     // "@babel/plugin-syntax-dynamic-import",
+//     '@babel/plugin-transform-runtime',
+//     'loadable-components/babel',
+//     'react-hot-loader/babel'
+//   ]
+// }
+
+babelOptions.plugins.push('react-hot-loader/babel');
 
 module.exports = {
   mode: 'development',
@@ -12,12 +38,26 @@ module.exports = {
     contentBase: './dist',
     noInfo: true,
     // quiet: true,
-    headers: { 'Access-Control-Allow-Origin': 'http://localhost:3000' },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers':
+        'Origin, X-Requested-With, Content-Type, Accept'
+    },
     hot: true,
     stats: 'errors-only'
   },
   resolve: {
-    extensions: ['.webpack.js', '.web.js', '.js', '.json', '.jsx']
+    extensions: [
+      '.webpack.js',
+      '.web.js',
+      '.js',
+      '.ts',
+      '/index.ts',
+      '/index.tsx',
+      '.tsx',
+      '.json',
+      '.jsx'
+    ]
   },
   module: {
     rules: [
@@ -28,27 +68,28 @@ module.exports = {
         loader: 'eslint-loader'
       },
       {
+        test: /\.tsx?$/,
+        exclude: /(node_modules|bower_components)/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: babelOptions
+          },
+          'awesome-typescript-loader'
+        ]
+      },
+      {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         use: {
           loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
-            presets: ['@babel/preset-env', '@babel/preset-react'],
-            plugins: [
-              // ["@babel/plugin-proposal-decorators", { legacy: true }],
-              ['@babel/plugin-proposal-class-properties', { loose: true }],
-              // "@babel/plugin-syntax-dynamic-import",
-              '@babel/plugin-transform-runtime',
-              'loadable-components/babel',
-              'react-hot-loader/babel'
-            ]
-          }
+          options: babelOptions
         }
       }
     ]
   },
   plugins: [
+    new CheckerPlugin(),
     new CleanWebpackPlugin(['public'], {
       root: process.cwd()
     }),

@@ -11,7 +11,11 @@ const rootElement = document.getElementById('root');
 // import component from "../common";
 async function render(ele) {
   await loadComponents();
-  const client = apollo(fetch, {});
+  const client = apollo(fetch, {
+    uri: window.QUERY_URL,
+    state: window.__APOLLO_STATE__,
+    fragments: window.__FRAGMENTS__
+  });
   // component();
   ReactDOM.hydrate(
     <BrowserRouter>

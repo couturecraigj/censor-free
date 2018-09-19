@@ -3,6 +3,7 @@ import { Route, Switch } from 'react-router';
 import { hot } from 'react-hot-loader';
 import { Helmet } from 'react-helmet';
 import styled, { injectGlobal } from 'styled-components';
+import Layout from './components/Layout';
 import * as Routes from './pages/Routes';
 
 injectGlobal`
@@ -17,14 +18,23 @@ const Div = styled.div`
 
 const App = () => (
   <Div>
-    <Helmet>
-      <title>Hello</title>
+    <Helmet titleTemplate="MySite.com - %s">
+      <title>Home</title>
     </Helmet>
-    <Switch>
-      <Route exact path="/" component={Routes.Home} />
-      <Route path="/about" component={Routes.About} />
-      <Route path="/user/:userId" component={Routes.User} />
-    </Switch>
+    <Layout>
+      <Switch>
+        <Route exact path="/" component={Routes.Home} />
+        <Route path="/about" component={Routes.About} />
+        <Route path="/company/:id/:slug?" exact component={Routes.Company} />
+        <Route path="/feed" component={Routes.Feed} />
+        <Route path="/group/:id/:slug?" component={Routes.Group} />
+        <Route path="/product/:id/:slug?" component={Routes.Product} />
+        <Route path="/saved" component={Routes.Saved} />
+        <Route path="/search" component={Routes.Search} />
+        <Route path="/user/:id/:slug?" component={Routes.User} />
+        <Route path="/video/:id/:slug?" component={Routes.Video} />
+      </Switch>
+    </Layout>
   </Div>
 );
 

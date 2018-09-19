@@ -4,8 +4,8 @@ import { Helmet } from 'react-helmet';
 export default () => (
   <div>
     <Helmet>
-      <title>Home</title>
+      <title>Video List</title>
     </Helmet>
-    <div>Home</div>
+    <div>Video List</div>
   </div>
 );

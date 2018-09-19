@@ -1,7 +1,11 @@
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const path = require('path');
+const { CheckerPlugin } = require('awesome-typescript-loader');
 
+const babelOptions = require('../babelOptions');
+
+babelOptions.plugins.unshift('dynamic-import-node');
 const cwd = process.cwd();
 
 module.exports = {
@@ -14,32 +18,41 @@ module.exports = {
     path: path.resolve(cwd, 'server')
   },
   resolve: {
-    extensions: ['.webpack.js', '.web.js', '.js', '.json', '.jsx']
+    extensions: [
+      '.webpack.js',
+      '.web.js',
+      '.js',
+      '.ts',
+      '.tsx',
+      '.json',
+      '.jsx'
+    ]
   },
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        exclude: /(node_modules|bower_components)/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: babelOptions
+          },
+          'awesome-typescript-loader'
+        ]
+      },
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         use: {
           loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
-            presets: ['@babel/preset-env', '@babel/preset-react'],
-            plugins: [
-              // ["@babel/plugin-proposal-decorators", { legacy: true }],
-              'dynamic-import-node',
-              ['@babel/plugin-proposal-class-properties', { loose: true }],
-              // "@babel/plugin-transform-runtime",
-              // "react-hot-loader/babel",
-              'loadable-components/babel'
-            ]
-          }
+          options: babelOptions
         }
       }
     ]
   },
   plugins: [
+    new CheckerPlugin(),
     new CleanWebpackPlugin(['dist', 'server'], {
       root: cwd
     })

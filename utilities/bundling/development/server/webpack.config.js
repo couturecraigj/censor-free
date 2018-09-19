@@ -1,8 +1,24 @@
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
+const { CheckerPlugin } = require('awesome-typescript-loader');
 // const path = require('path');
 
+const babelOptions = require('../babelOptions');
+
+babelOptions.presets.shift();
+babelOptions.presets.push([
+  '@babel/preset-env',
+  {
+    targets: {
+      node: 'current'
+    }
+  }
+]);
+
+babelOptions.plugins.unshift('dynamic-import-node');
+
 module.exports = {
+  devtool: 'inline-source-map',
   entry: {
     index: './src/server/dev.js'
   },
@@ -11,7 +27,17 @@ module.exports = {
     filename: '[name].js'
   },
   resolve: {
-    extensions: ['.webpack.js', '.web.js', '.js', '.json', '.jsx']
+    extensions: [
+      '.webpack.js',
+      '.web.js',
+      '.js',
+      '.ts',
+      '/index.ts',
+      '/index.tsx',
+      '.tsx',
+      '.json',
+      '.jsx'
+    ]
   },
   stats: 'errors-only',
   devServer: {
@@ -22,42 +48,33 @@ module.exports = {
     rules: [
       {
         enforce: 'pre',
-        test: /\.jsx?$/,
+        test: /\.[jt]sx?$/,
         exclude: /(node_modules|bower_components)/,
         loader: 'eslint-loader'
+      },
+      {
+        test: /\.tsx?$/,
+        exclude: /(node_modules|bower_components)/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: babelOptions
+          },
+          'awesome-typescript-loader'
+        ]
       },
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         use: {
           loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
-            presets: [
-              [
-                '@babel/preset-env',
-                {
-                  targets: {
-                    node: 'current',
-                    esmodules: true
-                  }
-                }
-              ],
-              '@babel/preset-react'
-            ],
-            plugins: [
-              // ["@babel/plugin-proposal-decorators", { legacy: true }],
-              'dynamic-import-node',
-              ['@babel/plugin-proposal-class-properties', { loose: true }],
-              'react-hot-loader/babel',
-              'loadable-components/babel'
-            ]
-          }
+          options: babelOptions
         }
       }
     ]
   },
   plugins: [
+    new CheckerPlugin(),
     new CleanWebpackPlugin(['server', 'dist'], {
       root: process.cwd()
     })

@@ -1,10 +1,60 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
+import { Query } from 'react-apollo';
+import { Helmet } from 'react-helmet';
+
+const GET_FEED = gql`
+  {
+    feed {
+      id
+      title
+      description
+    }
+  }
+`;
+
+const Post = styled.div`
+  width: 100%;
+  background: white;
+  padding: 8px;
+  border-radius: 2px;
+  margin: 10px;
+  & img {
+    width: 100%;
+    height: auto;
+  }
+`;
+
+const Feed = styled.div`
+  padding: 0 400px;
+`;
 
 export default () => (
   <div>
-    <Link to="/">Home</Link>
-    <Link to="/about">About</Link>
-    User
+    <Helmet>
+      <title>Feed</title>
+    </Helmet>
+    <Query query={GET_FEED}>
+      {({ loading, error, data }) => {
+        if (loading) return 'Loading...';
+        if (error) return `Error! ${error.message}`;
+
+        return (
+          <Feed name="dog">
+            {data.feed.map(post => (
+              <Post key={post.id} value={post.title}>
+                <div>{post.title}</div>
+                <img
+                  src="https://picsum.photos/500/300/?random"
+                  alt={post.title}
+                />
+                <div>{post.description}</div>
+              </Post>
+            ))}
+          </Feed>
+        );
+      }}
+    </Query>
   </div>
 );

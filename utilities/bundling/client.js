@@ -1,28 +1,11 @@
-const { CheckerPlugin } = require('awesome-typescript-loader');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+
+const common = require('.');
 
 module.exports = {
-  mode: 'development',
+  ...common,
   entry: {
     app: './src/client/index.jsx'
-  },
-  devServer: {
-    contentBase: './dist',
-    noInfo: true,
-    // quiet: true,
-    headers: { 'Access-Control-Allow-Origin': 'http://localhost:3000' },
-    hot: true,
-    stats: 'errors-only'
-  },
-  resolve: {
-    extensions: [
-      '.webpack.js',
-      '.web.js',
-      '.js',
-      '.json',
-      '.ts',
-      '.tsx',
-      '.jsx'
-    ]
   },
   module: {
     rules: [
@@ -58,7 +41,8 @@ module.exports = {
     ]
   },
   plugins: [
-    new CheckerPlugin()
-    // new webpack.HotModuleReplacementPlugin({ quiet: true })
+    new CleanWebpackPlugin(['public'], {
+      root: process.cwd()
+    })
   ]
 };

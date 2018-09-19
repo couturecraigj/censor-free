@@ -1,5 +1,8 @@
 import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import {
+  InMemoryCache,
+  IntrospectionFragmentMatcher
+} from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
 // import { onError } from "apollo-link-error";
 // import { withClientState } from "apollo-link-state";
@@ -7,9 +10,18 @@ import { ApolloLink } from 'apollo-link';
 
 export default (
   fetch,
-  { state = {}, uri = '/', ssrMode = false, req } = {}
+  {
+    state = {},
+    uri = '/',
+    ssrMode = false,
+    req,
+    fragments: introspectionQueryResultData
+  } = {}
 ) => {
-  const cache = new InMemoryCache();
+  const fragmentMatcher = new IntrospectionFragmentMatcher({
+    introspectionQueryResultData
+  });
+  const cache = new InMemoryCache({ fragmentMatcher });
 
   const client = new ApolloClient({
     ssrMode,

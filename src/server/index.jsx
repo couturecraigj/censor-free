@@ -2,6 +2,8 @@ const express = require('express');
 const fetch = require('node-fetch');
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
+const { ApolloProvider, getDataFromTree } = require('react-apollo');
+
 const { getLoadableState } = require('loadable-components/server');
 const { Helmet } = require('react-helmet');
 const { ServerStyleSheet } = require('styled-components');
@@ -11,27 +13,40 @@ const apollo = require('../common/apollo').default;
 const App = require('../common/App').default;
 const config = require('./config');
 const html = require('./html');
+const setup = require('./setup');
 
 const app = express();
 app.use(express.static('public'));
 config(app);
 app.get('*', (req, res, next) => {
+  const queryUrl = app.get('url') + app.get('apollo').graphqlPath;
   // eslint-disable-next-line prefer-const
   let context = {};
   const sheet = new ServerStyleSheet();
-  const client = apollo(fetch, { req, ssrMode: true });
+  const client = apollo(fetch, {
+    req,
+    ssrMode: true,
+    uri: queryUrl,
+    fragments: app.get('fragments')
+  });
   const spaApp = (
     <StaticRouter location={req.url} context={context}>
-      <App client={client} />
+      <ApolloProvider client={client}>
+        <App />
+      </ApolloProvider>
     </StaticRouter>
   );
-  return getLoadableState(spaApp)
-    .then(loadableState => {
+  return Promise.all([getLoadableState(spaApp), getDataFromTree(spaApp)])
+    .then(([loadableState]) => {
       const body = ReactDOMServer.renderToString(spaApp);
       const reactHelmet = Helmet.renderStatic();
       res.send(
         html({
-          head: `${loadableState.getScriptTag()}${reactHelmet.title.toString()}${sheet.getStyleTags()}`,
+          head: `<script>window.__FRAGMENTS__=${JSON.stringify(
+            app.get('fragments')
+          )};window.QUERY_URL="${queryUrl}";window.__APOLLO_STATE__ = ${JSON.stringify(
+            client.extract()
+          )};</script>${loadableState.getScriptTag()}${reactHelmet.title.toString()}${sheet.getStyleTags()}`,
           body,
           attrs: {
             body: reactHelmet.bodyAttributes.toString(),
@@ -47,6 +62,7 @@ if (module === require.main) {
   app.listen(app.get('port'), () => {
     // eslint-disable-next-line no-console
     console.info(`server listening on http://localhost:${app.get('port')}`);
+    setup(app);
   });
 }
 

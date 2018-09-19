@@ -4,10 +4,10 @@ import loadable from 'loadable-components';
 import { Route, Switch } from 'react-router';
 
 import LoadingComponent from '../../components/Loader';
-import Group from './Single';
+import Video from './Single';
 
-export const GroupList = loadable(
-  () => import(/* webpackChunkName: 'group-list' */ './List'),
+export const VideoList = loadable(
+  () => import(/* webpackChunkName: 'video-list' */ './List'),
   {
     LoadingComponent
   }
@@ -16,10 +16,10 @@ export const GroupList = loadable(
 const Chooser = ({ match }) =>
   match.params.id === 'list' ? (
     <Switch>
-      <Route exact path="/group/list" component={GroupList} />
+      <Route exact path="/video/list" component={VideoList} />
     </Switch>
   ) : (
-    <Group />
+    <Video />
   );
 
 Chooser.propTypes = {
@@ -31,7 +31,7 @@ Chooser.propTypes = {
 };
 
 Chooser.load = () => {
-  GroupList.load();
+  VideoList.load();
 };
 
 export default Chooser;

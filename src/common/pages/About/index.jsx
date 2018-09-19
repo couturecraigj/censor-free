@@ -1,10 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 export default () => (
   <div>
-    <Link to="/">Home</Link>
-    About
-    <Link to="/user/123">User</Link>
+    <Helmet>
+      <title>About</title>
+    </Helmet>
+    <div>About</div>
   </div>
 );
