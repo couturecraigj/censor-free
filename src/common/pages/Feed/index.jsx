@@ -6,10 +6,43 @@ import { Helmet } from 'react-helmet';
 
 const GET_FEED = gql`
   {
+    # PostUnion = Post | Review | Question | Answer | Image | Video | WebPage
     feed {
-      id
-      title
-      description
+      ... on Post {
+        id
+        title
+        description
+      }
+      ... on Review {
+        id
+        title
+        description
+      }
+      ... on Question {
+        id
+        title
+        description
+      }
+      ... on Answer {
+        id
+        title
+        description
+      }
+      ... on Image {
+        id
+        title
+        description
+      }
+      ... on Video {
+        id
+        title
+        description
+      }
+      ... on WebPage {
+        id
+        title
+        description
+      }
     }
   }
 `;

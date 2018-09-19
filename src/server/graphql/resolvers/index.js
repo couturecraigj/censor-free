@@ -1,8 +1,9 @@
 const resolvers = {
   Query: {
-    hello: () => 'Hello world!'
+    // hello: () => 'Hello world!'
   },
   Post: {}
+
   // Save: {
   //   object: {
   //     __resolveType() {

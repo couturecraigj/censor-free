@@ -13,14 +13,15 @@ const mocks = {
     description: casual.description
   }),
   Query: () => ({
-    feed: () =>
-      range(300).map(() => ({
-        id: casual.uuid,
-        title: casual.title,
-        description: casual.description
-      })),
+    feed: () => range(20).map(mocks.PostUnion),
     saved: () => range(400).map(mocks.Save)
   }),
+  PostUnion: () =>
+    mocks[
+      ['Post', 'Review', 'Question', 'Answer', 'Image', 'Video', 'WebPage'][
+        casual.integer(0, 6)
+      ]
+    ](casual.uuid),
   Save: () => ({
     id: casual.uuid,
     imgUri: `https://via.placeholder.com/${casual.integer(
@@ -42,7 +43,28 @@ const mocks = {
   }),
   SavedRecord: obj => ({
     id: obj.objectId || casual.uuid,
-    __typename: 'Product'
+    __typename: 'SavedRecord'
+  }),
+  Review: obj => ({
+    __typename: 'Review',
+    id: 'Review' + (obj.objectId || casual.uuid),
+    name: casual.title,
+    description: casual.description,
+    score: casual.double(0, 5)
+  }),
+  Question: obj => ({
+    __typename: 'Question',
+    id: 'Question' + (obj.objectId || casual.uuid),
+    name: casual.title,
+    description: casual.description,
+    score: casual.double(0, 5)
+  }),
+  Answer: obj => ({
+    __typename: 'Answer',
+    id: 'Answer' + (obj.objectId || casual.uuid),
+    name: casual.title,
+    description: casual.description,
+    score: casual.double(0, 5)
   }),
   Product: obj => ({
     __typename: 'Product',
@@ -71,6 +93,10 @@ const mocks = {
   Image: obj => ({
     __typename: 'Image',
     id: 'Image' + (obj.objectId || casual.uuid),
+    uri: `https://picsum.photos/${casual.integer(30, 500)}/${casual.integer(
+      30,
+      500
+    )}/?random`,
     title: casual.title,
     description: casual.description
   }),

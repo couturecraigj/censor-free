@@ -22,26 +22,26 @@ function startServer() {
     console.info(
       `
 
-${chalk.italic.red(
+${chalk.red(
         'Everything loaded just fine now you can navigate to one of the below options'
       )}
 
-${chalk.underline.red(
+${chalk.red(
         '****************************************************************************'
       )}
-${chalk.underline.red(
+${chalk.red(
         '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
       )}
 
-Website ==> ${chalk.blue.bold(`http://localhost:${port}/`)}
-GraphQL ==> ${chalk.blue.bold(
+Website ==> ${chalk.blue.underline.bold(`http://localhost:${port}/`)}
+GraphQL ==> ${chalk.blue.underline.bold(
         `http://localhost:${port}${app.get('apollo').graphqlPath}`
       )}
 
-${chalk.underline.red(
+${chalk.red(
         '-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='
       )}
-${chalk.underline.red(
+${chalk.red(
         '****************************************************************************'
       )}
 `

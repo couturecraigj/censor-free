@@ -1,11 +1,10 @@
 const { gql } = require('apollo-server');
 
 const typeDefs = gql`
+  # INTERFACES
   interface Node {
     id: ID!
   }
-  union SavedRecord = Product | Company | Video | Image | WebPage
-  union PostUnion = Post | Review | Question | Answer
   interface PostNode {
     id: ID!
     title: String!
@@ -15,12 +14,17 @@ const typeDefs = gql`
     id: ID!
     description: String!
   }
-
   interface Object {
     id: ID!
     name: String!
     description: String!
   }
+
+  # UNIONS
+  union SavedRecord = Product | Company | Video | Image | WebPage
+  union PostUnion = Post | Review | Question | Answer | Image | Video | WebPage
+
+  # TYPES
   type Post implements Node & PostNode {
     id: ID!
     title: String!
@@ -31,6 +35,7 @@ const typeDefs = gql`
     title: String!
     description: String!
     products: [Product!]!
+    comments: [Comment]!
     score: Float!
   }
   type Question implements Node & PostNode {
@@ -38,12 +43,19 @@ const typeDefs = gql`
     title: String!
     description: String!
     answers: [Answer]!
+    comments: [Comment]!
+  }
+  type Tip implements Node & PostNode {
+    id: ID!
+    title: String!
+    description: String!
   }
   type Answer implements Node & CommentNode & PostNode {
     id: ID!
     question: Question
     title: String!
     description: String!
+    comments: [Comment]!
   }
   type Comment implements Node & CommentNode {
     id: ID!
@@ -93,9 +105,9 @@ const typeDefs = gql`
     name: String!
     description: String!
   }
+
   type Query {
-    hello: String
-    feed: [Post]!
+    feed: [PostUnion]!
     saved: [Save]!
   }
 `;
