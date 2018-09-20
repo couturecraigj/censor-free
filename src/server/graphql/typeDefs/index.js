@@ -151,15 +151,19 @@ const typeDefs = gql`
     highlight: [Highlight]!
     name: String!
     description: String!
+    img: Image
+    imgs: [Image]
   }
 
   type Query {
     feed: [PostNode]!
     saved: [Save]!
     companies: [Company]!
-    company: Company
+    company(id: ID!): Company
     products: [Product]!
-    product: Product
+    product(id: ID!): Product
+    groups: [Group]!
+    group(id: ID!): Group
     search: [Searchable]!
   }
 `;

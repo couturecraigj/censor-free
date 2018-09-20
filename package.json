@@ -70,6 +70,7 @@
         "babel-eslint": "^9.0.0",
         "babel-loader": "^8.0.2",
         "babel-plugin-dynamic-import-node": "^2.1.0",
+        "babel-plugin-graphql-tag": "^1.6.0",
         "babel-plugin-styled-components": "^1.7.1",
         "babel-plugin-transform-react-remove-prop-types": "^0.4.15",
         "casual": "^1.5.19",

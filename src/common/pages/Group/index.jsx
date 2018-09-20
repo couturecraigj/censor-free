@@ -19,7 +19,7 @@ const Chooser = ({ match }) =>
       <Route exact path="/group/list" component={GroupList} />
     </Switch>
   ) : (
-    <Group />
+    <Group match={match} />
   );
 
 Chooser.propTypes = {

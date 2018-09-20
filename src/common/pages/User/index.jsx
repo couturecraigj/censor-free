@@ -19,7 +19,7 @@ const Chooser = ({ match }) =>
       <Route exact path="/user/list" component={UserList} />
     </Switch>
   ) : (
-    <User />
+    <User match={match} />
   );
 
 Chooser.propTypes = {

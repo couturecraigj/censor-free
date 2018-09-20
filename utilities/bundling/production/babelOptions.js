@@ -7,7 +7,8 @@ module.exports = {
         displayName: false
       }
     ],
-    "@babel/plugin-proposal-optional-chaining",
+    'graphql-tag',
+    '@babel/plugin-proposal-optional-chaining',
     // ["@babel/plugin-proposal-decorators", { legacy: true }],
     ['@babel/plugin-proposal-class-properties', { loose: true }],
     // "@babel/plugin-transform-runtime",

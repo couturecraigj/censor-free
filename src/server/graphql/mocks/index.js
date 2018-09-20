@@ -15,13 +15,28 @@ const mocks = {
     description: casual.description,
     __typename: 'Thought'
   }),
+  Group: () => ({
+    id: 'Group' + casual.uuid,
+    title: casual.title,
+    description: casual.description,
+    __typename: 'Group'
+  }),
+  Comment: () => ({
+    id: 'Comment' + casual.uuid,
+    title: casual.title,
+    description: casual.description,
+    __typename: 'Comment'
+  }),
   Query: () => ({
     feed: () => range(20).map(mocks.PostUnion),
     saved: () => range(50).map(mocks.Save),
+    company: ({ id = casual.uuid }) => mocks.Company(id),
     companies: () => range(40).map(() => mocks.Company(casual.uuid)),
-    company: () => mocks.Company(casual.uuid),
+    product: ({ id = casual.uuid }) => mocks.Product(id),
     products: () => range(40).map(() => mocks.Product(casual.uuid)),
-    product: () => mocks.Product(casual.uuid)
+    group: ({ id = casual.uuid }) => mocks.Group(id),
+    groups: () => range(40).map(() => mocks.Group(casual.uuid)),
+    search: () => range(40).map(() => mocks.Searchable(casual.uuid))
   }),
   PostUnion: () =>
     unionInterface(mocks, [
