@@ -8,40 +8,32 @@ const GET_FEED = gql`
   {
     # PostUnion = Post | Review | Question | Answer | Image | Video | WebPage
     feed {
-      ... on Post {
-        id
-        title
-        description
-      }
+      id
+      title
+      description
       ... on Review {
-        id
-        title
-        description
+        score
+        products {
+          id
+          name
+        }
       }
       ... on Question {
-        id
-        title
-        description
-      }
-      ... on Answer {
-        id
-        title
-        description
+        answers {
+          id
+          title
+          description
+        }
       }
       ... on Image {
-        id
-        title
-        description
+        imgUri
+        height
+        width
       }
       ... on Video {
-        id
-        title
-        description
-      }
-      ... on WebPage {
-        id
-        title
-        description
+        img {
+          imgUri
+        }
       }
     }
   }
@@ -77,11 +69,15 @@ export default () => (
           <Feed name="dog">
             {data.feed.map(post => (
               <Post key={post.id} value={post.title}>
+                <div>
+                  <strong>{post.__typename}</strong>
+                </div>
                 <div>{post.title}</div>
-                <img
-                  src="https://picsum.photos/500/300/?random"
-                  alt={post.title}
-                />
+                {post.imgUri && <img src={post.imgUri} alt={post.title} />}
+                {post.img &&
+                  post.img.imgUri && (
+                    <img src={post.img.imgUri} alt={post.title} />
+                  )}
                 <div>{post.description}</div>
               </Post>
             ))}

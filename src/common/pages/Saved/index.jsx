@@ -30,7 +30,9 @@ const GET_SAVED = gql`
           description
         }
       }
-      imgUri
+      img {
+        imgUri
+      }
     }
   }
 `;
@@ -98,7 +100,7 @@ export default () => (
                     {post.object.title}
                     {post.object.name}
                   </Title>
-                  <Img src={post.imgUri} alt={post.object.title} />
+                  <Img src={post.img.imgUri} alt={post.object.title} />
                   <Description>{post.object.description}</Description>
                 </Brick>
               ))}

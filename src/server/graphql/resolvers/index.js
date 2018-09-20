@@ -1,15 +1,13 @@
 const resolvers = {
-  Query: {
-    // hello: () => 'Hello world!'
-  },
-  Post: {}
-
+  // Query: {
+  //   // hello: () => 'Hello world!'
+  // },
+  // Post: {}
   // Save: {
   //   object: {
   //     __resolveType() {
   //       // obj, context, info
   //       return 'Product';
-
   //       // return null;
   //     }
   //   }
@@ -19,7 +17,6 @@ const resolvers = {
   //     // obj, context, info
   //     //
   //     return 'Product';
-
   //     // return null;
   //   }
   // },
@@ -28,7 +25,6 @@ const resolvers = {
   //     // obj, context, info
   //     //
   //     return 'Product';
-
   //     // return null;
   //   }
   // }
