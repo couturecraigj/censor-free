@@ -158,12 +158,16 @@ const typeDefs = gql`
   type Query {
     feed: [PostNode]!
     saved: [Save]!
-    companies: [Company]!
     company(id: ID!): Company
-    products: [Product]!
+    companies: [Company]!
     product(id: ID!): Product
-    groups: [Group]!
+    products: [Product]!
     group(id: ID!): Group
+    groups: [Group]!
+    user(id: ID!): User
+    users: [User]!
+    video(id: ID!): Video
+    videos: [Video]!
     search: [Searchable]!
   }
 `;

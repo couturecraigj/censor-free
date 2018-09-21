@@ -26,7 +26,15 @@ const babelOptions = require('../babelOptions');
 //     'react-hot-loader/babel'
 //   ]
 // }
-
+babelOptions.presets.unshift([
+  '@babel/preset-env',
+  {
+    targets: {
+      browsers: ['last 2 versions', 'safari >= 7']
+    },
+    modules: false
+  }
+]);
 babelOptions.plugins.push('react-hot-loader/babel');
 
 module.exports = {

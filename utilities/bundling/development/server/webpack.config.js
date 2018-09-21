@@ -5,8 +5,7 @@ const { CheckerPlugin } = require('awesome-typescript-loader');
 
 const babelOptions = require('../babelOptions');
 
-babelOptions.presets.shift();
-babelOptions.presets.push([
+babelOptions.presets.unshift([
   '@babel/preset-env',
   {
     targets: {

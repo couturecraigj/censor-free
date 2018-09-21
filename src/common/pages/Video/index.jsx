@@ -19,7 +19,7 @@ const Chooser = ({ match }) =>
       <Route exact path="/video/list" component={VideoList} />
     </Switch>
   ) : (
-    <Video />
+    <Video match={match} />
   );
 
 Chooser.propTypes = {

@@ -6,6 +6,15 @@ const { CheckerPlugin } = require('awesome-typescript-loader');
 
 const babelOptions = require('../babelOptions');
 
+babelOptions.presets.unshift([
+  '@babel/preset-env',
+  {
+    targets: {
+      browsers: ['last 2 versions', 'safari >= 7']
+    },
+    modules: false
+  }
+]);
 const cwd = process.cwd();
 
 module.exports = {

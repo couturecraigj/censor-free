@@ -36,6 +36,10 @@ const mocks = {
     products: () => range(40).map(() => mocks.Product(casual.uuid)),
     group: ({ id = casual.uuid }) => mocks.Group(id),
     groups: () => range(40).map(() => mocks.Group(casual.uuid)),
+    user: ({ id = casual.uuid }) => mocks.User(id),
+    users: () => range(40).map(() => mocks.User(casual.uuid)),
+    video: ({ id = casual.uuid }) => mocks.Video(id),
+    videos: () => range(40).map(() => mocks.Video(casual.uuid)),
     search: () => range(40).map(() => mocks.Searchable(casual.uuid))
   }),
   PostUnion: () =>
@@ -149,10 +153,6 @@ const mocks = {
     __typename: 'Video',
     id: 'Video' + (obj.objectId || casual.uuid),
     title: casual.title,
-    imgUri: `https://picsum.photos/${casual.integer(30, 500)}/${casual.integer(
-      30,
-      500
-    )}/?random`,
     description: casual.description
   })
 };

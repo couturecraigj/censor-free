@@ -6,6 +6,14 @@ const { CheckerPlugin } = require('awesome-typescript-loader');
 const babelOptions = require('../babelOptions');
 
 babelOptions.plugins.unshift('dynamic-import-node');
+babelOptions.presets.unshift([
+  '@babel/preset-env',
+  {
+    targets: {
+      node: 'current'
+    }
+  }
+]);
 const cwd = process.cwd();
 
 module.exports = {

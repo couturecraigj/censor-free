@@ -72,6 +72,7 @@ const Description = styled.div`
   margin: 0.5rem 0;
 `;
 const Brick = styled.div`
+  transition: all 0.5s ease-in-out;
   color: #444;
   background-color: #eee;
   border-radius: 0.5rem;
