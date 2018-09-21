@@ -6,8 +6,28 @@ import Modal from './Modal';
 
 const Div = styled.div`
   background: #eee;
+  display: grid;
   padding: 1rem;
   border-radius: 0.4rem;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+`;
+
+const PostType = styled.div`
+  float: left;
+  background: #eee;
+  padding: 0 0.5rem;
+`;
+
+const Close = styled.button`
+  float: right;
+  background: #000;
+  color: #eee;
+  font-size: 10;
+  padding: 0;
+  height: 1.3rem;
+  width: 1.3rem;
+  border-radius: 0.8rem;
+  border: none;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
 `;
 
@@ -44,13 +64,21 @@ class Post extends React.Component {
         <div ref={this.outsideDiv}>
           <Div>
             <div>
+              <PostType>Post</PostType>
+              <PostType>Video</PostType>
+              <PostType>Review</PostType>
+              <PostType>Question</PostType>
+              <PostType>Tip</PostType>
+              <PostType>Story</PostType>
+              <Close type="button" onClick={close}>
+                ✕
+              </Close>
+            </div>
+            <div>
               <label htmlFor={postInput}>What Are you thinking?</label>
               <input id={postInput} />
               <div>
                 <button type="submit">Submit</button>
-                <button type="button" onClick={close}>
-                  Close
-                </button>
               </div>
             </div>
           </Div>

@@ -7,20 +7,34 @@ export const About = loadable(
     LoadingComponent
   }
 );
-export const Company = loadable(
+
+const Company = loadable(
   () => import(/* webpackChunkName: 'company' */ './Company'),
   {
     LoadingComponent
   }
 );
+Company.List = loadable(
+  () => import(/* webpackChunkName: 'company-list' */ './Company/List'),
+  {
+    LoadingComponent
+  }
+);
+
 export const Feed = loadable(
   () => import(/* webpackChunkName: 'feed' */ './Feed'),
   {
     LoadingComponent
   }
 );
-export const Group = loadable(
+const Group = loadable(
   () => import(/* webpackChunkName: 'group' */ './Group'),
+  {
+    LoadingComponent
+  }
+);
+Group.List = loadable(
+  () => import(/* webpackChunkName: 'group-list' */ './Group/List'),
   {
     LoadingComponent
   }
@@ -32,12 +46,19 @@ export const Home = loadable(
     LoadingComponent
   }
 );
-export const Product = loadable(
+const Product = loadable(
   () => import(/* webpackChunkName: 'product' */ './Product'),
   {
     LoadingComponent
   }
 );
+Product.List = loadable(
+  () => import(/* webpackChunkName: 'product-list' */ './Product/List'),
+  {
+    LoadingComponent
+  }
+);
+
 export const Saved = loadable(
   () => import(/* webpackChunkName: 'saved' */ './Saved'),
   {
@@ -50,15 +71,27 @@ export const Search = loadable(
     LoadingComponent
   }
 );
-export const User = loadable(
-  () => import(/* webpackChunkName: 'user' */ './User'),
+const User = loadable(() => import(/* webpackChunkName: 'user' */ './User'), {
+  LoadingComponent
+});
+User.List = loadable(
+  () => import(/* webpackChunkName: 'user-list' */ './User/List'),
   {
     LoadingComponent
   }
 );
-export const Video = loadable(
+
+const Video = loadable(
   () => import(/* webpackChunkName: 'video' */ './Video'),
   {
     LoadingComponent
   }
 );
+Video.List = loadable(
+  () => import(/* webpackChunkName: 'video-list' */ './Video/List'),
+  {
+    LoadingComponent
+  }
+);
+
+export { Company, User, Video, Group, Product };
