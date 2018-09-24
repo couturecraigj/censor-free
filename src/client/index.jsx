@@ -31,8 +31,6 @@ render(rootElement);
 
 if (module.hot) {
   module.hot.accept('../common', function() {
-    // eslint-disable-next-line
-    console.log('Accepting the updated printMe module!');
     render(rootElement);
   });
 }

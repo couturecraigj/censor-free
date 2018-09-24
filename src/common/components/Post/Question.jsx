@@ -3,13 +3,13 @@ import TextArea from '../TextArea';
 import TextInput from '../TextInput';
 
 const Question = () => (
-  <div>
-    <TextInput label="Subject" id="Question__subject" />
-    <TextArea label="Body" id="Question__body" />
+  <form>
+    <TextInput name="title" label="Subject" id="Question__subject" />
+    <TextArea name="description" label="Body" id="Question__body" />
     <div>
       <button type="submit">Submit</button>
     </div>
-  </div>
+  </form>
 );
 
 export default Question;

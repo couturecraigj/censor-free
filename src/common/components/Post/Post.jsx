@@ -2,12 +2,16 @@ import React from 'react';
 import TextArea from '../TextArea';
 
 const Post = () => (
-  <div>
-    <TextArea label="Tell me something" id="Post__TextArea" />
+  <form>
+    <TextArea
+      name="description"
+      label="Tell me something..."
+      id="Post__TextArea"
+    />
     <div>
       <button type="submit">Submit</button>
     </div>
-  </div>
+  </form>
 );
 
 export default Post;

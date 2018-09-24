@@ -2,9 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 
+const __PROD__ = process.env.NODE_ENV === 'production';
+
 const PostType = styled(
-  ({ onClick, module, name, isChosen, children, ...props }) => (
-    <button {...props} type="button" onClick={() => onClick(module, name)}>
+  ({ onClick, postType, name, isChosen, children, ...props }) => (
+    <button {...props} type="button" onClick={() => onClick(postType, name)}>
       {children}
     </button>
   )
@@ -35,25 +37,22 @@ class TogglePostTypes extends React.Component {
 
   componentDidMount() {
     const {
-      selectedPost,
       list: [postType]
     } = this.props;
+    this.togglePostType(postType);
+  }
+
+  togglePostType = postType => {
+    const { selectedPost } = this.props;
     this.setState({
       post: postType.name
     });
-    return postType.module().then(mod => {
-      selectedPost(mod.default);
-    });
-  }
-
-  togglePostType = (el, name) => {
-    const { selectedPost } = this.props;
-    this.setState({
-      post: name
-    });
-    return el().then(mod => {
-      return selectedPost(mod.default);
-    });
+    if (__PROD__) {
+      return postType.module().then(mod => {
+        return selectedPost(mod.default);
+      });
+    }
+    return selectedPost(postType.module.default);
   };
 
   render() {
@@ -68,7 +67,7 @@ class TogglePostTypes extends React.Component {
             isChosen={post === postType.name}
             name={postType.name}
             key={postType.name}
-            module={postType.module}
+            postType={postType}
             onClick={togglePostType}
           >
             {postType.name}
@@ -83,7 +82,7 @@ TogglePostTypes.propTypes = {
   list: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string.isRequired,
-      module: PropTypes.func.isRequired
+      module: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired
     })
   ).isRequired,
   selectedPost: PropTypes.func.isRequired

@@ -1,19 +1,17 @@
 import React from 'react';
 import FileInput from '../FileInput';
 import TextInput from '../TextInput';
+import TextArea from '../TextArea';
 
 const Video = () => (
-  <div>
-    <div>
-      <FileInput label="Video" id="Video__file-input" />
-    </div>
-    <div>
-      <TextInput label="Title" id="Video__title" />
-    </div>
+  <form>
+    <FileInput label="Video" id="Video__file-input" />
+    <TextInput name="title" label="Title" id="Video__title" />
+    <TextArea name="description" label="Description" id="Video__description" />
     <div>
       <button type="submit">Submit</button>
     </div>
-  </div>
+  </form>
 );
 
 export default Video;

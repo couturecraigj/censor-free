@@ -3,13 +3,13 @@ import TextArea from '../TextArea';
 import TextInput from '../TextInput';
 
 const Story = () => (
-  <div>
-    <TextInput label="Subject" id="Story__subject" />
-    <TextArea label="Body" id="Story__body" />
+  <form>
+    <TextInput name="title" label="Subject" id="Story__subject" />
+    <TextArea name="description" label="Body" id="Story__body" />
     <div>
       <button type="submit">Submit</button>
     </div>
-  </div>
+  </form>
 );
 
 export default Story;

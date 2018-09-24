@@ -10,52 +10,45 @@ const list = [
   // TODO: hot reload in dev mode
   {
     name: 'Post',
-    module: () =>
-      __PROD__
-        ? import(/* webpackChunkName: 'new-post' */ './Post')
-        : Promise.resolve(require('./Post'))
+    module: __PROD__
+      ? () => import(/* webpackChunkName: 'new-post' */ './Post')
+      : require('./Post')
   },
   {
     name: 'Video',
-    module: () =>
-      __PROD__
-        ? import(/* webpackChunkName: 'new-video' */ './Video')
-        : Promise.resolve(require('./Video'))
+    module: __PROD__
+      ? () => import(/* webpackChunkName: 'new-video' */ './Video')
+      : require('./Video')
   },
   {
     name: 'Photo',
-    module: () =>
-      __PROD__
-        ? import(/* webpackChunkName: 'new-photo' */ './Photo')
-        : Promise.resolve(require('./Photo'))
+    module: __PROD__
+      ? () => import(/* webpackChunkName: 'new-photo' */ './Photo')
+      : require('./Photo')
   },
   {
     name: 'Review',
-    module: () =>
-      __PROD__
-        ? import(/* webpackChunkName: 'new-review' */ './Review')
-        : Promise.resolve(require('./Review'))
+    module: __PROD__
+      ? () => import(/* webpackChunkName: 'new-review' */ './Review')
+      : require('./Review')
   },
   {
     name: 'Question',
-    module: () =>
-      __PROD__
-        ? import(/* webpackChunkName: 'new-question' */ './Question')
-        : Promise.resolve(require('./Question'))
+    module: __PROD__
+      ? () => import(/* webpackChunkName: 'new-question' */ './Question')
+      : require('./Question')
   },
   {
     name: 'Tip',
-    module: () =>
-      __PROD__
-        ? import(/* webpackChunkName: 'new-tip' */ './Tip')
-        : Promise.resolve(require('./Tip'))
+    module: __PROD__
+      ? () => import(/* webpackChunkName: 'new-tip' */ './Tip')
+      : require('./Tip')
   },
   {
     name: 'Story',
-    module: () =>
-      __PROD__
-        ? import(/* webpackChunkName: 'new-story' */ './Story')
-        : Promise.resolve(require('./Story'))
+    module: __PROD__
+      ? () => import(/* webpackChunkName: 'new-story' */ './Story')
+      : require('./Story')
   }
 ];
 

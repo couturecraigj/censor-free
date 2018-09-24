@@ -6,13 +6,18 @@ import styled, { injectGlobal } from 'styled-components';
 import Layout from './components/Layout';
 import * as Routes from './pages/Routes';
 
+const siteName = 'CoutureCraig.com';
+
 injectGlobal`
    html {
     background: papayawhip;
     font-family: arial;
+    height: 100%;
   }
   body {
     margin: 0;
+    position:relative;
+    min-height: 100%;
   }
 `;
 
@@ -26,7 +31,7 @@ const Div = styled.div`
 
 const App = () => (
   <Div>
-    <Helmet titleTemplate="MySite.com - %s">
+    <Helmet titleTemplate={`${siteName} - %s`}>
       <title> Home </title>
     </Helmet>
     <Layout>
