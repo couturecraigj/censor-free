@@ -47,7 +47,7 @@ ${chalk.grey.bgBlackBright(
 `
     );
 
-    setup(app);
+    setup(app, httpServer);
 
     // Hot Module Replacement API
     if (module.hot) {
@@ -57,7 +57,7 @@ ${chalk.grey.bgBlackBright(
         import('.')
           .then(({ default: nextApp }) => {
             currentApp = nextApp;
-            setup(currentApp);
+            setup(currentApp, httpServer);
             httpServer.on('request', currentApp);
             console.log('HttpServer reloaded!');
           })

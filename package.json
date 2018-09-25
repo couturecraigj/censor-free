@@ -4,15 +4,20 @@
     "description": "What could possibly go wrong",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "jest",
+        "test:watch": "jest -watchAll",
         "start": "concurrently -n c,s \"npm run client:dev\" \"npm run server:dev\"",
-        "start:prod": "npm run build && npm run prod:server",
+        "start:prod": "npm run introspect:schema && npm run build && npm run prod:server",
+        "start:test": "NODE_ENV=introspection npm run introspect:schema && concurrently -n c,s \"npm run client:test\" \"npm run server:test\"",
         "build": "npm run client:prod && npm run server:prod",
-        "prod:server": "node server/index.0.js",
+        "prod:server": "NODE_ENV=production node server/index.0.js",
         "client:dev": "webpack-dev-server --config utilities/bundling/development/client/webpack.config.js",
-        "client:prod": "webpack --config utilities/bundling/production/client/webpack.config.js",
+        "client:test": "NODE_ENV=production webpack-dev-server --config utilities/bundling/development/client/webpack.config.js",
+        "client:prod": "NODE_ENV=production webpack --config utilities/bundling/production/client/webpack.config.js",
         "server:dev": "node-hot --config utilities/bundling/development/server/webpack.config.js",
-        "server:prod": "webpack --config utilities/bundling/production/server/webpack.config.js"
+        "server:test": "NODE_ENV=production node-hot --config utilities/bundling/development/server/webpack.config.js",
+        "server:prod": "NODE_ENV=production webpack --config utilities/bundling/production/server/webpack.config.js",
+        "introspect:schema": "node utilities/automating/introspection.js"
     },
     "repository": {
         "type": "git",

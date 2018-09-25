@@ -1,15 +1,17 @@
 /* eslint-disable no-console*/
 const fetch = require('node-fetch');
 const fs = require('fs');
+const { ApolloServer } = require('apollo-server');
 
-const __INTROSPECTION__ = process.env.INTROSPECT_GRAPHQL_SCHEMA;
-module.exports = app => {
-  if (__INTROSPECTION__) {
-    const data = require('../../../webpack-assets.json');
-    app.set('fragments', data);
-    return;
-  }
-  fetch(`http://localhost:${app.get('port')}/graphql`, {
+const resolvers = require('../../src/server/graphql/resolvers');
+const typeDefs = require('../../src/server/graphql/typeDefs');
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers
+});
+server.listen().then(({ url, server }) => {
+  fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -40,7 +42,6 @@ module.exports = app => {
         );
 
         result.data.__schema.types = filteredData;
-        app.set('fragments', result.data);
         if (!fs.existsSync('./public')) {
           // Do something
           fs.mkdirSync('./public');
@@ -53,6 +54,8 @@ module.exports = app => {
               console.error('Error writing fragmentTypes file', err);
             } else {
               console.log('Fragment types successfully extracted!');
+              // eslint-disable-next-line no-process-exit
+              server.close();
             }
           }
         );
@@ -61,4 +64,4 @@ module.exports = app => {
       }
     })
     .catch(console.error);
-};
+});

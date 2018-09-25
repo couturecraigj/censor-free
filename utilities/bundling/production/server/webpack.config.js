@@ -1,6 +1,7 @@
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const path = require('path');
+const webpack = require('webpack');
 const { CheckerPlugin } = require('awesome-typescript-loader');
 
 const babelOptions = require('../babelOptions');
@@ -63,6 +64,11 @@ module.exports = {
     new CheckerPlugin(),
     new CleanWebpackPlugin(['dist', 'server'], {
       root: cwd
+    }),
+    new webpack.DefinePlugin({
+      'process.env.INTROSPECT_GRAPHQL_SCHEMA': JSON.stringify(
+        process.env.NODE_ENV === 'production'
+      )
     })
   ],
   target: 'node',
