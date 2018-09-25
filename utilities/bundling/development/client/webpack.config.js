@@ -99,7 +99,9 @@ module.exports = {
   plugins: [
     new CheckerPlugin(),
     new CleanWebpackPlugin(['public'], {
-      root: process.cwd()
+      root: process.cwd(),
+      watch: true,
+      verbose: false
     }),
     new webpack.HotModuleReplacementPlugin({ quiet: true })
   ],

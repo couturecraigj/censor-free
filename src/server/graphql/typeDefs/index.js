@@ -12,7 +12,7 @@ const typeDefs = gql`
   }
   interface Searchable {
     id: ID!
-    highlight: [Highlight]!
+    highlights: [Highlight]!
   }
   interface CommentNode {
     id: ID!
@@ -47,13 +47,13 @@ const typeDefs = gql`
   }
   type Thought implements Node & PostNode & Searchable {
     id: ID!
-    highlight: [Highlight]!
+    highlights: [Highlight]!
     title: String!
     description: String!
   }
   type Review implements Node & PostNode & Searchable {
     id: ID!
-    highlight: [Highlight]!
+    highlights: [Highlight]!
     title: String!
     description: String!
     products: [Product!]!
@@ -62,7 +62,7 @@ const typeDefs = gql`
   }
   type Question implements Node & PostNode & Searchable {
     id: ID!
-    highlight: [Highlight]!
+    highlights: [Highlight]!
     title: String!
     description: String!
     products: [Product!]
@@ -71,14 +71,14 @@ const typeDefs = gql`
   }
   type Tip implements Node & PostNode & Searchable {
     id: ID!
-    highlight: [Highlight]!
+    highlights: [Highlight]!
     title: String!
     description: String!
     products: [Product!]
   }
   type Answer implements Node & CommentNode & PostNode & Searchable {
     id: ID!
-    highlight: [Highlight]!
+    highlights: [Highlight]!
     question: Question
     title: String!
     description: String!
@@ -86,13 +86,13 @@ const typeDefs = gql`
   }
   type Comment implements Node & CommentNode & Searchable {
     id: ID!
-    highlight: [Highlight]!
+    highlights: [Highlight]!
     parent: PostUnion!
     description: String!
   }
   type Image implements Node & PostNode & Searchable {
     id: ID!
-    highlight: [Highlight]!
+    highlights: [Highlight]!
     title: String!
     description: String!
     height: Int
@@ -101,7 +101,7 @@ const typeDefs = gql`
   }
   type Video implements Node & PostNode & Searchable {
     id: ID!
-    highlight: [Highlight]!
+    highlights: [Highlight]!
     title: String!
     description: String!
     imgs: [Image]
@@ -110,7 +110,7 @@ const typeDefs = gql`
   }
   type WebPage implements Node & PostNode & Searchable {
     id: ID!
-    highlight: [Highlight]!
+    highlights: [Highlight]!
     title: String!
     description: String!
     imgs: [Image]
@@ -119,7 +119,7 @@ const typeDefs = gql`
   }
   type Group implements Node & Searchable {
     id: ID!
-    highlight: [Highlight]!
+    highlights: [Highlight]!
     title: String!
     description: String!
     img: Image
@@ -132,7 +132,7 @@ const typeDefs = gql`
   }
   type Product implements Node & Object & Searchable {
     id: ID!
-    highlight: [Highlight]!
+    highlights: [Highlight]!
     name: String!
     description: String!
     img: Image
@@ -140,7 +140,7 @@ const typeDefs = gql`
   }
   type Company implements Node & Object & Searchable {
     id: ID!
-    highlight: [Highlight]!
+    highlights: [Highlight]!
     name: String!
     img: Image
     imgs: [Image]
@@ -148,7 +148,7 @@ const typeDefs = gql`
   }
   type User implements Node & Searchable {
     id: ID!
-    highlight: [Highlight]!
+    highlights: [Highlight]!
     name: String!
     description: String!
     img: Image
