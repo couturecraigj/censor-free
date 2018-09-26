@@ -68,7 +68,8 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.INTROSPECT_GRAPHQL_SCHEMA': JSON.stringify(
         process.env.NODE_ENV === 'production'
-      )
+      ),
+      'process.env.NODE_ENV': JSON.stringify('production')
     })
   ],
   target: 'node',

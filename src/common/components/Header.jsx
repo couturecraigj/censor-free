@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
+import { withApollo } from 'react-apollo';
+import * as Routes from '../pages/Routes';
 
 const Link = styled(NavLink).attrs({ activeClassName: 'current' })`
   font-size: 20px;
@@ -31,6 +33,12 @@ const Button = styled.button`
   border: 1px dotted #999;
 `;
 
+const Logout = styled.button`
+  text-decoration: none;
+  background-color: #ddd;
+  font-size: 20px;
+`;
+
 const LinksDiv = styled.div`
   padding: 0 0.7rem;
   text-decoration: none;
@@ -48,24 +56,98 @@ const Account = styled.div`
   border-radius: 2rem;
 `;
 
-const Layout = ({ togglePost }) => (
+const Layout = ({ togglePost, client }) => (
   <Nav>
     <LinksDiv>
-      <Link to="/" exact>
+      <Link
+        to="/"
+        exact
+        onMouseOver={Routes.Home.load}
+        onFocus={Routes.Home.load}
+      >
         Home
       </Link>
-      <Link to="/about">About</Link>
-      <Link to="/company/list">Company</Link>
-      <Link to="/feed">Feed</Link>
-      <Link to="/group/list">Group</Link>
-      <Link to="/product/list">Product</Link>
-      <Link to="/saved">Saved</Link>
-      <Link to="/search">Search</Link>
-      <Link to="/user/list">User</Link>
-      <Link to="/video/list">Videos</Link>
+      <Link
+        to="/about"
+        onMouseOver={Routes.About.load}
+        onFocus={Routes.About.load}
+      >
+        About
+      </Link>
+      <Link
+        to="/company/list"
+        onMouseOver={Routes.CompanyList.load}
+        onFocus={Routes.CompanyList.load}
+      >
+        Company
+      </Link>
+      <Link
+        to="/feed"
+        onMouseOver={Routes.Feed.load}
+        onFocus={Routes.Feed.load}
+      >
+        Feed
+      </Link>
+      <Link
+        to="/group/list"
+        onMouseOver={Routes.GroupList.load}
+        onFocus={Routes.GroupList.load}
+      >
+        Group
+      </Link>
+      <Link
+        to="/product/list"
+        onMouseOver={Routes.ProductList.load}
+        onFocus={Routes.ProductList.load}
+      >
+        Product
+      </Link>
+      <Link
+        to="/saved"
+        onMouseOver={Routes.Saved.load}
+        onFocus={Routes.Saved.load}
+      >
+        Saved
+      </Link>
+      <Link
+        to="/search"
+        onMouseOver={Routes.Search.load}
+        onFocus={Routes.Search.load}
+      >
+        Search
+      </Link>
+      <Link
+        to="/user/list"
+        onMouseOver={Routes.UserList.load}
+        onFocus={Routes.UserList.load}
+      >
+        User
+      </Link>
+      <Link
+        to="/video/list"
+        onMouseOver={Routes.VideoList.load}
+        onFocus={Routes.VideoList.load}
+      >
+        Videos
+      </Link>
     </LinksDiv>
     <Account>
-      <span>SignIn</span>
+      <Logout
+        onClick={e => {
+          e.preventDefault();
+          localStorage.removeItem('token');
+          client.resetStore();
+        }}
+      >
+        Logout
+      </Logout>
+      <Link
+        to="/login"
+        onMouseOver={Routes.Login.load}
+        onFocus={Routes.Login.load}
+      >
+        Login
+      </Link>
       <Button type="submit" onClick={togglePost}>
         +
       </Button>
@@ -75,7 +157,10 @@ const Layout = ({ togglePost }) => (
 
 Layout.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
-  togglePost: PropTypes.func.isRequired
+  togglePost: PropTypes.func.isRequired,
+  client: PropTypes.shape({
+    resetStore: PropTypes.func.isRequired
+  }).isRequired
 };
 
-export default Layout;
+export default withApollo(Layout);

@@ -3,7 +3,6 @@ const fetch = require('node-fetch');
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const { ApolloProvider, getDataFromTree } = require('react-apollo');
-
 const { getLoadableState } = require('loadable-components/server');
 const { Helmet } = require('react-helmet');
 const { ServerStyleSheet } = require('styled-components');
@@ -16,48 +15,61 @@ const html = require('./html');
 const setup = require('./setup');
 
 const app = express();
-app.use(express.static('public'));
+
 config(app);
 app.get('*', (req, res, next) => {
-  const queryUrl = app.get('url') + app.get('apollo').graphqlPath;
-  // eslint-disable-next-line prefer-const
-  let context = {};
-  const sheet = new ServerStyleSheet();
-  const client = apollo(fetch, {
-    req,
-    ssrMode: true,
-    uri: queryUrl,
-    fragments: app.get('fragments')
-  });
-  const spaApp = (
-    <StaticRouter location={req.url} context={context}>
-      <ApolloProvider client={client}>
-        <App />
-      </ApolloProvider>
-    </StaticRouter>
-  );
-  return Promise.all([getLoadableState(spaApp), getDataFromTree(spaApp)])
-    .then(([loadableState]) => {
-      const body = ReactDOMServer.renderToString(spaApp);
-      const reactHelmet = Helmet.renderStatic();
-      res.send(
-        html({
-          head: `<script>window.__FRAGMENTS__=${JSON.stringify(
-            app.get('fragments')
-          )};window.QUERY_URL="${queryUrl}";window.__APOLLO_STATE__ = ${JSON.stringify(
-            client.extract()
-          )};</script>${loadableState.getScriptTag()}${reactHelmet.title.toString()}${sheet.getStyleTags()}`,
-          body,
-          attrs: {
-            body: reactHelmet.bodyAttributes.toString(),
-            html: reactHelmet.htmlAttributes.toString()
-          }
-        })
-      );
-    })
-    .catch(err => next(err));
+  try {
+    const queryUrl = app.get('url') + app.get('apollo').graphqlPath;
+    // eslint-disable-next-line prefer-const
+    let context = {};
+    const sheet = new ServerStyleSheet();
+    const client = apollo(fetch, {
+      req,
+      ssrMode: true,
+      uri: queryUrl,
+      fragments: app.get('fragments')
+    });
+    const spaApp = (
+      <StaticRouter location={req.url} context={context}>
+        <ApolloProvider client={client}>
+          <App />
+        </ApolloProvider>
+      </StaticRouter>
+    );
+    if (context.url) {
+      return res.redirect(context.status, context.url);
+    }
+    return Promise.all([getLoadableState(spaApp), getDataFromTree(spaApp)])
+      .then(([loadableState]) => {
+        const body = ReactDOMServer.renderToString(spaApp);
+        const reactHelmet = Helmet.renderStatic();
+        res.send(
+          html({
+            head: `<script>window.__FRAGMENTS__=${JSON.stringify(
+              app.get('fragments')
+            )};window.QUERY_URL="${queryUrl}";window.__APOLLO_STATE__ = ${JSON.stringify(
+              client.extract()
+            )};</script>${loadableState.getScriptTag()}${reactHelmet.title.toString()}${sheet.getStyleTags()}`,
+            body,
+            attrs: {
+              body: reactHelmet.bodyAttributes.toString(),
+              html: reactHelmet.htmlAttributes.toString()
+            }
+          })
+        );
+      })
+      .catch(err => next(err));
+  } catch (e) {
+    next(e);
+  }
 });
-
+app.use(function errorHandler(err, req, res, next) {
+  if (res.headersSent) {
+    return next(err);
+  }
+  res.status(500);
+  res.render('error', { error: err });
+});
 if (module === require.main) {
   app.listen(app.get('port'), () => {
     // eslint-disable-next-line no-console

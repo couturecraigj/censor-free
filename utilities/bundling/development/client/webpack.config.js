@@ -4,28 +4,7 @@ const webpack = require('webpack');
 const { CheckerPlugin } = require('awesome-typescript-loader');
 
 const babelOptions = require('../babelOptions');
-// {
-//   presets: ['@babel/preset-env', '@babel/preset-react'],
-//   plugins: [
-//     // ["@babel/plugin-proposal-decorators", { legacy: true }],
-//     ['@babel/plugin-proposal-class-properties', { loose: true }],
-//     // "@babel/plugin-transform-runtime",
-//     // "react-hot-loader/babel",
-//     'loadable-components/babel'
-//   ]
-// };
-// {
-//   cacheDirectory: true,
-//   presets: ['@babel/preset-env', '@babel/preset-react'],
-//   plugins: [
-//     // ["@babel/plugin-proposal-decorators", { legacy: true }],
-//     ['@babel/plugin-proposal-class-properties', { loose: true }],
-//     // "@babel/plugin-syntax-dynamic-import",
-//     '@babel/plugin-transform-runtime',
-//     'loadable-components/babel',
-//     'react-hot-loader/babel'
-//   ]
-// }
+
 babelOptions.presets.unshift([
   '@babel/preset-env',
   {

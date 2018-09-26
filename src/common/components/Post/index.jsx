@@ -1,54 +1,50 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import loadable from 'loadable-components';
 import styled from 'styled-components';
 import TogglePostTypes from './TogglePostTypes';
 import Modal from '../Modal';
 
-const __PROD__ = process.env.NODE_ENV === 'production';
 const list = [
-  // TODO: Make sure you make it so these
-  // TODO: hot reload in dev mode
   {
-    name: 'Post',
-    module: __PROD__
-      ? () => import(/* webpackChunkName: 'new-post' */ './Post')
-      : require('./Post')
+    name: 'Thought',
+    module: loadable(() =>
+      import(/* webpackChunkName: 'new-thought' */ './Thought')
+    )
   },
   {
     name: 'Video',
-    module: __PROD__
-      ? () => import(/* webpackChunkName: 'new-video' */ './Video')
-      : require('./Video')
+    module: loadable(() =>
+      import(/* webpackChunkName: 'new-video' */ './Video')
+    )
   },
   {
     name: 'Photo',
-    module: __PROD__
-      ? () => import(/* webpackChunkName: 'new-photo' */ './Photo')
-      : require('./Photo')
+    module: loadable(() =>
+      import(/* webpackChunkName: 'new-photo' */ './Photo')
+    )
   },
   {
     name: 'Review',
-    module: __PROD__
-      ? () => import(/* webpackChunkName: 'new-review' */ './Review')
-      : require('./Review')
+    module: loadable(() =>
+      import(/* webpackChunkName: 'new-review' */ './Review')
+    )
   },
   {
     name: 'Question',
-    module: __PROD__
-      ? () => import(/* webpackChunkName: 'new-question' */ './Question')
-      : require('./Question')
+    module: loadable(() =>
+      import(/* webpackChunkName: 'new-question' */ './Question')
+    )
   },
   {
     name: 'Tip',
-    module: __PROD__
-      ? () => import(/* webpackChunkName: 'new-tip' */ './Tip')
-      : require('./Tip')
+    module: loadable(() => import(/* webpackChunkName: 'new-tip' */ './Tip'))
   },
   {
     name: 'Story',
-    module: __PROD__
-      ? () => import(/* webpackChunkName: 'new-story' */ './Story')
-      : require('./Story')
+    module: loadable(() =>
+      import(/* webpackChunkName: 'new-story' */ './Story')
+    )
   }
 ];
 

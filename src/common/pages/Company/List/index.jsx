@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Query } from 'react-apollo';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { Company as CompanyRoute } from '../../Routes';
 
 const GET_COMPANYLIST = gql`
   {
@@ -50,6 +51,8 @@ export default () => (
               <Link
                 key={company.id}
                 to={`/company/${company.id}/${company.name}`}
+                onMouseOver={CompanyRoute.load}
+                onFocus={CompanyRoute.load}
               >
                 <Company key={company.id} value={company.name}>
                   <div>{company.name}</div>

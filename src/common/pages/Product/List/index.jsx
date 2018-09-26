@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Query } from 'react-apollo';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { Product as ProductRoute } from '../../Routes';
 
 const GET_PRODUCT_LIST = gql`
   {
@@ -50,6 +51,8 @@ export default () => (
               <Link
                 key={product.id}
                 to={`/product/${product.id}/${product.name}`}
+                onMouseOver={ProductRoute.load}
+                onFocus={ProductRoute.load}
               >
                 <Product key={product.id} value={product.name}>
                   <div>{product.name}</div>

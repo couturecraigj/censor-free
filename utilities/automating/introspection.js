@@ -42,20 +42,30 @@ server.listen().then(({ url, server }) => {
         );
 
         result.data.__schema.types = filteredData;
-        if (!fs.existsSync('./public')) {
-          // Do something
-          fs.mkdirSync('./public');
-        }
         fs.writeFile(
-          './public/fragmentTypes.json',
+          './fragmentTypes.json',
           JSON.stringify(result.data),
           err => {
             if (err) {
               console.error('Error writing fragmentTypes file', err);
             } else {
-              console.log('Fragment types successfully extracted!');
-              // eslint-disable-next-line no-process-exit
-              server.close();
+              if (!fs.existsSync('./public')) {
+                // Do something
+                fs.mkdirSync('./public');
+              }
+              fs.writeFile(
+                './public/fragmentTypes.json',
+                JSON.stringify(result.data),
+                err => {
+                  if (err) {
+                    console.error('Error writing fragmentTypes file', err);
+                  } else {
+                    console.log('Fragment types successfully extracted!');
+                    // eslint-disable-next-line no-process-exit
+                    server.close();
+                  }
+                }
+              );
             }
           }
         );

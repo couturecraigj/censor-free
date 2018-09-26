@@ -36,8 +36,6 @@ class TextInput extends React.Component {
   componentDidMount() {
     this.resumable.assignBrowse(this.input.current);
     this.resumable.on('fileAdded', file => {
-      // eslint-disable-next-line
-      console.log(file);
       // this.resumable.upload();
       this.setState({
         ready: true

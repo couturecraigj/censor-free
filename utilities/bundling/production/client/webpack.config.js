@@ -1,6 +1,7 @@
 const AssetsPlugin = require('assets-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const path = require('path');
+const webpack = require('webpack');
 const { CheckerPlugin } = require('awesome-typescript-loader');
 // const webpack = require('webpack');
 
@@ -33,6 +34,11 @@ module.exports = {
       '.jsx'
     ]
   },
+  // optimization: {
+  //   splitChunks: {
+  //     chunks: 'all'
+  //   }
+  // },
   module: {
     rules: [
       {
@@ -61,8 +67,13 @@ module.exports = {
     new AssetsPlugin(),
     new CleanWebpackPlugin(['dist', 'public'], {
       root: cwd
+    }),
+    new webpack.DefinePlugin({
+      'process.env.INTROSPECT_GRAPHQL_SCHEMA': JSON.stringify(
+        process.env.NODE_ENV === 'production'
+      ),
+      'process.env.NODE_ENV': JSON.stringify('production')
     })
-    // new webpack.HotModuleReplacementPlugin({ quiet: true })
   ],
   output: {
     filename: '[name].[hash].js',

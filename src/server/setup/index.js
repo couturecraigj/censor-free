@@ -5,7 +5,7 @@ const fs = require('fs');
 const __INTROSPECTION__ = process.env.INTROSPECT_GRAPHQL_SCHEMA;
 module.exports = app => {
   if (__INTROSPECTION__) {
-    const data = require('../../../webpack-assets.json');
+    const data = require('../../../fragmentTypes.json');
     app.set('fragments', data);
     return;
   }

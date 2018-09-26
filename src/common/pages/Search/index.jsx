@@ -30,7 +30,7 @@ const SEARCH_SEARCHABLE = gql`
           imgUri
         }
       }
-      ... on Image {
+      ... on Photo {
         title
         description
         imgUri

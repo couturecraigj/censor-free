@@ -1,12 +1,12 @@
 import React from 'react';
 import TextArea from '../TextArea';
 
-const Post = () => (
+const Thought = () => (
   <form>
     <TextArea
       name="description"
       label="Tell me something..."
-      id="Post__TextArea"
+      id="Thought__TextArea"
     />
     <div>
       <button type="submit">Submit</button>
@@ -14,4 +14,4 @@ const Post = () => (
   </form>
 );
 
-export default Post;
+export default Thought;

@@ -16,6 +16,12 @@ module.exports = app => {
         requireResolversForResolveType: false
       }
     }),
+    context: ({ req, res }) => ({
+      // authScope: getScope(req.headers.authorization)
+      db: req.db,
+      res,
+      req
+    }),
     mocks,
     debug: true
   });

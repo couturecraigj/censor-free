@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Query } from 'react-apollo';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { User as UserRoute } from '../../Routes';
 
 const GET_USER_LIST = gql`
   {
@@ -47,7 +48,12 @@ export default () => (
         return (
           <UserList name="dog">
             {data.users.map(user => (
-              <Link key={user.id} to={`/user/${user.id}/${user.name}`}>
+              <Link
+                key={user.id}
+                onMouseOver={UserRoute.load}
+                onFocus={UserRoute.load}
+                to={`/user/${user.id}/${user.name}`}
+              >
                 <User key={user.id} value={user.name}>
                   <div>{user.name}</div>
                   {user.img &&

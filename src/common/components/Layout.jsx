@@ -1,9 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import styled, { ThemeProvider, injectGlobal } from 'styled-components';
+
 import Post from './Post';
 import Header from './Header';
 import Footer from './Footer';
+
+injectGlobal`
+   html {
+    background: papayawhip;
+    font-family: arial;
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    position:relative;
+    min-height: 100%;
+  }
+`;
 
 const Body = styled.div`
   padding: 10px;
@@ -34,12 +48,14 @@ class Layout extends React.Component {
     const { post } = this.state;
 
     return (
-      <React.Fragment>
-        <Header togglePost={this.togglePost} />
-        <Body>{children}</Body>
-        <Footer />
-        {post && <Post close={this.togglePost} />}
-      </React.Fragment>
+      <ThemeProvider theme={{ mode: 'light' }}>
+        <React.Fragment>
+          <Header togglePost={this.togglePost} />
+          <Body>{children}</Body>
+          <Footer />
+          {post && <Post close={this.togglePost} />}
+        </React.Fragment>
+      </ThemeProvider>
     );
   }
 }

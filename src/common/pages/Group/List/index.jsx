@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Query } from 'react-apollo';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { Group as GroupRoute } from '../../Routes';
 
 const GET_GROUP_LIST = gql`
   {
@@ -47,7 +48,12 @@ export default () => (
         return (
           <GroupList name="dog">
             {data.groups.map(group => (
-              <Link key={group.id} to={`/group/${group.id}/${group.title}`}>
+              <Link
+                key={group.id}
+                onMouseOver={GroupRoute.load}
+                onFocus={GroupRoute.load}
+                to={`/group/${group.id}/${group.title}`}
+              >
                 <Group key={group.id} value={group.title}>
                   <div>{group.title}</div>
                   {group.img &&

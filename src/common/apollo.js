@@ -3,6 +3,7 @@ import {
   InMemoryCache,
   IntrospectionFragmentMatcher
 } from 'apollo-cache-inmemory';
+import { setContext } from 'apollo-link-context';
 import { HttpLink } from 'apollo-link-http';
 // import { onError } from "apollo-link-error";
 // import { withClientState } from "apollo-link-state";
@@ -14,7 +15,7 @@ export default (
     state = {},
     uri = '/',
     ssrMode = false,
-    req,
+    // req,
     fragments: introspectionQueryResultData
   } = {}
 ) => {
@@ -25,18 +26,31 @@ export default (
 
   const client = new ApolloClient({
     ssrMode,
-    link: ApolloLink.from([
-      new HttpLink({
-        uri,
-        fetch,
-        credentials: 'same-origin',
-        headers: req
-          ? {
-              cookie: req.header('Cookie')
-            }
-          : undefined
-      })
-    ]),
+    link: ApolloLink.from(
+      [
+        !ssrMode &&
+          setContext((_, { headers }) => {
+            const token = localStorage.getItem('token');
+            return {
+              headers: {
+                ...headers,
+                'Access-Control-Allow-Credentials': true,
+                authorization: token ? `Bearer ${token}` : ''
+              }
+            };
+          }),
+        new HttpLink({
+          uri,
+          fetch,
+          credentials: 'same-origin'
+          // headers: req
+          //   ? {
+          //       cookie: req.header('Cookie')
+          //     }
+          //   : undefined
+        })
+      ].filter(v => v)
+    ),
     cache: ssrMode ? cache : cache.restore(state),
     ssrForceFetchDelay: ssrMode ? 100 : undefined
   });

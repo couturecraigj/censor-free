@@ -25,13 +25,13 @@ const typeDefs = gql`
   }
 
   # UNIONS
-  union SavedRecord = Product | Company | Video | Image | WebPage
+  union SavedRecord = Product | Company | Video | Photo | WebPage
   union PostUnion =
       Thought
     | Review
     | Question
     | Answer
-    | Image
+    | Photo
     | Video
     | WebPage
     | Tip
@@ -50,6 +50,13 @@ const typeDefs = gql`
     highlights: [Highlight]!
     title: String!
     description: String!
+  }
+  type Story implements Node & PostNode & Searchable {
+    id: ID!
+    highlights: [Highlight]!
+    title: String!
+    description: String!
+    excerpt: String!
   }
   type Review implements Node & PostNode & Searchable {
     id: ID!
@@ -90,7 +97,7 @@ const typeDefs = gql`
     parent: PostUnion!
     description: String!
   }
-  type Image implements Node & PostNode & Searchable {
+  type Photo implements Node & PostNode & Searchable {
     id: ID!
     highlights: [Highlight]!
     title: String!
@@ -104,8 +111,8 @@ const typeDefs = gql`
     highlights: [Highlight]!
     title: String!
     description: String!
-    imgs: [Image]
-    img: Image
+    imgs: [Photo]
+    img: Photo
     uri: String!
   }
   type WebPage implements Node & PostNode & Searchable {
@@ -113,8 +120,8 @@ const typeDefs = gql`
     highlights: [Highlight]!
     title: String!
     description: String!
-    imgs: [Image]
-    img: Image
+    imgs: [Photo]
+    img: Photo
     uri: String!
   }
   type Group implements Node & Searchable {
@@ -122,28 +129,28 @@ const typeDefs = gql`
     highlights: [Highlight]!
     title: String!
     description: String!
-    img: Image
-    imgs: [Image]
+    img: Photo
+    imgs: [Photo]
   }
   type Save implements Node {
     id: ID!
     object: SavedRecord!
-    img: Image
+    img: Photo
   }
   type Product implements Node & Object & Searchable {
     id: ID!
     highlights: [Highlight]!
     name: String!
     description: String!
-    img: Image
-    imgs: [Image]
+    img: Photo
+    imgs: [Photo]
   }
   type Company implements Node & Object & Searchable {
     id: ID!
     highlights: [Highlight]!
     name: String!
-    img: Image
-    imgs: [Image]
+    img: Photo
+    imgs: [Photo]
     description: String!
   }
   type User implements Node & Searchable {
@@ -151,8 +158,33 @@ const typeDefs = gql`
     highlights: [Highlight]!
     name: String!
     description: String!
-    img: Image
-    imgs: [Image]
+    img: Photo
+    imgs: [Photo]
+  }
+
+  type Authentication {
+    token: String!
+    user: User!
+  }
+
+  type Mutation {
+    signUp(email: String!): Authentication!
+    forgotPassword(email: String!): String!
+    resetPassword(
+      token: String!
+      password: String!
+      confirmPassword: String!
+    ): Authentication!
+    logIn(nameEmail: String!, password: String!): Authentication!
+    addPhoto(title: String!): Photo
+    addThought(title: String!): Thought
+    addQuestion(title: String!): Question
+    addReview(title: String!): Review
+    addStory(title: String!): Story
+    addTip(title: String!): Tip
+    addVideo(title: String!): Video
+    # addPost(title: String!): Thought
+    # addPost(title: String!): Thought
   }
 
   type Query {

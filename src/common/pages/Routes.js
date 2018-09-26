@@ -8,13 +8,46 @@ export const About = loadable(
   }
 );
 
-const Company = loadable(
+export const Login = loadable(
+  () => import(/* webpackChunkName: 'login' */ './Account/Login'),
+  {
+    LoadingComponent
+  }
+);
+export const SignUp = loadable(
+  () => import(/* webpackChunkName: 'signup' */ './Account/SignUp'),
+  {
+    LoadingComponent
+  }
+);
+export const ForgotPassword = loadable(
+  () =>
+    import(/* webpackChunkName: 'forgot-password' */ './Account/ForgotPassword'),
+  {
+    LoadingComponent
+  }
+);
+export const Profile = loadable(
+  () => import(/* webpackChunkName: 'profile' */ './Account/Profile'),
+  {
+    LoadingComponent
+  }
+);
+export const Reset = loadable(
+  () => import(/* webpackChunkName: 'profile' */ './Account/Reset'),
+  {
+    LoadingComponent
+  }
+);
+
+export const Company = loadable(
   () => import(/* webpackChunkName: 'company' */ './Company'),
   {
     LoadingComponent
   }
 );
-Company.List = loadable(
+
+export const CompanyList = loadable(
   () => import(/* webpackChunkName: 'company-list' */ './Company/List'),
   {
     LoadingComponent
@@ -27,13 +60,14 @@ export const Feed = loadable(
     LoadingComponent
   }
 );
-const Group = loadable(
+export const Group = loadable(
   () => import(/* webpackChunkName: 'group' */ './Group'),
   {
     LoadingComponent
   }
 );
-Group.List = loadable(
+
+export const GroupList = loadable(
   () => import(/* webpackChunkName: 'group-list' */ './Group/List'),
   {
     LoadingComponent
@@ -46,13 +80,14 @@ export const Home = loadable(
     LoadingComponent
   }
 );
-const Product = loadable(
+export const Product = loadable(
   () => import(/* webpackChunkName: 'product' */ './Product'),
   {
     LoadingComponent
   }
 );
-Product.List = loadable(
+
+export const ProductList = loadable(
   () => import(/* webpackChunkName: 'product-list' */ './Product/List'),
   {
     LoadingComponent
@@ -71,27 +106,30 @@ export const Search = loadable(
     LoadingComponent
   }
 );
-const User = loadable(() => import(/* webpackChunkName: 'user' */ './User'), {
-  LoadingComponent
-});
-User.List = loadable(
+export const User = loadable(
+  () => import(/* webpackChunkName: 'user' */ './User'),
+  {
+    LoadingComponent
+  }
+);
+
+export const UserList = loadable(
   () => import(/* webpackChunkName: 'user-list' */ './User/List'),
   {
     LoadingComponent
   }
 );
 
-const Video = loadable(
+export const Video = loadable(
   () => import(/* webpackChunkName: 'video' */ './Video'),
   {
     LoadingComponent
   }
 );
-Video.List = loadable(
+
+export const VideoList = loadable(
   () => import(/* webpackChunkName: 'video-list' */ './Video/List'),
   {
     LoadingComponent
   }
 );
-
-export { Company, User, Video, Group, Product };

@@ -4,7 +4,8 @@ module.exports = {
     [
       'babel-plugin-styled-components',
       {
-        displayName: false
+        displayName: false,
+        minify: false
       }
     ],
     '@babel/plugin-proposal-optional-chaining',

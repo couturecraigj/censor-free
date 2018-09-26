@@ -15,6 +15,20 @@ const mocks = {
     description: casual.description,
     __typename: 'Thought'
   }),
+  Story: () => {
+    const description = casual.sentences(50);
+    const excerpt = description
+      .split('. ')
+      .filter((v, i) => i < 4)
+      .join('. ');
+    return {
+      id: 'Thought' + casual.uuid,
+      title: casual.title,
+      excerpt,
+      description,
+      __typename: 'Thought'
+    };
+  },
   Group: () => ({
     id: 'Group' + casual.uuid,
     title: casual.title,
@@ -27,8 +41,102 @@ const mocks = {
     description: casual.description,
     __typename: 'Comment'
   }),
+  Mutation: () => ({
+    signUp: (parent, args, { res }) => {
+      const token = casual.uuid;
+      res.cookie('token', token, {
+        httpOnly: true,
+        maxAge: 9999999,
+        sameSite: true
+      });
+      return {
+        user: mocks.User(token),
+        token
+      };
+    },
+    logIn: (parent, args, { res }) => {
+      const token = casual.uuid;
+      res.cookie('token', token, {
+        httpOnly: true,
+        maxAge: 9999999,
+        sameSite: true
+      });
+      return {
+        user: mocks.User(token),
+        token
+      };
+    },
+    resetPassword: (parent, args, { res, req }) => {
+      if (
+        req.cookies['reset-token'] &&
+        req.cookies['reset-token'] === args.resetToken
+      ) {
+        // eslint-disable-next-line no-console
+        console.log('resetTokens match');
+        res.clearCookie('reset-token');
+      }
+      const token = casual.uuid;
+      res.cookie('token', token, {
+        httpOnly: true,
+        maxAge: 9999999,
+        sameSite: true
+      });
+      return {
+        user: mocks.User(token),
+        token
+      };
+    },
+    forgotPassword: (parent, args, { res }) => {
+      const token = casual.uuid;
+      res.cookie('reset-token', token, {
+        httpOnly: true,
+        maxAge: 9999999,
+        sameSite: true
+      });
+      return casual.uuid;
+    },
+    addVideo: (parent, args) => {
+      // eslint-disable-next-line no-console
+      console.log(args);
+    },
+    addPhoto: (parent, args) => {
+      // eslint-disable-next-line no-console
+      console.log(args);
+    },
+    addThought: (parent, args) => {
+      // eslint-disable-next-line no-console
+      console.log(args);
+    },
+    addReview: (parent, args) => {
+      // eslint-disable-next-line no-console
+      console.log(args);
+    },
+    addQuestion: (parent, args) => {
+      // eslint-disable-next-line no-console
+      console.log(args);
+    },
+    addAnswer: (parent, args) => {
+      // eslint-disable-next-line no-console
+      console.log(args);
+    },
+    addStory: (parent, args) => {
+      // eslint-disable-next-line no-console
+      console.log(args);
+    },
+    addTip: (parent, args) => {
+      // eslint-disable-next-line no-console
+      console.log(args);
+    },
+
+    deletePost: (parent, args) => {
+      // eslint-disable-next-line no-console
+      console.log(args);
+    }
+  }),
   Query: () => ({
-    feed: () => range(20).map(mocks.PostUnion),
+    feed: () => {
+      return range(20).map(mocks.PostUnion);
+    },
     saved: () => range(50).map(mocks.Save),
     company: ({ id = casual.uuid }) => mocks.Company(id),
     companies: () => range(40).map(() => mocks.Company(casual.uuid)),
@@ -48,7 +156,7 @@ const mocks = {
       'Review',
       'Question',
       'Answer',
-      'Image',
+      'Photo',
       'Video',
       'WebPage',
       'Tip'
@@ -64,7 +172,7 @@ const mocks = {
       'Company',
       'User',
       'Answer',
-      'Image',
+      'Photo',
       'Video',
       'WebPage',
       'Tip'
@@ -77,7 +185,7 @@ const mocks = {
     )}x${casual.integer(20, 400)}`,
     objectId: casual.uuid,
     object: () =>
-      unionInterface(mocks, ['Product', 'Company', 'WebPage', 'Image', 'Video'])
+      unionInterface(mocks, ['Product', 'Company', 'WebPage', 'Photo', 'Video'])
   }),
   SavedRecord: obj => ({
     id: obj.objectId || casual.uuid,
@@ -136,12 +244,12 @@ const mocks = {
     title: casual.title,
     description: casual.description
   }),
-  Image: obj => {
+  Photo: obj => {
     const height = casual.integer(30, 500);
     const width = casual.integer(30, 500);
     return {
-      __typename: 'Image',
-      id: 'Image' + (obj.objectId || casual.uuid),
+      __typename: 'Photo',
+      id: 'Photo' + (obj.objectId || casual.uuid),
       imgUri: `https://picsum.photos/${height}/${width}/?random`,
       title: casual.title,
       height,

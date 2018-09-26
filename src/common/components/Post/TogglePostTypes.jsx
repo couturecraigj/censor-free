@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
 
-const __PROD__ = process.env.NODE_ENV === 'production';
-
 const PostType = styled(
   ({ onClick, postType, name, isChosen, children, ...props }) => (
     <button {...props} type="button" onClick={() => onClick(postType, name)}>
@@ -47,12 +45,7 @@ class TogglePostTypes extends React.Component {
     this.setState({
       post: postType.name
     });
-    if (__PROD__) {
-      return postType.module().then(mod => {
-        return selectedPost(mod.default);
-      });
-    }
-    return selectedPost(postType.module.default);
+    return selectedPost(postType.module);
   };
 
   render() {
@@ -69,6 +62,8 @@ class TogglePostTypes extends React.Component {
             key={postType.name}
             postType={postType}
             onClick={togglePostType}
+            onMouseOver={postType.module.load}
+            onFocus={postType.module.load}
           >
             {postType.name}
           </PostType>

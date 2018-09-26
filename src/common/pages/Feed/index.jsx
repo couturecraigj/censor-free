@@ -25,7 +25,7 @@ const GET_FEED = gql`
           description
         }
       }
-      ... on Image {
+      ... on Photo {
         imgUri
         height
         width

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Query } from 'react-apollo';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { Video as VideoRoute } from '../../Routes';
 
 const GET_VIDEO_LIST = gql`
   {
@@ -47,7 +48,12 @@ export default () => (
         return (
           <VideoList name="dog">
             {data.videos.map(video => (
-              <Link key={video.id} to={`/video/${video.id}/${video.title}`}>
+              <Link
+                key={video.id}
+                to={`/video/${video.id}/${video.title}`}
+                onMouseOver={VideoRoute.load}
+                onFocus={VideoRoute.load}
+              >
                 <Video key={video.id} value={video.title}>
                   <div>{video.title}</div>
                   {video.img &&
