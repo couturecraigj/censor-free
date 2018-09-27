@@ -2,8 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
+import gql from 'graphql-tag';
 import { withApollo } from 'react-apollo';
 import * as Routes from '../pages/Routes';
+
+const LOG_OUT = gql`
+  mutation LogOut {
+    logOut
+  }
+`;
 
 const Link = styled(NavLink).attrs({ activeClassName: 'current' })`
   font-size: 20px;
@@ -137,6 +144,14 @@ const Layout = ({ togglePost, client }) => (
           e.preventDefault();
           localStorage.removeItem('token');
           client.resetStore();
+          return (
+            client
+              .mutate({ mutation: LOG_OUT })
+              // eslint-disable-next-line no-console
+              .then(result => console.log(result))
+              // eslint-disable-next-line no-console
+              .catch(err => console.error(err))
+          );
         }}
       >
         Logout

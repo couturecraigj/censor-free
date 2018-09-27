@@ -29,8 +29,12 @@ export default (
     link: ApolloLink.from(
       [
         !ssrMode &&
-          setContext((_, { headers }) => {
+          setContext((_, { headers, ...rest }) => {
             const token = localStorage.getItem('token');
+            // eslint-disable-next-line
+            console.log(_);
+            // eslint-disable-next-line
+            console.log(rest);
             return {
               headers: {
                 ...headers,

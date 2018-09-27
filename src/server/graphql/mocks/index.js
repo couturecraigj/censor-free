@@ -66,6 +66,10 @@ const mocks = {
         token
       };
     },
+    logOut: (parent, args, { res }) => {
+      res.clearCookie('token');
+      return 'Successfully Logged Out!';
+    },
     resetPassword: (parent, args, { res, req }) => {
       if (
         req.cookies['reset-token'] &&

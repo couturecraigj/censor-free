@@ -169,6 +169,7 @@ const typeDefs = gql`
 
   type Mutation {
     signUp(email: String!): Authentication!
+    logOut: String!
     forgotPassword(email: String!): String!
     resetPassword(
       token: String!
