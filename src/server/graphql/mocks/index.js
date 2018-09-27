@@ -4,6 +4,9 @@ const range = size => [...Array(size).keys()];
 const unionInterface = (mockMap, list) => {
   return mockMap[list[casual.integer(0, list.length - 1)]](casual.uuid);
 };
+
+// const User = require('../../models/users');
+
 const mocks = {
   Id: () => Math.random(),
   Int: () => casual.integer(-1000, 1000),
@@ -54,18 +57,22 @@ const mocks = {
         token
       };
     },
-    logIn: (parent, args, { res }) => {
-      const token = casual.uuid;
-      res.cookie('token', token, {
-        httpOnly: true,
-        maxAge: 9999999,
-        sameSite: true
-      });
-      return {
-        user: mocks.User(token),
-        token
-      };
-    },
+    // logIn: async (parent, args, { res }) => {
+    //   const token = casual.uuid;
+    //   const user = new User();
+    //   await user.save();
+    //   // eslint-disable-next-line
+    //   console.log(user);
+    //   res.cookie('token', token, {
+    //     httpOnly: true,
+    //     maxAge: 9999999,
+    //     sameSite: true
+    //   });
+    //   return {
+    //     user,
+    //     token
+    //   };
+    // },
     logOut: (parent, args, { res }) => {
       res.clearCookie('token');
       return 'Successfully Logged Out!';

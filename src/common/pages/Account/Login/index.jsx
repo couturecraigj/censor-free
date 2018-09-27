@@ -13,7 +13,8 @@ const LOGIN = gql`
       token
       user {
         id
-        name
+        userName
+        email
       }
     }
   }

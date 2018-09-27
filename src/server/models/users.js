@@ -1,32 +1,14 @@
-module.exports = async db => {
-  const userSchema = {
-    title: 'user schema',
-    description: 'describes a simple user',
-    version: 0,
-    type: 'object',
-    properties: {
-      name: {
-        type: 'string',
-        primary: true
-      },
-      color: {
-        type: 'string'
-      }
-    },
-    required: ['color']
-  };
-  await db.collection({
-    name: 'users',
-    schema: userSchema
-    // statics: {
-    //   // async addUser(name, color) {
-    //   //   return this.upsert({
-    //   //     name,
-    //   //     color
-    //   //   });
-    //   // }
-    // }
-  });
-  // db.collections.users.sync();
-  return db;
-};
+const mongoose = require('mongoose');
+
+const { Schema } = mongoose;
+const User = new Schema({
+  userName: { type: String },
+  email: { type: String },
+  password: { type: String },
+  age: { type: Number, min: 18, index: true },
+  bio: { type: String, match: /[a-z]/ },
+  date: { type: Date, default: Date.now },
+  buff: Buffer
+});
+// TODO: Figure out how to make this hot-reload
+module.exports = mongoose.models.User || mongoose.model('User', User);

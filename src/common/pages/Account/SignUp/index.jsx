@@ -8,12 +8,25 @@ import TextInput from '../../../components/TextInput';
 import * as Routes from '../../Routes';
 
 const SIGN_UP = gql`
-  mutation SignUp($email: String!) {
-    signUp(email: $email) {
+  mutation SignUp(
+    $email: String!
+    $confirmEmail: String!
+    $password: String!
+    $confirmPassword: String!
+    $userName: String!
+  ) {
+    signUp(
+      email: $email
+      confirmEmail: $confirmEmail
+      password: $password
+      confirmPassword: $confirmPassword
+      userName: $userName
+    ) {
       token
       user {
         id
-        name
+        userName
+        email
       }
     }
   }
@@ -78,7 +91,7 @@ const SignUp = () => {
               id="SignUp__confirm-email"
               label="Confirm Email"
               type="email"
-              name="confirm-email"
+              name="confirmEmail"
             />
 
             <TextInput
@@ -88,7 +101,7 @@ const SignUp = () => {
               }}
               id="SignUp__name"
               label="Name"
-              name="name"
+              name="userName"
             />
             <TextInput
               id="SignUp__password"
@@ -108,7 +121,7 @@ const SignUp = () => {
               label="Confirm Password"
               autoComplete="new-password"
               type="password"
-              name="confirm-password"
+              name="confirmPassword"
             />
             <button type="submit">Submit</button>
           </form>

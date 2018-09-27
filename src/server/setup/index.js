@@ -11,10 +11,14 @@ module.exports = async app => {
   }
   const [csurf, cookie] = await fetch(
     `http://localhost:${app.get('port')}/csurf`
-  ).then(async result => [
-    await result.json(),
-    result.headers.get('set-cookie')
-  ]);
+  )
+    .then(async result => [
+      await result.json(),
+      result.headers.get('set-cookie')
+    ])
+    .catch(() => {
+      return ['sdas', '_csurf=asdfdasf'];
+    });
   await fetch(`http://localhost:${app.get('port')}/graphql`, {
     method: 'POST',
     headers: {

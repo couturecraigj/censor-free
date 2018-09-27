@@ -19,21 +19,21 @@ const app = express();
 config(app);
 app.get('*', async (req, res, next) => {
   try {
-    const csurfToken = req.csrfToken();
+    // const csurfToken = req.csrfToken();
     const queryUrl = app.get('url') + app.get('apollo').graphqlPath;
     // eslint-disable-next-line prefer-const
     let context = {};
-    const [csurf, cookie] = await fetch(
-      `http://localhost:${app.get('port')}/csurf`
-    ).then(async result => [
-      await result.json(),
-      result.headers.get('set-cookie')
-    ]);
+    // const [csurf, cookie] = await fetch(
+    //   `http://localhost:${app.get('port')}/csurf`
+    // ).then(async result => [
+    //   await result.json(),
+    //   result.headers.get('set-cookie')
+    // ]);
 
     const sheet = new ServerStyleSheet();
     const headers = {
-      cookie,
-      'x-xsurf-token': csurf
+      // cookie,
+      // 'x-xsurf-token': csurf
     };
     const client = apollo(fetch, {
       headers,
@@ -63,7 +63,7 @@ app.get('*', async (req, res, next) => {
               app.get('fragments')
             )};window.QUERY_URL="${queryUrl}";window.__APOLLO_STATE__=${JSON.stringify(
               client.extract()
-            )};window.__CSURF__="${csurfToken}";</script>${loadableState.getScriptTag()}${reactHelmet.title.toString()}${sheet.getStyleTags()}`,
+            )};</script>${loadableState.getScriptTag()}${reactHelmet.title.toString()}${sheet.getStyleTags()}`,
             body,
             attrs: {
               body: reactHelmet.bodyAttributes.toString(),

@@ -77,7 +77,7 @@ module.exports = {
     new CheckerPlugin(),
     new CleanWebpackPlugin(['server', 'dist'], {
       root: process.cwd(),
-      watch: true,
+      // watch: true,
       verbose: false
     }),
     new webpack.DefinePlugin({

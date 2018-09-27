@@ -40,10 +40,10 @@ export default (
           if (networkError)
             // eslint-disable-next-line no-console
             console.log(`[Network error]: ${networkError.stack}`);
-          // eslint-disable-next-line no-console
-          console.log(networkError);
-          // eslint-disable-next-line no-console
-          console.log(headers);
+          // // eslint-disable-next-line no-console
+          // console.log(networkError);
+          // // eslint-disable-next-line no-console
+          // console.log(headers);
         }),
         !ssrMode &&
           setContext((_, { headers }) => {

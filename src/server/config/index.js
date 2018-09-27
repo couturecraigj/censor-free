@@ -1,5 +1,5 @@
 const cookieParser = require('cookie-parser');
-const csrf = require('csurf');
+// const csrf = require('csurf');
 const express = require('express');
 const multer = require('multer');
 const resumable = require('express-resumablejs')({
@@ -26,12 +26,12 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage
 });
-const csrfProtection = csrf({ cookie: true });
+// const csrfProtection = csrf({ cookie: true });
 const port = 3000;
 
 module.exports = app => {
   app.use(cookieParser());
-  app.use(csrfProtection);
+  // app.use(csrfProtection);
   app.use(express.static('public'));
   app.set('port', port);
   app.set('url', 'http://localhost:3000');
@@ -43,9 +43,9 @@ module.exports = app => {
       next(e);
     }
   });
-  app.get('/csurf', function(req, res) {
-    res.json(req.csrfToken());
-  });
+  // app.get('/csurf', function(req, res) {
+  //   res.json(req.csrfToken());
+  // });
   app.use('/files', resumable);
   app.post('/file', upload.single('avatar'), function(req, res) {
     res.send(req.file);

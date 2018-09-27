@@ -156,6 +156,8 @@ const typeDefs = gql`
   type User implements Node & Searchable {
     id: ID!
     highlights: [Highlight]!
+    userName: String!
+    email: String!
     name: String!
     description: String!
     img: Photo
@@ -168,7 +170,13 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    signUp(email: String!): Authentication!
+    signUp(
+      email: String!
+      confirmEmail: String!
+      password: String!
+      confirmPassword: String!
+      userName: String!
+    ): Authentication!
     logOut: String!
     forgotPassword(email: String!): String!
     resetPassword(

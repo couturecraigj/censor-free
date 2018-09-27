@@ -51,6 +51,7 @@ ${chalk.grey.bgBlackBright(
 
     // Hot Module Replacement API
     if (module.hot) {
+      module.hot.decline('./database');
       let currentApp = app;
       module.hot.accept('./index', () => {
         httpServer.removeListener('request', currentApp);
