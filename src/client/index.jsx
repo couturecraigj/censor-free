@@ -11,6 +11,7 @@ const rootElement = document.getElementById('root');
 // import component from "../common";
 async function render(ele) {
   await loadComponents();
+  localStorage.setItem('csurf-token', window.__CSURF__);
   const client = apollo(fetch, {
     uri: window.QUERY_URL,
     state: window.__APOLLO_STATE__,

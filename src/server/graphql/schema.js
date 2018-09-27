@@ -12,6 +12,10 @@ module.exports = app => {
       typeDefs,
       resolvers,
       mocks,
+      logger: {
+        // eslint-disable-next-line no-console
+        log: console.log
+      },
       resolverValidationOptions: {
         requireResolversForResolveType: false
       }
@@ -22,8 +26,18 @@ module.exports = app => {
       res,
       req
     }),
-    mocks,
-    debug: true
+    formatError: error => {
+      // eslint-disable-next-line no-console
+      console.log(error);
+      return new Error('Internal server error');
+    },
+    formatResponse: response => {
+      // eslint-disable-next-line no-console
+      console.log(response);
+      return response;
+    },
+    mocks
+    // debug: true
   });
   server.applyMiddleware({ app });
   app.set('apollo', server);

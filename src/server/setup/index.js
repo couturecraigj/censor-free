@@ -3,15 +3,25 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 
 const __INTROSPECTION__ = process.env.INTROSPECT_GRAPHQL_SCHEMA;
-module.exports = app => {
+module.exports = async app => {
   if (__INTROSPECTION__) {
     const data = require('../../../fragmentTypes.json');
     app.set('fragments', data);
     return;
   }
-  fetch(`http://localhost:${app.get('port')}/graphql`, {
+  const [csurf, cookie] = await fetch(
+    `http://localhost:${app.get('port')}/csurf`
+  ).then(async result => [
+    await result.json(),
+    result.headers.get('set-cookie')
+  ]);
+  await fetch(`http://localhost:${app.get('port')}/graphql`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-xsrf-token': csurf,
+      cookie
+    },
     body: JSON.stringify({
       variables: {},
       operationName: '',
