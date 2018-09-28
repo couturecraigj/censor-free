@@ -21,7 +21,8 @@ const User = new Schema(
     reset: {
       token: { type: String },
       timeOut: { type: Number }
-    }
+    },
+    previousHashes: [String]
   },
   {
     timestamps: true
@@ -91,17 +92,15 @@ User.statics.resetPassword = async function({
     'reset.timeOut': { $gte: timeOut }
   });
   if (!userTokenMatch) throw NO_USER_WITH_THAT_TOKEN;
-  const user = mongoose.models.User.findOneAndUpdate(
+  const previousHash = userTokenMatch.hash;
+  userTokenMatch.password = password;
+  userTokenMatch.confirmPassword = confirmPassword;
+  await userTokenMatch.save();
+  const user = mongoose.models.User.findByIdAndUpdate(
+    userTokenMatch.id,
     {
-      'reset.token': token,
-      'reset.timeOut': { $gte: timeOut }
-    },
-    {
-      $set: {
-        password,
-        confirmPassword
-      },
-      $unset: { reset: '' }
+      $unset: { reset: '' },
+      $addToSet: { previousHashes: previousHash }
     },
     {
       new: true
