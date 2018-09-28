@@ -1,15 +1,14 @@
 const cookieParser = require('cookie-parser');
 // const csrf = require('csurf');
 const express = require('express');
+const fs = require('fs');
 const multer = require('multer');
-const resumable = require('express-resumablejs')({
-  // eslint-disable-next-line no-console
-  log: console.log,
-  dest: 'uploads/'
-});
+const path = require('path');
+const resumable = require('express-resumablejs');
 
 const DataBase = require('../database');
 
+const cwd = process.cwd();
 const dbPromise = DataBase.get();
 
 const apolloSchemaSetup = require('../graphql/schema');
@@ -46,7 +45,18 @@ module.exports = app => {
   // app.get('/csurf', function(req, res) {
   //   res.json(req.csrfToken());
   // });
-  app.use('/files', resumable);
+  app.use('/files', (req, res, next) => {
+    const dir = path.join(cwd, 'uploads', req.cookies.token);
+    fs.mkdir(dir, err => {
+      // eslint-disable-next-line no-console
+      if (err) console.error(err);
+      return resumable({
+        // eslint-disable-next-line no-console
+        log: console.log,
+        dest: dir
+      })(req, res, next);
+    });
+  });
   app.post('/file', upload.single('avatar'), function(req, res) {
     res.send(req.file);
   });

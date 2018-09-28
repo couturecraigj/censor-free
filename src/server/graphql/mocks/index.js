@@ -1,6 +1,6 @@
 const casual = require('casual');
+const { MockList } = require('apollo-server');
 
-const range = size => [...Array(size).keys()];
 const unionInterface = (mockMap, list) => {
   return mockMap[list[casual.integer(0, list.length - 1)]](casual.uuid);
 };
@@ -145,21 +145,14 @@ const mocks = {
     }
   }),
   Query: () => ({
-    feed: () => {
-      return range(20).map(mocks.PostUnion);
-    },
-    saved: () => range(50).map(mocks.Save),
-    company: ({ id = casual.uuid }) => mocks.Company(id),
-    companies: () => range(40).map(() => mocks.Company(casual.uuid)),
-    product: ({ id = casual.uuid }) => mocks.Product(id),
-    products: () => range(40).map(() => mocks.Product(casual.uuid)),
-    group: ({ id = casual.uuid }) => mocks.Group(id),
-    groups: () => range(40).map(() => mocks.Group(casual.uuid)),
-    user: ({ id = casual.uuid }) => mocks.User(id),
-    users: () => range(40).map(() => mocks.User(casual.uuid)),
-    video: ({ id = casual.uuid }) => mocks.Video(id),
-    videos: () => range(40).map(() => mocks.Video(casual.uuid)),
-    search: () => range(40).map(() => mocks.Searchable(casual.uuid))
+    feed: () => new MockList([0, 20], mocks.PostUnion),
+    saved: () => new MockList([8, 20], mocks.Save),
+    companies: () => new MockList([0, 20]),
+    products: () => new MockList([0, 20], mocks.Product),
+    groups: () => new MockList([0, 20], mocks.Group),
+    users: () => new MockList([0, 20], mocks.User),
+    videos: () => new MockList([0, 20], mocks.Video),
+    search: () => new MockList([8, 20], mocks.Searchable)
   }),
   PostUnion: () =>
     unionInterface(mocks, [
@@ -198,36 +191,36 @@ const mocks = {
     object: () =>
       unionInterface(mocks, ['Product', 'Company', 'WebPage', 'Photo', 'Video'])
   }),
-  SavedRecord: obj => ({
+  SavedRecord: (obj = {}) => ({
     id: obj.objectId || casual.uuid,
     __typename: 'SavedRecord'
   }),
-  Review: obj => ({
+  Review: (obj = {}) => ({
     __typename: 'Review',
     id: 'Review' + (obj.objectId || casual.uuid),
     name: casual.title,
     description: casual.description,
     score: casual.double(0, 5)
   }),
-  Question: obj => ({
+  Question: (obj = {}) => ({
     __typename: 'Question',
     id: 'Question' + (obj.objectId || casual.uuid),
     name: casual.title,
     description: casual.description
   }),
-  Tip: obj => ({
+  Tip: (obj = {}) => ({
     __typename: 'Tip',
     id: 'Tip' + (obj.objectId || casual.uuid),
     name: casual.title,
     description: casual.description
   }),
-  Answer: obj => ({
+  Answer: (obj = {}) => ({
     __typename: 'Answer',
     id: 'Answer' + (obj.objectId || casual.uuid),
     name: casual.title,
     description: casual.description
   }),
-  Product: obj => ({
+  Product: (obj = {}) => ({
     __typename: 'Product',
     id: 'Product' + (obj.objectId || casual.uuid),
     imgUri: `https://picsum.photos/${casual.integer(30, 500)}/${casual.integer(
@@ -237,25 +230,27 @@ const mocks = {
     name: casual.title,
     description: casual.description
   }),
-  User: obj => ({
+  User: (obj = {}) => ({
     __typename: 'User',
     id: 'User' + (obj.objectId || casual.uuid),
     name: casual.full_name,
     description: casual.description
   }),
-  Company: obj => ({
-    __typename: 'Company',
-    id: 'Company' + (obj.objectId || casual.uuid),
-    name: casual.title,
-    description: casual.description
-  }),
-  WebPage: obj => ({
+  Company: (obj = {}) => {
+    return {
+      __typename: 'Company',
+      id: 'Company' + (obj.objectId || casual.uuid),
+      name: casual.title,
+      description: casual.description
+    };
+  },
+  WebPage: (obj = {}) => ({
     __typename: 'WebPage',
     id: 'WebPage' + (obj.objectId || casual.uuid),
     title: casual.title,
     description: casual.description
   }),
-  Photo: obj => {
+  Photo: (obj = {}) => {
     const height = casual.integer(30, 500);
     const width = casual.integer(30, 500);
     return {
@@ -268,7 +263,7 @@ const mocks = {
       description: casual.description
     };
   },
-  Video: obj => ({
+  Video: (obj = {}) => ({
     __typename: 'Video',
     id: 'Video' + (obj.objectId || casual.uuid),
     title: casual.title,

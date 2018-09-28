@@ -192,8 +192,6 @@ const typeDefs = gql`
     addStory(title: String!): Story
     addTip(title: String!): Tip
     addVideo(title: String!): Video
-    # addPost(title: String!): Thought
-    # addPost(title: String!): Thought
   }
 
   type Query {
