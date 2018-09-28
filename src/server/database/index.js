@@ -2,10 +2,10 @@ const Database = require('mongoose');
 
 Database.connect('mongodb://localhost/no_censor');
 
-require('../models/users');
+require('../models/user');
 // const RxDB = require('rxdb');
 
-// const user = require('../models/users');
+// const user = require('../models/user');
 
 // RxDB.plugin(require('pouchdb-adapter-node-websql'));
 // // RxDB.plugin(require('pouchdb-adapter-http'));

@@ -1,4 +1,4 @@
-const User = require('../../models/users');
+const User = require('../../models/user');
 
 const AUTHENTICATION_ERROR = new Error('Authentication Error');
 
@@ -28,6 +28,18 @@ const resolvers = {
       return {
         user,
         token: user.id
+      };
+    },
+    forgotPassword: async (parent, args, { res }) => {
+      const token = await User.getResetToken(args);
+      res.cookie('reset-token', token, { httpOnly: true, maxAge: 3000 });
+      return token;
+    },
+    resetPassword: async (parent, args) => {
+      const user = await User.resetPassword(args);
+      return {
+        token: user.id,
+        user
       };
     }
   },
