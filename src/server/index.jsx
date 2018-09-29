@@ -12,6 +12,7 @@ const apollo = require('../common/apollo').default;
 const App = require('../common/App').default;
 const config = require('./config');
 const html = require('./html');
+const routeCache = require('./routeCache');
 const setup = require('./setup');
 
 const app = express();
@@ -58,18 +59,21 @@ app.get('*', async (req, res, next) => {
         const body = ReactDOMServer.renderToString(spaApp);
         const reactHelmet = Helmet.renderStatic();
         res.send(
-          html({
-            head: `<script>window.__FRAGMENTS__=${JSON.stringify(
-              app.get('fragments')
-            )};window.QUERY_URL="${queryUrl}";window.__APOLLO_STATE__=${JSON.stringify(
-              client.extract()
-            )};</script>${loadableState.getScriptTag()}${reactHelmet.title.toString()}${sheet.getStyleTags()}`,
-            body,
-            attrs: {
-              body: reactHelmet.bodyAttributes.toString(),
-              html: reactHelmet.htmlAttributes.toString()
-            }
-          })
+          routeCache.preCache(
+            html({
+              head: `<script>window.__FRAGMENTS__=${JSON.stringify(
+                app.get('fragments')
+              )};window.QUERY_URL="${queryUrl}";window.__APOLLO_STATE__=${JSON.stringify(
+                client.extract()
+              )};</script>${loadableState.getScriptTag()}${reactHelmet.title.toString()}${sheet.getStyleTags()}`,
+              body,
+              attrs: {
+                body: reactHelmet.bodyAttributes.toString(),
+                html: reactHelmet.htmlAttributes.toString()
+              }
+            }),
+            req.path
+          )
         );
       })
       .catch(err => next(err));

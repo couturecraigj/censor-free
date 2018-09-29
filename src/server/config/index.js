@@ -7,6 +7,7 @@ const path = require('path');
 const resumable = require('express-resumablejs');
 
 const DataBase = require('../database');
+const routeCache = require('../routeCache');
 
 const cwd = process.cwd();
 const dbPromise = DataBase.get();
@@ -34,6 +35,7 @@ module.exports = app => {
   app.use(express.static('public'));
   app.set('port', port);
   app.set('url', 'http://localhost:3000');
+  app.use(routeCache.hitCache);
   app.use(async (req, res, next) => {
     try {
       req.db = await dbPromise;
