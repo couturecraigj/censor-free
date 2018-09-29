@@ -109,6 +109,23 @@ User.statics.resetPassword = async function({
   return user;
 };
 
+User.statics.requestFriendship = function() {};
+User.statics.acceptFriendship = function() {};
+User.statics.rejectFriendship = function() {};
+User.statics.blockUser = function() {};
+User.statics.unblockUser = function() {};
+User.statics.changeProfileContent = function() {};
+User.statics.addComment = function() {};
+User.statics.follow = function() {};
+User.statics.addPhoto = function() {};
+User.statics.addQuestion = function() {};
+User.statics.addReview = function() {};
+User.statics.addStory = function() {};
+User.statics.addThought = function() {};
+User.statics.addTip = function() {};
+User.statics.addVideo = function() {};
+User.statics.addWebPage = function() {};
+
 if (mongoose.models && mongoose.models.User) delete mongoose.models.User;
 
 module.exports = mongoose.model('User', User);

@@ -8,6 +8,9 @@ const Video = new Schema(
   }
 );
 
+Video.statics.edit = function() {};
+Video.statics.addComment = function() {};
+
 if (mongoose.models && mongoose.models.Video) delete mongoose.models.Video;
 
 module.exports = mongoose.model('Video', Video);

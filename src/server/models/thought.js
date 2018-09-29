@@ -8,6 +8,9 @@ const Thought = new Schema(
   }
 );
 
+Thought.statics.edit = function() {};
+Thought.statics.addComment = function() {};
+
 if (mongoose.models && mongoose.models.Thought) delete mongoose.models.Thought;
 
 module.exports = mongoose.model('Thought', Thought);

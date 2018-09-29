@@ -8,6 +8,9 @@ const WebPage = new Schema(
   }
 );
 
+WebPage.statics.edit = function() {};
+WebPage.statics.addComment = function() {};
+
 if (mongoose.models && mongoose.models.WebPage) delete mongoose.models.WebPage;
 
 module.exports = mongoose.model('WebPage', WebPage);

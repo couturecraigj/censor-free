@@ -8,6 +8,9 @@ const Review = new Schema(
   }
 );
 
+Review.statics.edit = function() {};
+Review.statics.addComment = function() {};
+
 if (mongoose.models && mongoose.models.Review) delete mongoose.models.Review;
 
 module.exports = mongoose.model('Review', Review);

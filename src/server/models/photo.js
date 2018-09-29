@@ -8,6 +8,9 @@ const Photo = new Schema(
   }
 );
 
+Photo.statics.edit = function() {};
+Photo.statics.addComment = function() {};
+
 if (mongoose.models && mongoose.models.Photo) delete mongoose.models.Photo;
 
 module.exports = mongoose.model('Photo', Photo);
