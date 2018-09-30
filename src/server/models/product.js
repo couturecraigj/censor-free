@@ -11,8 +11,11 @@ const Product = new Schema(
   }
 );
 
-Product.statics.delete = function() {};
+Product.statics.create = function() {};
 Product.statics.edit = function() {};
+Product.statics.delete = function() {};
+Product.statics.addRetailer = function() {};
+Product.statics.addManufacturer = function() {};
 Product.statics.removeFromWishList = function() {};
 Product.statics.addToWishList = function() {};
 Product.statics.want = function() {};

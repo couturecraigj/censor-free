@@ -11,13 +11,98 @@ const NO_USER_WITH_THAT_TOKEN = new Error('No user with that token');
 const { Schema } = mongoose;
 const User = new Schema(
   {
+    // UNIQUE
     userName: { type: String },
     email: { type: String },
+
+    // SECURE
     hash: { type: String },
+
+    // USER INFO
     birthDate: { type: String },
     birthYear: { type: Number },
     birthMonth: { type: Number },
     birthDay: { type: Number },
+
+    // PREFERENCES
+    filterOut: [
+      {
+        type: String,
+        enum: [
+          'Nudity',
+          'Sex',
+          'Violence',
+          'Weapons',
+          'Frightening',
+          'Gross',
+          'Smoking',
+          'Drugs',
+          'Alcohol'
+        ]
+      }
+    ],
+
+    objectTypes: [
+      {
+        type: String,
+        enum: ['User', 'Product', 'Company', 'Group']
+      }
+    ],
+
+    // OTHER SITES
+    webPages: [{ type: Schema.Types.ObjectId, ref: 'WebPage' }],
+    otherSocials: [
+      {
+        type: String,
+        enum: [
+          'YouTube',
+          'Twitter',
+          'Facebook',
+          'DeviantArt',
+          'LinkedIn',
+          'Tumblr',
+          'Picasa',
+          'Flickr',
+          'Google+',
+          'Instagram',
+          'Pinterest',
+          'Etsy'
+        ]
+      }
+    ],
+    emails: [String],
+
+    // PRIVACY
+    privacySetting: { type: String, enum: ['Only', 'Except'] },
+    dataMode: {
+      type: String,
+      enum: [
+        // Idea is to display data from Server
+        'Server',
+        // Or from in blockchain
+        'Decentralized',
+        // Or only when they are online (Use alot more data on their computer)
+        'Mobile'
+      ]
+    },
+    onlyUserList: [Schema.Types.ObjectId],
+    exceptUserList: [Schema.Types.ObjectId],
+    userType: {
+      type: String,
+      enum: ['User', 'Viewer', 'Advanced']
+    },
+    authorization: [
+      {
+        type: String,
+        enum: [
+          'Administrator',
+          'Moderator-Final',
+          'Moderator-Third',
+          'Moderator-Second',
+          'Moderator-First'
+        ]
+      }
+    ],
     reset: {
       token: { type: String },
       timeOut: { type: Number }
@@ -109,14 +194,15 @@ User.statics.resetPassword = async function({
   return user;
 };
 
+User.statics.invite = function() {};
 User.statics.requestFriendship = function() {};
 User.statics.acceptFriendship = function() {};
 User.statics.rejectFriendship = function() {};
 User.statics.blockUser = function() {};
 User.statics.unblockUser = function() {};
 User.statics.changeProfileContent = function() {};
-User.statics.addComment = function() {};
 User.statics.follow = function() {};
+User.statics.addComment = function() {};
 User.statics.addPhoto = function() {};
 User.statics.addQuestion = function() {};
 User.statics.addReview = function() {};

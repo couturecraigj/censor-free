@@ -9,6 +9,7 @@ const Group = new Schema(
 );
 
 Group.statics.delete = function() {};
+Group.statics.create = function() {};
 Group.statics.edit = function() {};
 Group.statics.rejectJoin = function() {};
 Group.statics.acceptJoin = function() {};

@@ -2,21 +2,32 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const PostNode = new Schema(
-  {},
+  {
+    changeableType: {
+      type: Boolean
+    },
+    published: {
+      type: Boolean
+    },
+    publishedDate: {
+      type: Boolean
+    },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  },
   {
     timestamps: true
   }
 );
-//   - Nudity
-//   - Sex
-//   - Violence
-//   - Guns/Weapons
-//   - Frightening
-//   - Gross
-//   - Smoking
-//   - Drugs/Alcohol
-//   - Language
+
 PostNode.delete = function() {};
+
+PostNode.publish = function() {};
+PostNode.unPublish = function() {};
+PostNode.flagScam = function() {};
+PostNode.flagCopyRightsViolation = function() {};
 PostNode.addLike = function() {};
 PostNode.addDislike = function() {};
 PostNode.flagNudity = function() {};

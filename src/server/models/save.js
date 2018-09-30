@@ -8,8 +8,9 @@ const Save = new Schema(
   }
 );
 
-Save.statics.delete = function() {};
+Save.statics.create = function() {};
 Save.statics.edit = function() {};
+Save.statics.delete = function() {};
 Save.statics.addComment = function() {};
 
 if (mongoose.models && mongoose.models.Save) delete mongoose.models.Save;

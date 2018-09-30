@@ -5,6 +5,9 @@ const typeDefs = gql`
   interface Node {
     id: ID!
   }
+  interface UserNode {
+    userName: String!
+  }
   interface PostNode {
     id: ID!
     title: String!
@@ -153,20 +156,27 @@ const typeDefs = gql`
     imgs: [Photo]
     description: String!
   }
-  type User implements Node & Searchable {
+  type User implements Node & Searchable & UserNode {
     id: ID!
     highlights: [Highlight]!
     userName: String!
     email: String!
-    name: String!
-    description: String!
+    img: Photo
+    imgs: [Photo]
+  }
+
+  type Me implements Node & Searchable & UserNode {
+    id: ID!
+    highlights: [Highlight]!
+    userName: String!
+    email: String!
     img: Photo
     imgs: [Photo]
   }
 
   type Authentication {
     token: String!
-    user: User!
+    me: Me!
   }
 
   type Mutation {
@@ -205,6 +215,7 @@ const typeDefs = gql`
     groups: [Group]!
     user(id: ID!): User
     users: [User]!
+    me: Me
     video(id: ID!): Video
     videos: [Video]!
     search: [Searchable]!

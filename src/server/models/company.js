@@ -11,8 +11,11 @@ const Company = new Schema(
   }
 );
 
+Company.statics.create = function() {};
 Company.statics.edit = function() {};
 Company.statics.delete = function() {};
+Company.statics.addSoldProduct = function() {};
+Company.statics.addManufacturedProduct = function() {};
 Company.statics.follow = function() {};
 Company.statics.unfollow = function() {};
 Company.statics.like = function() {};
