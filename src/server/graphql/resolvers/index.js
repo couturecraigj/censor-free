@@ -1,3 +1,4 @@
+const Photo = require('../../models/photo');
 const User = require('../../models/user');
 
 const AUTHENTICATION_ERROR = new Error('Authentication Error');
@@ -41,6 +42,9 @@ const resolvers = {
         token: user.id,
         user
       };
+    },
+    addPhoto: async (parent, args, context) => {
+      return await Photo.createPhoto(args, context);
     }
   },
   User: async (parent, args) => {
