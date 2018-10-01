@@ -5,14 +5,13 @@ const webpack = require('webpack');
 
 const babelOptions = require('../babelOptions');
 
-babelOptions.presets = undefined;
+babelOptions.presets = [];
 babelOptions.presets.unshift([
   '@babel/preset-env',
   {
     targets: {
       browsers: ['last 2 versions', 'safari >= 7']
-    },
-    modules: false
+    }
   }
 ]);
 
@@ -27,7 +26,7 @@ module.exports = {
     rules: [
       {
         enforce: 'pre',
-        test: /\.[jt]sx?$/,
+        test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         loader: 'eslint-loader'
       },

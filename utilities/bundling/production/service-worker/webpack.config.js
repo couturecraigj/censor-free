@@ -6,14 +6,13 @@ const webpack = require('webpack');
 const babelOptions = require('../babelOptions');
 const webpackAssets = require('../../../../webpack-assets.json');
 
-babelOptions.presets = undefined;
+babelOptions.presets = [];
 babelOptions.presets.unshift([
   '@babel/preset-env',
   {
     targets: {
       browsers: ['last 2 versions', 'safari >= 7']
-    },
-    modules: false
+    }
   }
 ]);
 

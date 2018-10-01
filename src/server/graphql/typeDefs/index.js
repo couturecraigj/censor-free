@@ -12,6 +12,8 @@ const typeDefs = gql`
     id: ID!
     title: String!
     description: String!
+    created: AlterationStamp!
+    modified: AlterationStamp
   }
   interface Searchable {
     id: ID!
@@ -20,11 +22,15 @@ const typeDefs = gql`
   interface CommentNode {
     id: ID!
     description: String!
+    created: AlterationStamp!
+    modified: AlterationStamp
   }
   interface Object {
     id: ID!
     name: String!
     description: String!
+    created: AlterationStamp!
+    modified: AlterationStamp
   }
 
   # UNIONS
@@ -40,6 +46,10 @@ const typeDefs = gql`
     | Tip
 
   # TYPES
+  type AlterationStamp {
+    user: User!
+    date: Int!
+  }
   type Highlight {
     text: String!
     ranges: [RangeInt]!
@@ -53,6 +63,8 @@ const typeDefs = gql`
     highlights: [Highlight]!
     title: String!
     description: String!
+    created: AlterationStamp!
+    modified: AlterationStamp
   }
   type Story implements Node & PostNode & Searchable {
     id: ID!
@@ -60,6 +72,8 @@ const typeDefs = gql`
     title: String!
     description: String!
     excerpt: String!
+    created: AlterationStamp!
+    modified: AlterationStamp
   }
   type Review implements Node & PostNode & Searchable {
     id: ID!
@@ -69,6 +83,8 @@ const typeDefs = gql`
     products: [Product!]!
     comments: [Comment]!
     score: Float!
+    created: AlterationStamp!
+    modified: AlterationStamp
   }
   type Question implements Node & PostNode & Searchable {
     id: ID!
@@ -78,6 +94,8 @@ const typeDefs = gql`
     products: [Product!]
     answers: [Answer]!
     comments: [Comment]!
+    created: AlterationStamp!
+    modified: AlterationStamp
   }
   type Tip implements Node & PostNode & Searchable {
     id: ID!
@@ -85,6 +103,8 @@ const typeDefs = gql`
     title: String!
     description: String!
     products: [Product!]
+    created: AlterationStamp!
+    modified: AlterationStamp
   }
   type Answer implements Node & CommentNode & PostNode & Searchable {
     id: ID!
@@ -93,12 +113,16 @@ const typeDefs = gql`
     title: String!
     description: String!
     comments: [Comment]!
+    created: AlterationStamp!
+    modified: AlterationStamp
   }
   type Comment implements Node & CommentNode & Searchable {
     id: ID!
     highlights: [Highlight]!
     parent: PostUnion!
     description: String!
+    created: AlterationStamp!
+    modified: AlterationStamp
   }
   type Photo implements Node & PostNode & Searchable {
     id: ID!
@@ -108,6 +132,8 @@ const typeDefs = gql`
     height: Int
     width: Int
     imgUri: String!
+    created: AlterationStamp!
+    modified: AlterationStamp
   }
   type Video implements Node & PostNode & Searchable {
     id: ID!
@@ -117,6 +143,8 @@ const typeDefs = gql`
     imgs: [Photo]
     img: Photo
     uri: String!
+    created: AlterationStamp!
+    modified: AlterationStamp
   }
   type WebPage implements Node & PostNode & Searchable {
     id: ID!
@@ -126,6 +154,8 @@ const typeDefs = gql`
     imgs: [Photo]
     img: Photo
     uri: String!
+    created: AlterationStamp!
+    modified: AlterationStamp
   }
   type Group implements Node & Searchable {
     id: ID!
@@ -147,6 +177,8 @@ const typeDefs = gql`
     description: String!
     img: Photo
     imgs: [Photo]
+    created: AlterationStamp!
+    modified: AlterationStamp
   }
   type Company implements Node & Object & Searchable {
     id: ID!
@@ -155,6 +187,8 @@ const typeDefs = gql`
     img: Photo
     imgs: [Photo]
     description: String!
+    created: AlterationStamp!
+    modified: AlterationStamp
   }
   type User implements Node & Searchable & UserNode {
     id: ID!
