@@ -2,33 +2,28 @@ const gulp = require('gulp');
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 
-const webpackAssets = require('./webpack-assets.json');
+const __PROD__ = process.env.NODE_ENV === 'production';
 
-const assets = Object.values(webpackAssets).reduce(
-  (p, c) => [...p, ...Object.values(c)],
-  []
-);
+const config = __PROD__
+  ? require('./utilities/bundling/production/service-worker/webpack.config.js')
+  : require('./utilities/bundling/development/service-worker/webpack.config.js');
 
 gulp.task('default', function() {
-  return gulp
+  gulp
     .src('src/service-worker/sw.js')
-    .pipe(
-      webpackStream(
-        {
-          target: 'webworker',
-          plugins: [
-            new webpack.DefinePlugin({
-              __ASSETS__: JSON.stringify(assets),
-              __SW_PREFIX__: '"(inside Service-Worker) "'
-            }),
-            new webpack.ExtendedAPIPlugin()
-          ],
-          output: {
-            filename: 'sw.js'
-          }
-        },
-        webpack
-      )
-    )
-    .pipe(gulp.dest('./public/'));
+    .pipe(webpackStream(config, webpack))
+    .on('error', function(err) {
+      // eslint-disable-next-line no-console
+      console.log(err.toString());
+
+      this.emit('end');
+    })
+    .pipe(gulp.dest('public/'));
+});
+
+gulp.task('watch', function() {
+  gulp.series(
+    'default',
+    gulp.watch(['src/**/*.js', '**/fragmentTypes.json'], ['default'])
+  );
 });

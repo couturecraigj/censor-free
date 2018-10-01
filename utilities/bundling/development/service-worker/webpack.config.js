@@ -4,7 +4,6 @@ const path = require('path');
 const webpack = require('webpack');
 
 const babelOptions = require('../babelOptions');
-const webpackAssets = require('../../../../webpack-assets.json');
 
 babelOptions.presets = undefined;
 babelOptions.presets.unshift([
@@ -17,16 +16,21 @@ babelOptions.presets.unshift([
   }
 ]);
 
-const assets = Object.values(webpackAssets).reduce(
-  (p, c) => [...p, ...Object.values(c)],
-  []
-);
+const assets = [];
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
+  devtool: 'inline-source-map',
+  stats: 'errors-only',
   target: 'webworker',
   module: {
     rules: [
+      {
+        enforce: 'pre',
+        test: /\.[jt]sx?$/,
+        exclude: /(node_modules|bower_components)/,
+        loader: 'eslint-loader'
+      },
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
