@@ -53,6 +53,23 @@ const PostNode = new Schema(
     changeableType: {
       type: Boolean
     },
+    post: {
+      type: Schema.Types.ObjectId
+    },
+    kind: {
+      type: String,
+      enum: [
+        'Answer',
+        'Photo',
+        'Question',
+        'Review',
+        'Story',
+        'Thought',
+        'Tip',
+        'Video',
+        'WebPage'
+      ]
+    },
     published: {
       type: Boolean
     },
@@ -70,16 +87,17 @@ const PostNode = new Schema(
   }
 );
 
-PostNode.delete = function() {};
-PostNode.createPostNode = async function(args, context) {
+PostNode.statics.delete = function() {};
+PostNode.statics.createPostNode = async function(args, context) {
+  console.log(context.req.user.id);
   return mongoose.models.PostNode.create({
-    user: context.req.token,
+    user: context.req.user.id,
     published: args.published,
     publishedDate: args.published ? Date.now() : undefined
   });
 };
 
-PostNode.publish = async function(args, context) {
+PostNode.statics.publish = async function(args, context) {
   const postNode = mongoose.models.PostNode.findOne(args);
   if (postNode.user !== context.cookie.token) throw UNATHORIZED_USER;
   return mongoose.models.PostNode.findOneAndUpdate(args, {
@@ -87,22 +105,22 @@ PostNode.publish = async function(args, context) {
     publishedDate: Date.now()
   });
 };
-PostNode.unPublish = function() {};
-PostNode.flagScam = function() {};
-PostNode.flagCopyRightsViolation = function() {};
-PostNode.flagPrivacy = function() {};
-PostNode.addLike = function() {};
-PostNode.addDislike = function() {};
-PostNode.flagNudity = function() {};
-PostNode.flagSex = function() {};
-PostNode.flagViolence = function() {};
-PostNode.flagWeapons = function() {};
-PostNode.flagFrightening = function() {};
-PostNode.flagGross = function() {};
-PostNode.flagSmoking = function() {};
-PostNode.flagDrugs = function() {};
-PostNode.flagAlcohol = function() {};
-PostNode.flagLanguage = function() {};
+PostNode.statics.unPublish = function() {};
+PostNode.statics.flagScam = function() {};
+PostNode.statics.flagCopyRightsViolation = function() {};
+PostNode.statics.flagPrivacy = function() {};
+PostNode.statics.addLike = function() {};
+PostNode.statics.addDislike = function() {};
+PostNode.statics.flagNudity = function() {};
+PostNode.statics.flagSex = function() {};
+PostNode.statics.flagViolence = function() {};
+PostNode.statics.flagWeapons = function() {};
+PostNode.statics.flagFrightening = function() {};
+PostNode.statics.flagGross = function() {};
+PostNode.statics.flagSmoking = function() {};
+PostNode.statics.flagDrugs = function() {};
+PostNode.statics.flagAlcohol = function() {};
+PostNode.statics.flagLanguage = function() {};
 
 if (mongoose.models && mongoose.models.PostNode)
   delete mongoose.models.PostNode;

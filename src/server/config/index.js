@@ -38,6 +38,10 @@ module.exports = app => {
   app.use(routeCache.hitCache);
   app.use(async (req, res, next) => {
     try {
+      req.user = {
+        id:
+          req.cookies.token || req.headers.authorization.replace('Bearer ', '')
+      };
       req.db = await dbPromise;
       next();
     } catch (e) {

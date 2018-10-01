@@ -43,8 +43,11 @@ self.addEventListener('fetch', function(event) {
   if (
     event.request.url.includes('sockjs-node/info') ||
     ['POST', 'PUT', 'PATCH'].includes(event.request.method)
-  )
-    return fetch(event.request);
+  ) {
+    // eslint-disable-next-line no-console
+    console.log('Skipping Checks');
+    return;
+  }
   event.respondWith(
     (async () => {
       try {

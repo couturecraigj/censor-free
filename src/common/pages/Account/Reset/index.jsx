@@ -19,9 +19,9 @@ const LOGIN = gql`
       token: $token
     ) {
       token
-      user {
+      me {
         id
-        name
+        userName
       }
     }
   }

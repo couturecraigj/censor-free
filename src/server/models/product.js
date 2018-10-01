@@ -11,7 +11,7 @@ const Product = new Schema(
   }
 );
 
-Product.statics.create = function() {};
+Product.statics.createProduct = function() {};
 Product.statics.edit = function() {};
 Product.statics.delete = function() {};
 Product.statics.addRetailer = function() {};

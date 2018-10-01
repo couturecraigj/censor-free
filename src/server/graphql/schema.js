@@ -19,6 +19,12 @@ module.exports = app => {
         // eslint-disable-next-line no-console
         log: console.log
       },
+      context: ({ req, res }) => ({
+        // authScope: getScope(req.headers.authorization)
+        db: req.db,
+        res,
+        req
+      }),
       resolverValidationOptions: {
         requireResolversForResolveType: false
       }

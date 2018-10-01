@@ -1,5 +1,13 @@
+const Answer = require('../../models/answer');
 const Photo = require('../../models/photo');
+const Question = require('../../models/question');
+const Review = require('../../models/review');
+const Story = require('../../models/story');
+const Thought = require('../../models/thought');
+const Tip = require('../../models/tip');
 const User = require('../../models/user');
+const Video = require('../../models/video');
+const WebPage = require('../../models/webPage');
 
 const AUTHENTICATION_ERROR = new Error('Authentication Error');
 
@@ -13,9 +21,14 @@ const resolvers = {
         $or: [{ userName: args.nameEmail }, { email: args.nameEmail }]
       });
 
-      if (!user) throw AUTHENTICATION_ERROR;
-      if (!(await user.passwordsMatch(args.password)))
+      if (!user) {
+        console.log('No User');
         throw AUTHENTICATION_ERROR;
+      }
+      if (!(await user.passwordsMatch(args.password))) {
+        console.log('Passwords do not match');
+        throw AUTHENTICATION_ERROR;
+      }
       res.cookie('token', user.id, { httpOnly: true, maxAge: 9999999 });
       return {
         user,
@@ -43,8 +56,35 @@ const resolvers = {
         user
       };
     },
+    addAnswer: async (parent, args, context) => {
+      return Answer.createAnswer(args, context);
+    },
+    addComment: async (parent, args, context) => {
+      return Answer.createAnswer(args, context);
+    },
     addPhoto: async (parent, args, context) => {
-      return await Photo.createPhoto(args, context);
+      return Photo.createPhoto(args, context);
+    },
+    addQuestion: async (parent, args, context) => {
+      return Question.createQuestion(args, context);
+    },
+    addReview: async (parent, args, context) => {
+      return Review.createReview(args, context);
+    },
+    addStory: async (parent, args, context) => {
+      return Story.createStory(args, context);
+    },
+    addThought: async (parent, args, context) => {
+      return Thought.createThought(args, context);
+    },
+    addTip: async (parent, args, context) => {
+      return Tip.createTip(args, context);
+    },
+    addVideo: async (parent, args, context) => {
+      return Video.createVideo(args, context);
+    },
+    addWebPage: async (parent, args, context) => {
+      return WebPage.createWebPage(args, context);
     }
   },
   User: async (parent, args) => {

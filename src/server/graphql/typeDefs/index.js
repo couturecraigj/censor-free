@@ -12,6 +12,7 @@ const typeDefs = gql`
     id: ID!
     title: String!
     description: String!
+    comments: [Comment]!
     created: AlterationStamp!
     modified: AlterationStamp
   }
@@ -63,6 +64,7 @@ const typeDefs = gql`
     highlights: [Highlight]!
     title: String!
     description: String!
+    comments: [Comment]!
     created: AlterationStamp!
     modified: AlterationStamp
   }
@@ -71,6 +73,7 @@ const typeDefs = gql`
     highlights: [Highlight]!
     title: String!
     description: String!
+    comments: [Comment]!
     excerpt: String!
     created: AlterationStamp!
     modified: AlterationStamp
@@ -103,6 +106,7 @@ const typeDefs = gql`
     title: String!
     description: String!
     products: [Product!]
+    comments: [Comment]!
     created: AlterationStamp!
     modified: AlterationStamp
   }
@@ -129,6 +133,7 @@ const typeDefs = gql`
     highlights: [Highlight]!
     title: String!
     description: String!
+    comments: [Comment]!
     height: Int
     width: Int
     imgUri: String!
@@ -141,6 +146,7 @@ const typeDefs = gql`
     title: String!
     description: String!
     imgs: [Photo]
+    comments: [Comment]!
     img: Photo
     uri: String!
     created: AlterationStamp!
@@ -151,6 +157,7 @@ const typeDefs = gql`
     highlights: [Highlight]!
     title: String!
     description: String!
+    comments: [Comment]!
     imgs: [Photo]
     img: Photo
     uri: String!
@@ -229,13 +236,22 @@ const typeDefs = gql`
       confirmPassword: String!
     ): Authentication!
     logIn(nameEmail: String!, password: String!): Authentication!
-    addPhoto(title: String!): Photo
+    addPhoto(
+      title: String!
+      description: String!
+      height: Int!
+      width: Int!
+      imgUri: String!
+    ): Photo
+    addAnswer(title: String!): Answer
+    addComment(description: String!): Comment
     addThought(title: String!): Thought
     addQuestion(title: String!): Question
     addReview(title: String!): Review
     addStory(title: String!): Story
     addTip(title: String!): Tip
     addVideo(title: String!): Video
+    addWebPage(title: String!): WebPage
   }
 
   type Query {
