@@ -9,7 +9,7 @@ const config = __PROD__
   : require('./utilities/bundling/development/service-worker/webpack.config.js');
 
 gulp.task('default', function() {
-  gulp
+  return gulp
     .src('src/service-worker/sw.js')
     .pipe(webpackStream(config, webpack))
     .on('error', function(err) {
