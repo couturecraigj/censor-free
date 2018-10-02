@@ -41,27 +41,17 @@ module.exports = {
   },
   stats: 'errors-only',
   devServer: {
-    noInfo: true
+    noInfo: true,
+    color: true
     // contentBase: './dist',
   },
   module: {
     rules: [
       {
         enforce: 'pre',
-        test: /\.[jt]sx?$/,
+        test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         loader: 'eslint-loader'
-      },
-      {
-        test: /\.tsx?$/,
-        exclude: /(node_modules|bower_components)/,
-        use: [
-          {
-            loader: 'babel-loader',
-            options: babelOptions
-          },
-          'awesome-typescript-loader'
-        ]
       },
       {
         test: /\.jsx?$/,
@@ -84,6 +74,9 @@ module.exports = {
       'process.env.INTROSPECT_GRAPHQL_SCHEMA': JSON.stringify(
         process.env.NODE_ENV === 'production'
       )
+    }),
+    new webpack.BannerPlugin({
+      banner: "require('source-map-support').install();"
     })
   ],
   target: 'node',

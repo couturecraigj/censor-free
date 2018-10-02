@@ -29,4 +29,4 @@ Group.statics.addWebPage = function() {};
 
 if (mongoose.models && mongoose.models.Group) delete mongoose.models.Group;
 
-module.exports = mongoose.model('Group', Group);
+export default mongoose.model('Group', Group);

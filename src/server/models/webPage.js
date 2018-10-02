@@ -1,5 +1,6 @@
+import PostNode from './postNode';
+
 const mongoose = require('mongoose');
-const PostNode = require('./postNode');
 
 const { Schema } = mongoose;
 const WebPage = new Schema(
@@ -24,4 +25,4 @@ WebPage.statics.addComment = function() {};
 
 if (mongoose.models && mongoose.models.WebPage) delete mongoose.models.WebPage;
 
-module.exports = mongoose.model('WebPage', WebPage);
+export default mongoose.model('WebPage', WebPage);

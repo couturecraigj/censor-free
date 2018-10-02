@@ -5,7 +5,7 @@ const unionInterface = (mockMap, list) => {
   return mockMap[list[casual.integer(0, list.length - 1)]](casual.uuid);
 };
 
-// const User = require('../../models/user');
+// const User = require('../../models/user').default;
 
 const mocks = {
   Id: () => Math.random(),

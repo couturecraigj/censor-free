@@ -36,4 +36,4 @@ Company.statics.addWebPage = function() {};
 
 if (mongoose.models && mongoose.models.Company) delete mongoose.models.Company;
 
-module.exports = mongoose.model('Company', Company);
+export default mongoose.model('Company', Company);

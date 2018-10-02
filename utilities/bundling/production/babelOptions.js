@@ -12,7 +12,14 @@ module.exports = {
     // ["@babel/plugin-proposal-decorators", { legacy: true }],
     ['@babel/plugin-proposal-class-properties', { loose: true }],
     '@babel/plugin-transform-runtime',
-    '@babel/plugin-proposal-object-rest-spread',
+    '@babel/plugin-syntax-object-rest-spread',
+    [
+      '@babel/plugin-proposal-object-rest-spread',
+      {
+        loose: true,
+        useBuiltIns: true
+      }
+    ],
     'transform-react-remove-prop-types',
     // "react-hot-loader/babel",
     'loadable-components/babel'

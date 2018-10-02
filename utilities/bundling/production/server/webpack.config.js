@@ -12,7 +12,8 @@ babelOptions.presets.unshift([
   {
     targets: {
       node: 'current'
-    }
+    },
+    modules: 'commonjs'
   }
 ]);
 const cwd = process.cwd();

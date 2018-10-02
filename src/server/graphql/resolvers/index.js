@@ -5,7 +5,7 @@ const Review = require('../../models/review');
 const Story = require('../../models/story');
 const Thought = require('../../models/thought');
 const Tip = require('../../models/tip');
-const User = require('../../models/user');
+const User = require('../../models/user').default;
 const Video = require('../../models/video');
 const WebPage = require('../../models/webPage');
 

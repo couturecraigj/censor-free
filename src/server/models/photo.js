@@ -1,5 +1,6 @@
+import PostNode from './postNode';
+
 const mongoose = require('mongoose');
-const PostNode = require('./postNode');
 
 const { Schema } = mongoose;
 const Photo = new Schema(
@@ -29,4 +30,4 @@ Photo.statics.addComment = function() {};
 
 if (mongoose.models && mongoose.models.Photo) delete mongoose.models.Photo;
 
-module.exports = mongoose.model('Photo', Photo);
+export default mongoose.model('Photo', Photo);

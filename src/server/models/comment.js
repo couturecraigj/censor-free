@@ -1,5 +1,6 @@
+import PostNode from './postNode';
+
 const mongoose = require('mongoose');
-const PostNode = require('./postNode');
 
 const { Schema } = mongoose;
 const Comment = new Schema(
@@ -26,4 +27,4 @@ Comment.statics.edit = function() {};
 
 if (mongoose.models && mongoose.models.Comment) delete mongoose.models.Comment;
 
-module.exports = mongoose.model('Comment', Comment);
+export default mongoose.model('Comment', Comment);

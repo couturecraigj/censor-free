@@ -1,10 +1,35 @@
 /* eslint-disable no-console */
-// require("@babel/polyfill");
-import app from '.';
-
+require('@babel/polyfill');
 const chalk = require('chalk');
 
+const app = require('./index.jsx');
 const setup = require('./setup');
+
+const completedFunction = (port, graphQlPath) => `
+
+${chalk.black.bgGreenBright(
+  `
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Everything loaded just fine now you can navigate to one of the below options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+)}
+${chalk.grey.bgBlackBright(
+  '****************************************************************************'
+)}
+${chalk.grey.bgBlackBright('****************')} ${chalk.green(
+  `Website ==>`
+)} ${chalk.blue.underline.bold(
+  `http://localhost:${port}/`
+)}        ${chalk.grey.bgBlackBright('*****************')}
+${chalk.grey.bgBlackBright('****************')} ${chalk.green(
+  `GraphQL ==>`
+)} ${chalk.blue.underline.bold(
+  `http://localhost:${port}${graphQlPath}`
+)} ${chalk.grey.bgBlackBright('*****************')}
+${chalk.grey.bgBlackBright(
+  '****************************************************************************'
+)}
+`;
 
 function startServer() {
   return new Promise((resolve, reject) => {
@@ -12,61 +37,42 @@ function startServer() {
 
     httpServer.once('error', err => {
       if (err.code === 'EADDRINUSE') {
-        reject(err);
+        return reject(err);
       }
+      reject(err);
     });
 
     httpServer.once('listening', () => resolve(httpServer));
   }).then(httpServer => {
     const { port } = httpServer.address();
-    console.info(
-      `
-
-${chalk.black.bgGreenBright(
-        `
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Everything loaded just fine now you can navigate to one of the below options
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
-      )}
-${chalk.grey.bgBlackBright(
-        '****************************************************************************'
-      )}
-${chalk.grey.bgBlackBright('****************')} ${chalk.green(
-        `Website ==>`
-      )} ${chalk.blue.underline.bold(
-        `http://localhost:${port}/`
-      )}        ${chalk.grey.bgBlackBright('*****************')}
-${chalk.grey.bgBlackBright('****************')} ${chalk.green(
-        `GraphQL ==>`
-      )} ${chalk.blue.underline.bold(
-        `http://localhost:${port}${app.get('apollo').graphqlPath}`
-      )} ${chalk.grey.bgBlackBright('*****************')}
-${chalk.grey.bgBlackBright(
-        '****************************************************************************'
-      )}
-`
-    );
+    console.info(completedFunction(port, app.get('apollo').graphqlPath));
 
     setup(app, httpServer);
 
     // Hot Module Replacement API
     if (module.hot) {
-      module.hot.decline('./database');
       let currentApp = app;
-      module.hot.accept('./index', () => {
+      module.hot.accept('./index.jsx', () => {
         httpServer.removeListener('request', currentApp);
-        import('.')
+        import('./index.jsx')
           .then(({ default: nextApp }) => {
             currentApp = nextApp;
             setup(currentApp, httpServer);
             httpServer.on('request', currentApp);
+
             console.log('HttpServer reloaded!');
+            console.info(
+              completedFunction(port, app.get('apollo').graphqlPath)
+            );
           })
           .catch(err => console.error(err));
       });
 
       // For reload main module (self). It will be restart http-server.
-      module.hot.accept(err => console.error(err));
+      module.hot.accept(err => {
+        console.log('~~~Error while compiling~~~');
+        console.error(err);
+      });
       module.hot.dispose(() => {
         console.log('Disposing entry module...');
         httpServer.close();

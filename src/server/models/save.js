@@ -15,4 +15,4 @@ Save.statics.addComment = function() {};
 
 if (mongoose.models && mongoose.models.Save) delete mongoose.models.Save;
 
-module.exports = mongoose.model('Save', Save);
+export default mongoose.model('Save', Save);

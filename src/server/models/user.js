@@ -151,9 +151,9 @@ User.methods.passwordsMatch = async function(password) {
   return bcrypt.compare(password, this.hash);
 };
 
-User.statics.getResetToken = async function({ email }) {
+User.statics.getResetToken = async function({ email, userName }) {
   const timeOut = Date.now() + 360000;
-  const user = await mongoose.models.User.findOne({ email });
+  const user = await mongoose.models.User.findOne({ ...{ email, userName } });
   if (!user) throw NO_USER_BY_THAT_EMAIL;
   const salt = await bcrypt.genSalt(15);
   const token = await bcrypt
@@ -215,4 +215,4 @@ User.statics.addWebPage = function() {};
 
 if (mongoose.models && mongoose.models.User) delete mongoose.models.User;
 
-module.exports = mongoose.model('User', User);
+export default mongoose.model('User', User);

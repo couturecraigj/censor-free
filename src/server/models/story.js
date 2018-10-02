@@ -1,5 +1,6 @@
+import PostNode from './postNode';
+
 const mongoose = require('mongoose');
-const PostNode = require('./postNode');
 
 const { Schema } = mongoose;
 const Story = new Schema(
@@ -23,4 +24,4 @@ Story.statics.addComment = function() {};
 
 if (mongoose.models && mongoose.models.Story) delete mongoose.models.Story;
 
-module.exports = mongoose.model('Story', Story);
+export default mongoose.model('Story', Story);

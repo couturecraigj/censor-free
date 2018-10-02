@@ -48,4 +48,4 @@ Product.statics.addWebPage = function() {};
 
 if (mongoose.models && mongoose.models.Product) delete mongoose.models.Product;
 
-module.exports = mongoose.model('Product', Product);
+export default mongoose.model('Product', Product);

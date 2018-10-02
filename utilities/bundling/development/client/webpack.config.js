@@ -23,7 +23,14 @@ module.exports = {
   },
   devServer: {
     contentBase: './dist',
+    // open: true,
+    public: 'http://localhost:8080/',
+    // clientLogLevel: 'warning',
     noInfo: true,
+    overlay: {
+      warnings: true,
+      errors: true
+    },
     // quiet: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
@@ -48,12 +55,12 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        enforce: 'pre',
-        test: /\.jsx?$/,
-        exclude: /(node_modules|bower_components)/,
-        loader: 'eslint-loader'
-      },
+      // {
+      //   enforce: 'pre',
+      //   test: /\.jsx?$/,
+      //   exclude: /(node_modules|bower_components)/,
+      //   loader: 'eslint-loader'
+      // },
       {
         test: /\.tsx?$/,
         exclude: /(node_modules|bower_components)/,

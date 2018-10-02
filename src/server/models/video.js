@@ -1,5 +1,6 @@
+import PostNode from './postNode';
+
 const mongoose = require('mongoose');
-const PostNode = require('./postNode');
 
 const { Schema } = mongoose;
 const Video = new Schema(
@@ -24,4 +25,4 @@ Video.statics.addComment = function() {};
 
 if (mongoose.models && mongoose.models.Video) delete mongoose.models.Video;
 
-module.exports = mongoose.model('Video', Video);
+export default mongoose.model('Video', Video);

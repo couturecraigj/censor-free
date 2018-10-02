@@ -1,7 +1,7 @@
+import User from './user';
+
 const mongoose = require('mongoose');
 const uuid = require('uuid/v4');
-
-const User = require('./user');
 
 const { Schema } = mongoose;
 const Session = new Schema(
@@ -16,11 +16,9 @@ const Session = new Schema(
 
 Session.statics.createSession = async function({ user }) {
   const hash = uuid();
-  const session = await mongoose.models.Session.create(
-    Object.assign({ user }, { hash })
-  );
+  const session = await mongoose.models.Session.create({ hash, user });
   await User.findByIdAndUpdate(user, {
-    $addToSet: { sessions: session.hash }
+    $addToSet: { sessions: hash }
   });
   return session.hash;
 };
@@ -33,4 +31,4 @@ Session.statics.findUser = async function({ session: hash }) {
 
 if (mongoose.models && mongoose.models.Session) delete mongoose.models.Session;
 
-module.exports = mongoose.model('Session', Session);
+export default mongoose.model('Session', Session);

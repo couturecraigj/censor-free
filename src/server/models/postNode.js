@@ -123,4 +123,4 @@ PostNode.statics.flagLanguage = function() {};
 
 if (mongoose.models && mongoose.models.PostNode)
   delete mongoose.models.PostNode;
-module.exports = mongoose.model('PostNode', PostNode);
+export default mongoose.model('PostNode', PostNode);
