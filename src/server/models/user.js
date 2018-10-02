@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
+import Person from './person';
 
 const EMAIL_ALREADY_EXISTS = new Error('Email already exists');
 const USERNAME_ALREADY_EXISTS = new Error('Username already exists');
@@ -12,8 +13,8 @@ const { Schema } = mongoose;
 const User = new Schema(
   {
     // UNIQUE
-    userName: { type: String },
-    email: { type: String },
+    userName: { type: String, unique: true },
+    email: { type: String, unique: true, lowercase: true },
 
     // SECURE
     hash: { type: String },
@@ -70,7 +71,12 @@ const User = new Schema(
         ]
       }
     ],
-    emails: [String],
+    emails: [
+      { email: { type: String }, public: { type: Boolean, default: false } }
+    ],
+    person: {
+      type: Schema.Types.ObjectId
+    },
 
     // PRIVACY
     privacySetting: { type: String, enum: ['Only', 'Except'] },
@@ -90,7 +96,8 @@ const User = new Schema(
     exceptUserList: [Schema.Types.ObjectId],
     userType: {
       type: String,
-      enum: ['User', 'Viewer', 'Advanced']
+      enum: ['Person', 'Viewer', 'Advanced'],
+      default: 'Person'
     },
     authorization: [
       {
@@ -115,6 +122,14 @@ const User = new Schema(
   }
 );
 
+User.pre('validate', async function() {
+  const that = this.toJSON();
+  if (!that.emails.some(({ email }) => email === this.email)) {
+    this.emails.push({ email: this.email });
+  }
+  this.personObject = this.toJSON();
+});
+
 User.virtual('password').set(function(value) {
   this._password = value;
 });
@@ -133,6 +148,7 @@ User.pre('save', async function() {
     const hash = await bcrypt.hash(this._password, salt);
     this.set('hash', hash);
   }
+
   if (this.isNew) {
     if (this._password !== this._confirmPassword) throw PASSWORDS_DO_NOT_MATCH;
     if (this.email !== this._confirmEmail) throw EMAILS_DO_NOT_MATCH;
@@ -145,15 +161,19 @@ User.pre('save', async function() {
     )
       throw USERNAME_ALREADY_EXISTS;
   }
+  if (this.userType === 'Person') {
+    const person = await Person.createFromUser(this.personObject);
+    this.person = person.id;
+  }
 });
 
 User.methods.passwordsMatch = async function(password) {
   return bcrypt.compare(password, this.hash);
 };
 
-User.statics.getResetToken = async function({ email, userName }) {
+User.statics.getResetToken = async function({ email }) {
   const timeOut = Date.now() + 360000;
-  const user = await mongoose.models.User.findOne({ email, userName });
+  const user = await mongoose.models.User.findOne({ email });
   if (!user) throw NO_USER_BY_THAT_EMAIL;
   const salt = await bcrypt.genSalt(15);
   const token = await bcrypt
@@ -196,13 +216,6 @@ User.statics.resetPassword = async function({
 };
 
 User.statics.invite = function() {};
-User.statics.requestFriendship = function() {};
-User.statics.acceptFriendship = function() {};
-User.statics.rejectFriendship = function() {};
-User.statics.blockUser = function() {};
-User.statics.unblockUser = function() {};
-User.statics.changeProfileContent = function() {};
-User.statics.follow = function() {};
 User.statics.addComment = function() {};
 User.statics.addPhoto = function() {};
 User.statics.addQuestion = function() {};

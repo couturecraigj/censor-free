@@ -16,7 +16,10 @@ class TextInput extends React.Component {
       ready: false,
       uploading: false,
       reader: new FileReader(),
-      progress: 0
+      progress: 0,
+      value: '',
+      height: '',
+      width: ''
     };
     this.resumable = new Resumable({
       target: '/files',
@@ -28,6 +31,16 @@ class TextInput extends React.Component {
     this.input = React.createRef();
     const { reader } = this.state;
     reader.onload = e => {
+      const img = new Image();
+
+      img.onload = () => {
+        this.setState({
+          width: +img.width,
+          height: +img.height
+        }); // image is loaded; sizes are available
+      };
+
+      img.src = reader.result;
       this.setState({
         src: e.target.result
       });
@@ -38,10 +51,12 @@ class TextInput extends React.Component {
     this.resumable.on('fileAdded', file => {
       // this.resumable.upload();
       this.setState({
-        ready: true
+        ready: true,
+        value: file.file.name
       });
       if (file.file.type.includes('image')) {
         const { reader } = this.state;
+
         reader.readAsDataURL(file.file);
       }
     });
@@ -100,8 +115,16 @@ class TextInput extends React.Component {
   //   }
   // };
   render() {
-    const { label, id, ...props } = this.props;
-    const { ready, src, progress, uploading } = this.state;
+    const { label, id, name, ...props } = this.props;
+    const {
+      ready,
+      src,
+      value,
+      progress,
+      height,
+      width,
+      uploading
+    } = this.state;
     return (
       <React.Fragment>
         <label htmlFor={id}>{label}</label>
@@ -115,6 +138,9 @@ class TextInput extends React.Component {
           <span ref={this.input} {...props} id={id}>
             Upload
           </span>
+          <input name={name} hidden readOnly value={value} />
+          <input name="height" type="number" hidden readOnly value={height} />
+          <input name="width" type="number" hidden readOnly value={width} />
           <Progress progress={progress} />
           {ready && !uploading && !progress ? (
             <button onClick={this.handleUpload} type="button">
@@ -144,6 +170,7 @@ class TextInput extends React.Component {
 
 TextInput.propTypes = {
   label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired
 };
 

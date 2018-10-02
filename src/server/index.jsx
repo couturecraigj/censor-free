@@ -14,6 +14,8 @@ import routeCache from './routeCache';
 import config from './config';
 import setup from './setup';
 
+const __PROD__ = process.env.NODE_ENV === 'production';
+
 const app = express();
 
 config(app);
@@ -84,8 +86,14 @@ app.use(function errorHandler(err, req, res, next) {
   if (res.headersSent) {
     return next(err);
   }
+  // console.log(req.url);
+  // TODO: make it so Errors send everything to the Error Page
   res.status(500);
-  res.send(`${err.message}\n${err.stack}`);
+  if (__PROD__) {
+    res.send('Internal Server Error');
+  } else {
+    res.send(`${err.message}\n${err.stack}`);
+  }
 });
 if (module === require.main) {
   app.listen(app.get('port'), () => {

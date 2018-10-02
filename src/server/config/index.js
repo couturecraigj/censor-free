@@ -7,6 +7,7 @@ import path from 'path';
 import resumable from 'express-resumablejs';
 import apolloSchemaSetup from '../graphql/schema';
 import DataBase from '../database';
+import Photo from '../models/photo';
 import routeCache from '../routeCache';
 
 const cwd = process.cwd();
@@ -51,16 +52,26 @@ export default app => {
   //   res.json(req.csrfToken());
   // });
   app.use('/files', (req, res, next) => {
+    if (!req.user.id)
+      return next(new Error('Cannot upload files when you are not logged in'));
     const dir = path.join(cwd, 'uploads', req.cookies.token);
-    fs.mkdir(dir, err => {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+    return resumable({
       // eslint-disable-next-line no-console
-      if (err) console.error(err);
-      return resumable({
-        // eslint-disable-next-line no-console
-        log: console.log,
-        dest: dir
-      })(req, res, next);
-    });
+      log: console.log,
+      dest: dir
+    })(req, res, next);
+  });
+  app.get('/photo/:width/:height/:folder/:name', async (req, res, next) => {
+    const { width, height, name, folder } = req.params;
+    try {
+      await Photo.getImageOfCertainSize(folder, name, { width, height }, res);
+    } catch (e) {
+      console.error(e);
+      next(new Error('Internal Server Error'));
+    }
   });
   app.post('/file', upload.single('avatar'), function(req, res) {
     res.send(req.file);

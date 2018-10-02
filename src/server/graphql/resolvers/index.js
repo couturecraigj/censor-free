@@ -1,13 +1,13 @@
-const Answer = require('../../models/answer');
-const Photo = require('../../models/photo');
-const Question = require('../../models/question');
-const Review = require('../../models/review');
-const Story = require('../../models/story');
-const Thought = require('../../models/thought');
-const Tip = require('../../models/tip');
-const User = require('../../models/user').default;
-const Video = require('../../models/video');
-const WebPage = require('../../models/webPage');
+import Answer from '../../models/answer';
+import Photo from '../../models/photo';
+import Question from '../../models/question';
+import Review from '../../models/review';
+import Story from '../../models/story';
+import Thought from '../../models/thought';
+import Tip from '../../models/tip';
+import User from '../../models/user';
+import Video from '../../models/video';
+import WebPage from '../../models/webPage';
 
 const AUTHENTICATION_ERROR = new Error('Authentication Error');
 

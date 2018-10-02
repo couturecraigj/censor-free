@@ -50,6 +50,8 @@ const list = [
 
 const Div = styled.div`
   background: #eee;
+  max-height: 100%;
+  min-height: 0;
   display: grid;
   padding: 1rem;
   border-radius: 0.4rem;

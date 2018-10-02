@@ -120,6 +120,13 @@ export const UserList = loadable(
   }
 );
 
+export const ErrorPage = loadable(
+  () => import(/* webpackChunkName: 'error-page' */ './Error'),
+  {
+    LoadingComponent
+  }
+);
+
 export const Video = loadable(
   () => import(/* webpackChunkName: 'video' */ './Video'),
   {

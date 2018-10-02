@@ -23,7 +23,7 @@ const SIGN_UP = gql`
       userName: $userName
     ) {
       token
-      user {
+      me {
         id
         userName
         email

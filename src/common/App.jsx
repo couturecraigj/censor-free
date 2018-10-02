@@ -47,6 +47,7 @@ const App = () => (
         <Route path="/user/:id/:slug?" component={Routes.User} />
         <Route path="/video/list" exact component={Routes.VideoList} />
         <Route path="/video/:id/:slug?" component={Routes.Video} />
+        <Route component={Routes.ErrorPage} />
       </Switch>
     </Layout>
   </Div>
