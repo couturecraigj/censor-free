@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 
 const __INTROSPECTION__ = process.env.INTROSPECT_GRAPHQL_SCHEMA;
-module.exports = async app => {
+export default async app => {
   if (__INTROSPECTION__) {
     const data = require('../../../fragmentTypes.json');
     app.set('fragments', data);

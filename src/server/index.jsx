@@ -1,19 +1,19 @@
-const express = require('express');
-const fetch = require('node-fetch');
-const React = require('react');
-const ReactDOMServer = require('react-dom/server');
-const { ApolloProvider, getDataFromTree } = require('react-apollo');
-const { getLoadableState } = require('loadable-components/server');
-const { Helmet } = require('react-helmet');
-const { ServerStyleSheet } = require('styled-components');
-const { StaticRouter } = require('react-router-dom');
+import express from 'express';
+import fetch from 'node-fetch';
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+import { ApolloProvider, getDataFromTree } from 'react-apollo';
+import { getLoadableState } from 'loadable-components/server';
+import { Helmet } from 'react-helmet';
+import { ServerStyleSheet } from 'styled-components';
+import { StaticRouter } from 'react-router-dom';
+import apollo from '../common/apollo';
+import App from '../common/App';
+import html from './html';
+import routeCache from './routeCache';
+import config from './config';
 
-const apollo = require('../common/apollo').default;
-const App = require('../common/App').default;
-const config = require('./config');
-const html = require('./html');
-const routeCache = require('./routeCache');
-const setup = require('./setup');
+import setup from './setup';
 
 const app = express();
 
@@ -96,4 +96,4 @@ if (module === require.main) {
   });
 }
 
-module.exports = app;
+export default app;

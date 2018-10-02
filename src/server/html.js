@@ -8,7 +8,7 @@ const script = !__PROD__
       require('../../webpack-assets.json').app.js
     }"></script>`;
 
-module.exports = ({ head, body, foot, attrs = {} }) => compress`
+export default ({ head, body, foot, attrs = {} }) => compress`
 <!DOCTYPE html>
 <html lang="en" ${attrs.html}>
 <head>

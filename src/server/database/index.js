@@ -7,7 +7,7 @@ Database.connect(
 
 require('../models/user');
 
-module.exports = {
+export default {
   get: async () => {
     return Database;
   }

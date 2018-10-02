@@ -1,3 +1,7 @@
+import routeCache from '../routeCache';
+import DataBase from '../database';
+import apolloSchemaSetup from '../graphql/schema';
+
 const cookieParser = require('cookie-parser');
 // const csrf = require('csurf');
 const express = require('express');
@@ -6,13 +10,8 @@ const multer = require('multer');
 const path = require('path');
 const resumable = require('express-resumablejs');
 
-const DataBase = require('../database');
-const routeCache = require('../routeCache');
-
 const cwd = process.cwd();
 const dbPromise = DataBase.get();
-
-const apolloSchemaSetup = require('../graphql/schema');
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
@@ -29,7 +28,7 @@ const upload = multer({
 // const csrfProtection = csrf({ cookie: true });
 const port = 3000;
 
-module.exports = app => {
+export default app => {
   app.use(cookieParser());
   // app.use(csrfProtection);
   app.use(express.static('public'));

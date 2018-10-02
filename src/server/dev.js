@@ -1,9 +1,8 @@
 /* eslint-disable no-console */
-require('@babel/polyfill');
-const chalk = require('chalk');
+import setup from './setup';
+import app from '.';
 
-const app = require('./index.jsx');
-const setup = require('./setup');
+const chalk = require('chalk');
 
 const completedFunction = (port, graphQlPath) => `
 
@@ -52,9 +51,9 @@ function startServer() {
     // Hot Module Replacement API
     if (module.hot) {
       let currentApp = app;
-      module.hot.accept('./index.jsx', () => {
+      module.hot.accept('.', () => {
         httpServer.removeListener('request', currentApp);
-        import('./index.jsx')
+        import('.')
           .then(({ default: nextApp }) => {
             currentApp = nextApp;
             setup(currentApp, httpServer);

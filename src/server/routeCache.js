@@ -34,4 +34,4 @@ const routeCache = {
     return string;
   }
 };
-module.exports = routeCache;
+export default routeCache;

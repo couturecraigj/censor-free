@@ -9,7 +9,7 @@ const resolvers = require('./resolvers');
 const typeDefs = require('./typeDefs');
 
 const __DEV__ = process.env.NODE_ENV === 'development';
-module.exports = app => {
+export default app => {
   let schema;
   if (__DEV__) {
     schema = makeExecutableSchema({
