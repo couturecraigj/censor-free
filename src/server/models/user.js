@@ -85,6 +85,7 @@ const User = new Schema(
         'Mobile'
       ]
     },
+    sessions: [String],
     onlyUserList: [Schema.Types.ObjectId],
     exceptUserList: [Schema.Types.ObjectId],
     userType: {
