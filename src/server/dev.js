@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
+import chalk from 'chalk';
 import setup from './setup';
 import app from '.';
-
-const chalk = require('chalk');
 
 const completedFunction = (port, graphQlPath) => `
 

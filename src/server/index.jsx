@@ -12,7 +12,6 @@ import App from '../common/App';
 import html from './html';
 import routeCache from './routeCache';
 import config from './config';
-
 import setup from './setup';
 
 const app = express();

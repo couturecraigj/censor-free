@@ -1,5 +1,6 @@
-const casual = require('casual');
-const { MockList } = require('apollo-server');
+import { MockList } from 'apollo-server';
+
+import casual from 'casual';
 
 const unionInterface = (mockMap, list) => {
   return mockMap[list[casual.integer(0, list.length - 1)]](casual.uuid);
@@ -271,4 +272,4 @@ const mocks = {
   })
 };
 
-module.exports = mocks;
+export default mocks;

@@ -1,11 +1,9 @@
-const Database = require('mongoose');
+import Database from 'mongoose';
 
 Database.connect(
   'mongodb://localhost/no_censor',
   { useNewUrlParser: true }
 );
-
-require('../models/user');
 
 export default {
   get: async () => {

@@ -11,5 +11,4 @@ const streamify = (res, string) => {
   return string.split('\\n').forEach(v => res.write(v));
 };
 
-module.exports.compress = compress;
-module.exports.streamify = streamify;
+export { compress, streamify };

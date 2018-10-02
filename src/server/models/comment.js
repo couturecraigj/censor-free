@@ -1,6 +1,5 @@
+import mongoose from 'mongoose';
 import PostNode from './postNode';
-
-const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const Comment = new Schema(

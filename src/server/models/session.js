@@ -1,7 +1,6 @@
+import mongoose from 'mongoose';
+import uuid from 'uuid/v4';
 import User from './user';
-
-const mongoose = require('mongoose');
-const uuid = require('uuid/v4');
 
 const { Schema } = mongoose;
 const Session = new Schema(

@@ -1,5 +1,5 @@
-const bcrypt = require('bcrypt');
-const mongoose = require('mongoose');
+import bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
 
 const EMAIL_ALREADY_EXISTS = new Error('Email already exists');
 const USERNAME_ALREADY_EXISTS = new Error('Username already exists');
@@ -153,7 +153,7 @@ User.methods.passwordsMatch = async function(password) {
 
 User.statics.getResetToken = async function({ email, userName }) {
   const timeOut = Date.now() + 360000;
-  const user = await mongoose.models.User.findOne({ ...{ email, userName } });
+  const user = await mongoose.models.User.findOne({ email, userName });
   if (!user) throw NO_USER_BY_THAT_EMAIL;
   const salt = await bcrypt.genSalt(15);
   const token = await bcrypt

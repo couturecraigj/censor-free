@@ -1,4 +1,4 @@
-const { compress } = require('./utils/strings');
+import { compress } from './utils/strings';
 
 const __PROD__ = process.env.NODE_ENV === 'production';
 const script = !__PROD__

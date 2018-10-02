@@ -1,12 +1,8 @@
-const {
-  makeExecutableSchema,
-  addMockFunctionsToSchema
-} = require('apollo-server');
-const { ApolloServer } = require('apollo-server-express');
-
-const mocks = require('./mocks');
-const resolvers = require('./resolvers');
-const typeDefs = require('./typeDefs');
+import { makeExecutableSchema, addMockFunctionsToSchema } from 'apollo-server';
+import { ApolloServer } from 'apollo-server-express';
+import typeDefs from './typeDefs';
+import mocks from './mocks';
+import resolvers from './resolvers';
 
 const __DEV__ = process.env.NODE_ENV === 'development';
 export default app => {

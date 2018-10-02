@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const UNATHORIZED_USER = new Error('Unathorized User');
 const { Schema } = mongoose;

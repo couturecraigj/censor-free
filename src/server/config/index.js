@@ -1,14 +1,13 @@
-import routeCache from '../routeCache';
-import DataBase from '../database';
+import cookieParser from 'cookie-parser';
+// import csrf from 'csurf';
+import express from 'express';
+import fs from 'fs';
+import multer from 'multer';
+import path from 'path';
+import resumable from 'express-resumablejs';
 import apolloSchemaSetup from '../graphql/schema';
-
-const cookieParser = require('cookie-parser');
-// const csrf = require('csurf');
-const express = require('express');
-const fs = require('fs');
-const multer = require('multer');
-const path = require('path');
-const resumable = require('express-resumablejs');
+import DataBase from '../database';
+import routeCache from '../routeCache';
 
 const cwd = process.cwd();
 const dbPromise = DataBase.get();
