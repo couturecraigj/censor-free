@@ -35,8 +35,23 @@ module.exports = app => {
     schema: __DEV__ ? schema : undefined,
     typeDefs: __DEV__ ? undefined : typeDefs,
     resolvers: __DEV__ ? undefined : resolvers,
+    playground: __DEV__
+      ? {
+          settings: {
+            'general.betaUpdates': false,
+            'editor.cursorShape': 'line',
+            'editor.fontSize': 14,
+            'editor.fontFamily':
+              "'Source Code Pro', 'Consolas', 'Inconsolata', 'Droid Sans Mono', 'Monaco', monospace",
+            'editor.theme': 'dark',
+            'editor.reuseHeaders': true,
+            'prettier.printWidth': 80,
+            'request.credentials': 'include',
+            'tracing.hideTracingResponse': true
+          }
+        }
+      : false,
     context: ({ req, res }) => ({
-      // authScope: getScope(req.headers.authorization)
       db: req.db,
       res,
       req

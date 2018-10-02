@@ -40,7 +40,8 @@ module.exports = app => {
     try {
       req.user = {
         id:
-          req.cookies.token || req.headers.authorization.replace('Bearer ', '')
+          req.cookies.token ||
+          (req.headers.authorization || '').replace('Bearer ', '')
       };
       req.db = await dbPromise;
       next();

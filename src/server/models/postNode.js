@@ -89,7 +89,6 @@ const PostNode = new Schema(
 
 PostNode.statics.delete = function() {};
 PostNode.statics.createPostNode = async function(args, context) {
-  console.log(context.req.user.id);
   return mongoose.models.PostNode.create({
     user: context.req.user.id,
     published: args.published,

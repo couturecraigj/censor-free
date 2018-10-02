@@ -22,11 +22,9 @@ const resolvers = {
       });
 
       if (!user) {
-        console.log('No User');
         throw AUTHENTICATION_ERROR;
       }
       if (!(await user.passwordsMatch(args.password))) {
-        console.log('Passwords do not match');
         throw AUTHENTICATION_ERROR;
       }
       res.cookie('token', user.id, { httpOnly: true, maxAge: 9999999 });

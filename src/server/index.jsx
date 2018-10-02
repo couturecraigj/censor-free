@@ -86,7 +86,7 @@ app.use(function errorHandler(err, req, res, next) {
     return next(err);
   }
   res.status(500);
-  res.send({ error: err });
+  res.send(`${err.message}\n${err.stack}`);
 });
 if (module === require.main) {
   app.listen(app.get('port'), () => {
