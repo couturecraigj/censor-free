@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
+import { makeDirectory } from './utils/fileSystem';
+
 const __PROD__ = process.env.NODE_ENV === 'production';
 
 const routeCache = {
@@ -14,7 +16,7 @@ const routeCache = {
   },
   preCache(string, route) {
     if (__PROD__ && routeCache.routes.includes(route)) {
-      const directoryArray = route.split('/').filter(v => v);
+      const directoryArray = makeDirectory(route);
       const file = path.join.apply(
         null,
         [process.cwd(), 'public'].concat(directoryArray, 'index.html')

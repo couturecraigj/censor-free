@@ -29,6 +29,7 @@ const upload = multer({
 const port = 3000;
 
 export default app => {
+  app.enable('strict routing');
   app.use(cookieParser());
   // app.use(csrfProtection);
   app.use(express.static('public'));
@@ -64,11 +65,17 @@ export default app => {
       dest: dir
     })(req, res, next);
   });
-  app.get('/photo/:width/:height/:folder/:name', async (req, res, next) => {
-    const { width, height, name, folder } = req.params;
+  app.get('/photo/:width/:height*', async (req, res, next) => {
+    // console.log(req.url);
+    const { width, height } = req.params;
     try {
-      await Photo.getImageOfCertainSize(folder, name, { width, height }, res);
+      await Photo.getImageOfCertainSize(
+        req.params[0],
+        { width, height, req },
+        res
+      );
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(e);
       next(new Error('Internal Server Error'));
     }

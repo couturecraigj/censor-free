@@ -4,6 +4,7 @@ import sharp from 'sharp';
 import uuid from 'uuid/v4';
 import path from 'path';
 import PostNode from './postNode';
+import { makeDirectory } from '../utils/fileSystem';
 
 const PHOTO_DOES_NOT_EXIST = new Error('Photo has not been uploaded');
 
@@ -22,11 +23,6 @@ const Photo = new Schema(
     timestamps: true
   }
 );
-
-const makeDirectory = async filepath => {
-  if (!fs.existsSync(filepath)) fs.mkdirSync(filepath);
-  return;
-};
 
 const getThumbnailDimensions = ({ width, height }, size) => {
   let multiplier = 0;
@@ -48,13 +44,8 @@ Photo.statics.createPhoto = async function(args, context) {
     context.req.user.id,
     args.imgUri
   );
-  const publicFullsizePath = path.join(cwd, 'public', context.req.user.id);
-  const publicThumbnailPath = path.join(
-    cwd,
-    'public',
-    context.req.user.id,
-    'thumbnail'
-  );
+  const publicFullsizePath = path.join(context.req.user.id);
+  const publicThumbnailPath = path.join(context.req.user.id, 'thumbnail');
 
   if (!fs.existsSync(uploadsPath)) throw PHOTO_DOES_NOT_EXIST;
   const extension = args.imgUri.match(/(?:\.([^.]+))?$/gm)[0];
@@ -63,10 +54,10 @@ Photo.statics.createPhoto = async function(args, context) {
   makeDirectory(publicFullsizePath);
   makeDirectory(publicThumbnailPath);
   const writeStream = fs.createWriteStream(
-    path.join(publicFullsizePath, fileName)
+    path.join(cwd, 'public', publicFullsizePath, fileName)
   );
   const thumbnailWriteStream = fs.createWriteStream(
-    path.join(publicThumbnailPath, fileName)
+    path.join(cwd, 'public', publicThumbnailPath, fileName)
   );
   writeStream.on('close', () => {
     fs.unlinkSync(uploadsPath);
@@ -93,20 +84,31 @@ Photo.statics.createPhoto = async function(args, context) {
 };
 
 Photo.statics.getImageOfCertainSize = function(
-  folder,
-  photoFilename,
-  { width, height },
+  photoFilePath,
+  { width, height, req },
   writableStream
 ) {
   return new Promise((resolve, reject) => {
-    const photoPath = path.join(cwd, 'public', folder, photoFilename);
+    const photoPath = path.join(cwd, 'public', photoFilePath);
+
     if (!fs.existsSync(photoPath)) throw new Error('No Photo at that Path');
     const transformer = sharp().resize(+width, +height);
+
     writableStream.once('error', reject);
     writableStream.on('close', resolve);
     const readStream = fs.createReadStream(photoPath);
     readStream.once('error', reject);
-    readStream.on('close', resolve);
+    readStream.on('close', () => {
+      const publicPath = path.join(cwd, 'public', req.url);
+      const file = photoFilePath.match(/.[^/]*/g)[1];
+      makeDirectory(req.url.replace(file, ''));
+      const publicReadStream = fs.createReadStream(photoPath);
+      const publicStream = fs.createWriteStream(publicPath);
+      const publicTransformer = sharp().resize(+width, +height);
+      publicReadStream.once('error', reject);
+      publicReadStream.on('close', resolve);
+      publicReadStream.pipe(publicTransformer).pipe(publicStream);
+    });
     readStream.pipe(transformer).pipe(writableStream);
   });
 };

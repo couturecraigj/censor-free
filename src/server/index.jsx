@@ -19,12 +19,28 @@ const __PROD__ = process.env.NODE_ENV === 'production';
 const app = express();
 
 config(app);
+
+app.use(function errorHandler(err, req, res, next) {
+  if (res.headersSent) {
+    return next(err);
+  }
+  // console.log(req.url);
+  // TODO: make it so Errors send everything to the Error Page
+  res.status(500);
+  if (__PROD__) {
+    res.locals.errorMessage = 'Internal Server Error';
+  } else {
+    res.locals.errorMessage = `${err.message}\n${err.stack}`;
+  }
+  next();
+});
 app.get('*', async (req, res, next) => {
   try {
     // const csurfToken = req.csrfToken();
     const queryUrl = app.get('url') + app.get('apollo').graphqlPath;
     // eslint-disable-next-line prefer-const
     let context = {};
+    if (res.locals.errorMessage) context.errorMessage = res.locals.errorMessage;
     // const [csurf, cookie] = await fetch(
     //   `http://localhost:${app.get('port')}/csurf`
     // ).then(async result => [
@@ -44,7 +60,6 @@ app.get('*', async (req, res, next) => {
       uri: queryUrl,
       fragments: app.get('fragments')
     });
-
     const spaApp = (
       <StaticRouter location={req.url} context={context}>
         <ApolloProvider client={client}>
@@ -66,7 +81,13 @@ app.get('*', async (req, res, next) => {
                 app.get('fragments')
               )};window.QUERY_URL="${queryUrl}";window.__APOLLO_STATE__=${JSON.stringify(
                 client.extract()
-              )};</script>${loadableState.getScriptTag()}${reactHelmet.title.toString()}${sheet.getStyleTags()}`,
+              )};${
+                res.locals.errorMessage
+                  ? `window.__ERROR_MESSAGE__=${JSON.stringify(
+                      res.locals.errorMessage
+                    )};`
+                  : ``
+              }</script>${loadableState.getScriptTag()}${reactHelmet.title.toString()}${sheet.getStyleTags()}`,
               body,
               attrs: {
                 body: reactHelmet.bodyAttributes.toString(),
@@ -82,19 +103,7 @@ app.get('*', async (req, res, next) => {
     next(e);
   }
 });
-app.use(function errorHandler(err, req, res, next) {
-  if (res.headersSent) {
-    return next(err);
-  }
-  // console.log(req.url);
-  // TODO: make it so Errors send everything to the Error Page
-  res.status(500);
-  if (__PROD__) {
-    res.send('Internal Server Error');
-  } else {
-    res.send(`${err.message}\n${err.stack}`);
-  }
-});
+
 if (module === require.main) {
   app.listen(app.get('port'), () => {
     // eslint-disable-next-line no-console

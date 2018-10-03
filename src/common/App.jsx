@@ -1,4 +1,5 @@
 import React from 'react';
+// import PropTypes from 'prop-types';
 import { Route, Switch } from 'react-router';
 import { hot } from 'react-hot-loader';
 import { Helmet } from 'react-helmet';
