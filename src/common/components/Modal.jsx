@@ -66,7 +66,11 @@ class Modal extends React.Component {
     const { server, opacity } = this.state;
     const Result = (
       <Div opacity={opacity} ref={this.handleNodeAssign}>
-        {children}
+        <div
+          style={{ overflow: 'scroll', maxHeight: '100%', maxWidth: '100%' }}
+        >
+          {children}
+        </div>
       </Div>
     );
     return server ? null : ReactDOM.createPortal(Result, this.el);

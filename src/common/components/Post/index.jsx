@@ -114,7 +114,10 @@ class Post extends React.Component {
     // TODO: Create a Wizard that will ask for filterable categories
     return (
       <Modal close={close} ref={this.modalDiv}>
-        <div ref={this.outsideDiv}>
+        <div
+          ref={this.outsideDiv}
+          // style={{ overflow: 'scroll', maxHeight: '100%', maxWidth: '100%' }}
+        >
           <Div>
             <div>
               <Close type="button" onClick={close}>
