@@ -250,7 +250,7 @@ const typeDefs = gql`
     addReview(title: String!): Review
     addStory(title: String!): Story
     addTip(title: String!): Tip
-    addVideo(title: String!): Video
+    addVideo(title: String!, description: String!, videoUri: String!): Video
     addWebPage(title: String!): WebPage
   }
 

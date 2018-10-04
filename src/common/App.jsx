@@ -1,5 +1,5 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { Route, Switch } from 'react-router';
 import { hot } from 'react-hot-loader';
 import { Helmet } from 'react-helmet';
@@ -13,12 +13,12 @@ const Div = styled.div`
   height: 100%;
 `;
 
-const App = () => (
+const App = ({ store }) => (
   <Div>
     <Helmet titleTemplate={`${siteName} - %s`}>
       <title> Home </title>
     </Helmet>
-    <Layout>
+    <Layout store={store}>
       <Switch>
         <Route exact path="/" component={Routes.Home} />
         <Route exact path="/login" component={Routes.Login} />
@@ -35,6 +35,11 @@ const App = () => (
           component={Routes.Reset}
         />
         <Route path="/about" component={Routes.About} />
+        <Route path="/legal/cookies" component={Routes.Cookies} />
+        <Route
+          path="/legal/terms-and-conditions"
+          component={Routes.TermsAndConditions}
+        />
         <Route path="/company/list" exact component={Routes.CompanyList} />
         <Route path="/company/:id/:slug?" component={Routes.Company} />
         <Route path="/feed" component={Routes.Feed} />
@@ -48,10 +53,18 @@ const App = () => (
         <Route path="/user/:id/:slug?" component={Routes.User} />
         <Route path="/video/list" exact component={Routes.VideoList} />
         <Route path="/video/:id/:slug?" component={Routes.Video} />
-        <Route component={Routes.ErrorPage} />
+        {store.getState().errorMessage && (
+          <Route component={Routes.ErrorPage} />
+        )}
+        <Route component={Routes.NotFound} />
       </Switch>
     </Layout>
   </Div>
 );
+
+App.propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types
+  store: PropTypes.any.isRequired
+};
 
 export default hot(module)(App);

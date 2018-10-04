@@ -79,6 +79,9 @@ const resolvers = {
       return Tip.createTip(args, context);
     },
     addVideo: async (parent, args, context) => {
+      await Video.createDifferentVideoFormats(args, context, {
+        progress: console.log
+      });
       return Video.createVideo(args, context);
     },
     addWebPage: async (parent, args, context) => {

@@ -9,8 +9,7 @@ const GET_USER = gql`
   query getUser($id: ID!) {
     user(id: $id) {
       id
-      name
-      description
+      userName
       img {
         imgUri
       }
@@ -46,12 +45,12 @@ const SingleUser = ({ match }) => (
         const { user } = data;
 
         return (
-          <Container name="dog">
+          <Container name="user">
             <Helmet>
               <title>{user.name}</title>
             </Helmet>
             <User key={user.id} value={user.name}>
-              <div>{user.name}</div>
+              <div>{user.userName}</div>
               {user.img &&
                 user.img.imgUri && (
                   <img src={user.img.imgUri} alt={user.name} />

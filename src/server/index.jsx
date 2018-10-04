@@ -8,6 +8,7 @@ import { Helmet } from 'react-helmet';
 import { ServerStyleSheet } from 'styled-components';
 import { StaticRouter } from 'react-router-dom';
 import apollo from '../common/apollo';
+import initiateStore from '../common/redux';
 import App from '../common/App';
 import html from './html';
 import routeCache from './routeCache';
@@ -34,13 +35,17 @@ app.use(function errorHandler(err, req, res, next) {
   }
   next();
 });
-app.get('*', async (req, res, next) => {
+app.get('*', async (req, res) => {
   try {
     // const csurfToken = req.csrfToken();
     const queryUrl = app.get('url') + app.get('apollo').graphqlPath;
+    const store = initiateStore({
+      errorMessage:
+        res.locals.errorMessage ||
+        (req.url === '/error' && 'Internal Server Error')
+    });
     // eslint-disable-next-line prefer-const
     let context = {};
-    if (res.locals.errorMessage) context.errorMessage = res.locals.errorMessage;
     // const [csurf, cookie] = await fetch(
     //   `http://localhost:${app.get('port')}/csurf`
     // ).then(async result => [
@@ -63,44 +68,47 @@ app.get('*', async (req, res, next) => {
     const spaApp = (
       <StaticRouter location={req.url} context={context}>
         <ApolloProvider client={client}>
-          <App />
+          <App store={store} />
         </ApolloProvider>
       </StaticRouter>
     );
+
+    const preloadedState = store.getState();
+
     if (context.url) {
       return res.redirect(context.status, context.url);
     }
-    return Promise.all([getLoadableState(spaApp), getDataFromTree(spaApp)])
-      .then(([loadableState]) => {
-        const body = ReactDOMServer.renderToString(spaApp);
-        const reactHelmet = Helmet.renderStatic();
-        res.send(
-          routeCache.preCache(
-            html({
-              head: `<script>window.__FRAGMENTS__=${JSON.stringify(
-                app.get('fragments')
-              )};window.QUERY_URL="${queryUrl}";window.__APOLLO_STATE__=${JSON.stringify(
-                client.extract()
-              )};${
-                res.locals.errorMessage
-                  ? `window.__ERROR_MESSAGE__=${JSON.stringify(
-                      res.locals.errorMessage
-                    )};`
-                  : ``
-              }</script>${loadableState.getScriptTag()}${reactHelmet.title.toString()}${sheet.getStyleTags()}`,
-              body,
-              attrs: {
-                body: reactHelmet.bodyAttributes.toString(),
-                html: reactHelmet.htmlAttributes.toString()
-              }
-            }),
-            req.path
-          )
-        );
-      })
-      .catch(err => next(err));
+    return Promise.all([
+      getLoadableState(spaApp),
+      getDataFromTree(spaApp)
+    ]).then(async ([loadableState]) => {
+      const body = ReactDOMServer.renderToString(spaApp);
+      const reactHelmet = Helmet.renderStatic();
+      res.send(
+        await routeCache.preCache(
+          html({
+            head: `<script>window.__STORE_STATE=${JSON.stringify(
+              preloadedState
+            )};window.__FRAGMENTS__=${JSON.stringify(
+              app.get('fragments')
+            )};window.QUERY_URL="${queryUrl}";window.__APOLLO_STATE__=${JSON.stringify(
+              client.extract()
+            )};</script>${loadableState.getScriptTag()}${reactHelmet.title.toString()}${sheet.getStyleTags()}`,
+            body,
+            attrs: {
+              body: reactHelmet.bodyAttributes.toString(),
+              html: reactHelmet.htmlAttributes.toString()
+            }
+          }),
+          req.path
+        )
+      );
+    });
   } catch (e) {
-    next(e);
+    // eslint-disable-next-line no-console
+    console.error(e);
+    res.redirect('/error');
+    // next(e);
   }
 });
 

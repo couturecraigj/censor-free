@@ -14,9 +14,9 @@ const routeCache = {
     }
     next();
   },
-  preCache(string, route) {
+  async preCache(string, route) {
     if (__PROD__ && routeCache.routes.includes(route)) {
-      const directoryArray = makeDirectory(route);
+      const directoryArray = await makeDirectory(route);
       const file = path.join.apply(
         null,
         [process.cwd(), 'public'].concat(directoryArray, 'index.html')

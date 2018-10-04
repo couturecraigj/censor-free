@@ -10,8 +10,7 @@ const SEARCH_SEARCHABLE = gql`
     search {
       id
       ... on User {
-        name
-        description
+        userName
         img {
           imgUri
         }
@@ -115,7 +114,7 @@ export default () => (
             {data.search.map(search => (
               <Link key={search.id} to={`/search/${search.id}/${search.name}`}>
                 <Searchable key={search.id} value={search.name}>
-                  <div>{search.name}</div>
+                  <div>{search.name || search.userName}</div>
                   {(search.imgUri || search.img?.imgUri) && (
                     <img
                       src={search.imgUri || search.img.imgUri}

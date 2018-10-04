@@ -51,8 +51,8 @@ Photo.statics.createPhoto = async function(args, context) {
   const extension = args.imgUri.match(/(?:\.([^.]+))?$/gm)[0];
   const readStream = fs.createReadStream(uploadsPath);
   const fileName = uuid() + extension;
-  makeDirectory(publicFullsizePath);
-  makeDirectory(publicThumbnailPath);
+  await makeDirectory(publicFullsizePath);
+  await makeDirectory(publicThumbnailPath);
   const writeStream = fs.createWriteStream(
     path.join(cwd, 'public', publicFullsizePath, fileName)
   );

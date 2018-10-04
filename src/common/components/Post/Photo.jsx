@@ -59,7 +59,12 @@ const Photo = () => {
               );
             }}
           >
-            <FileInput label="Photo" id="Photo__file-input" name="imgUri" />
+            <FileInput
+              label="Photo"
+              id="Photo__file-input"
+              accept="image/*"
+              name="imgUri"
+            />
             <TextInput name="title" label="Subject" id="Photo__subject" />
             <TextArea
               name="description"

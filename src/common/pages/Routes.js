@@ -127,6 +127,27 @@ export const ErrorPage = loadable(
   }
 );
 
+export const NotFound = loadable(
+  () => import(/* webpackChunkName: '404-page' */ './NotFound'),
+  {
+    LoadingComponent
+  }
+);
+
+export const Cookies = loadable(
+  () => import(/* webpackChunkName: 'cookies' */ './Legal/Cookies'),
+  {
+    LoadingComponent
+  }
+);
+export const TermsAndConditions = loadable(
+  () =>
+    import(/* webpackChunkName: 'terms-conditions' */ './Legal/TermsAndConditions'),
+  {
+    LoadingComponent
+  }
+);
+
 export const Video = loadable(
   () => import(/* webpackChunkName: 'video' */ './Video'),
   {

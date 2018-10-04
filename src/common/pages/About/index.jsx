@@ -1,11 +1,15 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 
-export default () => (
-  <div>
-    <Helmet>
-      <title>About</title>
-    </Helmet>
-    <div>About</div>
-  </div>
-);
+const About = () => {
+  return (
+    <div>
+      <Helmet>
+        <title>About</title>
+      </Helmet>
+      <div>About</div>
+    </div>
+  );
+};
+
+export default About;

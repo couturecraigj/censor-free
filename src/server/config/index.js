@@ -55,7 +55,7 @@ export default app => {
   app.use('/files', (req, res, next) => {
     if (!req.user.id)
       return next(new Error('Cannot upload files when you are not logged in'));
-    const dir = path.join(cwd, 'uploads', req.cookies.token);
+    const dir = path.join(cwd, 'uploads', req.user.id);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }

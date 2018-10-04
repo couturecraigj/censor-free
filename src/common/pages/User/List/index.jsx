@@ -10,8 +10,7 @@ const GET_USER_LIST = gql`
   {
     users {
       id
-      name
-      description
+      userName
       img {
         imgUri
       }
@@ -46,19 +45,19 @@ export default () => (
         if (error) return `Error! ${error.message}`;
 
         return (
-          <UserList name="dog">
+          <UserList name="userList">
             {data.users.map(user => (
               <Link
                 key={user.id}
                 onMouseOver={UserRoute.load}
                 onFocus={UserRoute.load}
-                to={`/user/${user.id}/${user.name}`}
+                to={`/user/${user.id}/${user.userName}`}
               >
-                <User key={user.id} value={user.name}>
-                  <div>{user.name}</div>
+                <User key={user.id} value={user.userName}>
+                  <div>{user.userName}</div>
                   {user.img &&
                     user.img.imgUri && (
-                      <img src={user.img.imgUri} alt={user.name} />
+                      <img src={user.img.imgUri} alt={user.userName} />
                     )}
                   <div>{user.description}</div>
                 </User>

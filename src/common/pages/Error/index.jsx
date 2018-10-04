@@ -1,30 +1,29 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import ErrorMessage from '../../components/ErrorMessage';
 
-const ErrorPage = ({ staticContext }) => {
+const mapStateToProps = ({ errorMessage }, ownProps) => {
+  return {
+    ...ownProps,
+    errorMessage
+  };
+};
+
+const ErrorPage = ({ errorMessage }) => {
   return (
     <div>
       <Helmet>
         <title>Error</title>
       </Helmet>
-      <ErrorMessage {...staticContext} />
+      <ErrorMessage errorMessage={errorMessage} />
     </div>
   );
 };
 
 ErrorPage.propTypes = {
-  staticContext: PropTypes.shape({
-    errorMessage: PropTypes.string
-  })
+  errorMessage: PropTypes.string.isRequired
 };
 
-ErrorPage.defaultProps = {
-  staticContext: {
-    errorMessage:
-      typeof window !== 'undefined' ? window.__ERROR_MESSAGE__ : 'error'
-  }
-};
-
-export default ErrorPage;
+export default connect(mapStateToProps)(ErrorPage);
