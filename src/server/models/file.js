@@ -1,0 +1,128 @@
+import mongoose from 'mongoose';
+import uuid from 'uuid/v4';
+import path from 'path';
+import fs from 'fs';
+import rimraf from 'rimraf';
+
+const sendFileFields = file => ({
+  uploadToken: file.uploadToken,
+  chunkSize: file.chunkSize,
+  chunksLoaded: file.chunksLoaded
+});
+
+const cwd = process.cwd();
+const { Schema } = mongoose;
+const File = new Schema(
+  {
+    mimeType: { type: String, required: true },
+    height: { type: Number },
+    width: { type: Number },
+    finishedFileName: { type: String },
+    path: {
+      type: String
+    },
+    chunksLoaded: [String],
+    chunkSize: {
+      type: Number
+    },
+    extension: {
+      type: String
+    },
+    uploadToken: { type: String, default: uuid, unique: true },
+    user: { type: Schema.Types.ObjectId, required: true },
+    originalFileName: { type: String, required: true },
+    size: { type: Number },
+    finished: { type: Boolean }
+  },
+  {
+    timestamps: true
+  }
+);
+
+File.pre('validate', function() {
+  if (this.isNew) {
+    this.path = path.join(cwd, 'uploads', this.uploadToken);
+    this.extension = this.originalFileName
+      .replace(this.originalFileName.replace(/\.[\w\d]*$/gm, ''), '')
+      .replace('.', '');
+  }
+});
+
+File.statics.getUploadToken = async function(args) {
+  const file = await mongoose.models.File.findOne(args);
+  if (file) return sendFileFields(file);
+  if (file?.finished) throw new Error('File has already finished uploading');
+  return mongoose.models.File.create(args).then(file => {
+    fs.mkdirSync(file.path);
+    return sendFileFields(file);
+  });
+};
+
+File.statics.saveChunk = function({ uploadToken, chunk, chunkNumber }) {
+  const chunkName = '' + chunkNumber + '.chunk';
+  return new Promise(async (resolve, reject) => {
+    try {
+      const file = await mongoose.models.File.findOne({ uploadToken });
+      if (!file) return reject(new Error('No File Found'));
+      const buffer = Buffer.from(chunk, 'base64');
+      const chunkPath = path.join(file.path, chunkName);
+      const writeStream = fs.createWriteStream(chunkPath);
+      writeStream.on('finish', async () => {
+        await mongoose.models.File.findByIdAndUpdate(file.id, {
+          $addToSet: {
+            chunksLoaded: chunkName
+          }
+        });
+        try {
+          if (file.size <= (file.chunksLoaded.length + 1) * file.chunkSize)
+            await mongoose.models.File.combineChunks({ uploadToken });
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      });
+      writeStream.on('error', err => {
+        reject(err);
+      });
+      writeStream.write(buffer);
+      writeStream.end();
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+File.statics.combineChunks = function({ uploadToken }) {
+  return new Promise(async (resolve, reject) => {
+    const file = await mongoose.models.File.findOne({ uploadToken });
+    const finishedFileName = file.path + '.' + file.extension;
+    fs.readdir(file.path, async (err, files) => {
+      if (err) return reject(err);
+
+      files.sort((a, b) => {
+        const fileA = a.replace('.chunk', '');
+        const fileB = b.replace('.chunk', '');
+        return +fileA - +fileB;
+      });
+      const writeStream = fs.createWriteStream(finishedFileName);
+      for (const newFile of files) {
+        writeStream.write(fs.readFileSync(path.join(file.path, newFile)));
+      }
+      rimraf(file.path, async err => {
+        if (err) return reject(err);
+        writeStream.end();
+        await mongoose.models.File.findByIdAndUpdate(file.id, {
+          finished: true,
+          finishedFileName
+        });
+        resolve();
+      });
+    });
+  });
+};
+
+File.statics.edit = function() {};
+File.statics.addComment = function() {};
+
+if (mongoose.models && mongoose.models.File) delete mongoose.models.File;
+export default mongoose.model('File', File);

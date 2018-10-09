@@ -9,6 +9,7 @@ import apolloSchemaSetup from '../graphql/schema';
 import DataBase from '../database';
 import Photo from '../models/photo';
 import routeCache from '../routeCache';
+import api from './api';
 
 const cwd = process.cwd();
 const dbPromise = DataBase.get();
@@ -49,6 +50,7 @@ export default app => {
       next(e);
     }
   });
+  app.use('/api', api);
   // app.get('/csurf', function(req, res) {
   //   res.json(req.csrfToken());
   // });
