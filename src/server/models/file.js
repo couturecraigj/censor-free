@@ -51,7 +51,8 @@ File.pre('validate', function() {
 File.statics.getUploadToken = async function(args) {
   const file = await mongoose.models.File.findOne(args);
   if (file) return sendFileFields(file);
-  if (file?.finished) throw new Error('File has already finished uploading');
+  if (file?.finished)
+    throw new mongoose.models.File.File.statics.FILE_ALREADY_FINISHED();
   return mongoose.models.File.create(args).then(file => {
     fs.mkdirSync(file.path);
     return sendFileFields(file);
@@ -63,7 +64,9 @@ File.statics.saveChunk = function({ uploadToken, chunk, chunkNumber }) {
   return new Promise(async (resolve, reject) => {
     try {
       const file = await mongoose.models.File.findOne({ uploadToken });
-      if (!file) return reject(new Error('No File Found'));
+      if (!file) return reject(new mongoose.models.File.NO_FILE_FOUND());
+      if (file.chunksLoaded.find(file => file === chunkName))
+        return reject(new mongoose.models.File.CHUNK_ALREADY_LOADED());
       const buffer = Buffer.from(chunk, 'base64');
       const chunkPath = path.join(file.path, chunkName);
       const writeStream = fs.createWriteStream(chunkPath);
@@ -92,6 +95,11 @@ File.statics.saveChunk = function({ uploadToken, chunk, chunkNumber }) {
   });
 };
 
+File.statics.CHUNK_ALREADY_LOADED = Error('Chunk Already Uploaded');
+File.statics.NO_FILE_FOUND = Error('No File Found');
+File.statics.FILE_ALREADY_FINISHED = Error(
+  'File has already finished uploading'
+);
 File.statics.combineChunks = function({ uploadToken }) {
   return new Promise(async (resolve, reject) => {
     const file = await mongoose.models.File.findOne({ uploadToken });
@@ -115,7 +123,7 @@ File.statics.combineChunks = function({ uploadToken }) {
           finished: true,
           finishedFileName
         });
-        resolve();
+        resolve({ finishedFileName });
       });
     });
   });

@@ -13,46 +13,13 @@ class FileInput extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      blobs: [],
-      base64s: []
+      chunkNumber: 0
     };
   }
   componentDidMount() {
     this.reader = new FileReader();
-    this.reader.onload = async () => {
-      const { base64s } = this.state;
-      this.setState({
-        base64s: [
-          ...base64s,
-          this.reader.result.replace(/^data:[\w/-]*;base64,/gm, '')
-        ]
-      });
-      this.readFiles();
-    };
   }
-  readFiles = async () => {
-    // eslint-disable-next-line react/destructuring-assignment
-    if (!this.state.uploadToken) await this.getToken();
-    // eslint-disable-next-line react/destructuring-assignment
-    const [blob, ...blobs] = this.state.blobs;
-    this.setState({
-      blobs
-    });
-    if (blob) this.reader.readAsDataURL(blob);
-    else {
-      const { base64s, type } = this.state;
-      // console.log(base64s);
-      // console.log(type);
-      this.setState(
-        {
-          chunks: []
-        },
-        () => {
-          this.sendFiles();
-        }
-      );
-    }
-  };
+
   getToken = () => {
     const {
       height,
@@ -95,37 +62,25 @@ class FileInput extends React.Component {
       uploadToken: undefined
     });
   };
-  sendFiles = async () => {
-    const {
-      uploadToken,
-      base64s: [chunk, ...base64s],
-      chunks
-    } = this.state;
-    this.setState(
-      {
-        chunk,
-        base64s,
-        chunks: [...chunks, chunk]
+  asyncSetState = state =>
+    new Promise(resolve => this.setState({ ...state }, resolve));
+  sendFile = async blob => {
+    const { uploadToken, chunkNumber } = this.state;
+    const chunk = await this.provideBase64(blob);
+    if (!chunk) return this.cleanUpUpload();
+    const response = await fetch(`/api/upload`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
       },
-      async () => {
-        const { chunk, chunks, base64s } = this.state;
-        if (!chunk) return this.cleanUpUpload();
-        const response = await fetch(`/api/upload`, {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            uploadToken,
-            chunk,
-            chunkNumber: chunks.length
-          })
-        }).then(res => res.json());
-        await this.sendFiles();
-        return response;
-      }
-    );
+      body: JSON.stringify({
+        uploadToken,
+        chunk,
+        chunkNumber
+      })
+    }).then(res => res.json());
+    return response;
   };
   getDimensionsOfImage = file =>
     new Promise((resolve, reject) => {
@@ -146,35 +101,42 @@ class FileInput extends React.Component {
         reject(e);
       }
     });
+  provideBase64 = async blob =>
+    new Promise(resolve => {
+      this.reader.onload = async () => {
+        resolve(this.reader.result.replace(/^data:[\w/-]*;base64,/gm, ''));
+      };
+      this.reader.readAsDataURL(blob);
+    });
+  processFile = async file => {
+    const { chunkSize } = this.state;
+    await this.getToken();
+    for (let i = 0, limit = chunkSize; file.size > i; ) {
+      const { chunkNumber } = this.state;
+      const blob = file.slice(i, limit);
+      await this.asyncSetState({ chunkNumber: chunkNumber + 1 });
+      await this.sendFile(blob);
+      i = i + chunkSize;
+      limit = limit + chunkSize;
+    }
+  };
   onChange = async e => {
     e.preventDefault();
     if (!e.target.files[0]) return;
     const [file] = [...e.target.files];
     if (file.type.startsWith('image')) await this.getDimensionsOfImage(file);
-    const blobs = [];
-    const chunkSize = 10000;
-    this.setState({
-      chunkSize
+    const chunkSize = 50000;
+    await this.asyncSetState({
+      mimeType: file.type,
+      originalFileName: file.name,
+      chunkSize,
+      size: file.size
     });
-    for (let i = 0, limit = chunkSize; file.size > i; ) {
-      const blob = file.slice(i, limit);
+    setTimeout(async () => {
+      await this.processFile(file);
+    }, 1);
 
-      blobs.push(blob);
-      i = i + chunkSize;
-      limit = limit + chunkSize;
-    }
     // console.log(file);
-    this.setState(
-      {
-        blobs,
-        mimeType: file.type,
-        originalFileName: file.name,
-        size: file.size
-      },
-      () => {
-        this.readFiles();
-      }
-    );
   };
   render() {
     const { label, id, name } = this.props;

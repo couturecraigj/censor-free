@@ -1,5 +1,6 @@
 import cookieParser from 'cookie-parser';
 // import csrf from 'csurf';
+import compression from 'compression';
 import express from 'express';
 import fs from 'fs';
 import multer from 'multer';
@@ -32,6 +33,7 @@ const port = 3000;
 export default app => {
   app.enable('strict routing');
   app.use(cookieParser());
+  app.use(compression());
   // app.use(csrfProtection);
   app.use(express.static('public'));
   app.set('port', port);

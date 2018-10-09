@@ -80,6 +80,7 @@ const resolvers = {
     },
     addVideo: async (parent, args, context) => {
       await Video.createDifferentVideoFormats(args, context, {
+        // eslint-disable-next-line no-console
         progress: console.log
       });
       return Video.createVideo(args, context);

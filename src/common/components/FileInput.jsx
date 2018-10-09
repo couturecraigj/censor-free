@@ -60,7 +60,7 @@ class FileInput extends React.Component {
   }
   componentDidMount() {
     this.resumable.assignBrowse(this.input.current);
-    this.resumable.on('fileAdded', (file, message) => {
+    this.resumable.on('fileAdded', file => {
       if (!this.isAcceptableFile(file.file.type)) {
         return this.setState({
           error: 'File Type Unaccepted'

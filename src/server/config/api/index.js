@@ -1,7 +1,6 @@
 /* env node */
 import express from 'express';
 import bodyParser from 'body-parser';
-import { nextTick } from 'async';
 import File from '../../models/file';
 
 const app = express.Router();
@@ -20,10 +19,11 @@ app.post('/upload', bodyParser.json(), async (req, res, next) => {
   // This is were we will be putting all our data into
   // Requirements: Session, Token from Get
   try {
-    const file = await File.saveChunk(req.body);
+    await File.saveChunk(req.body);
     res.json(req.body);
   } catch (e) {
-    console.error(e);
+    if (e instanceof File.CHUNK_ALREADY_LOADED)
+      return res.statusCode(400).json({ message: 'already loaded' });
     next(e);
   }
 });

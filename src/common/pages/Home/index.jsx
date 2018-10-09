@@ -1,13 +1,13 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import VideoUpload from '../../components/VideoUpload';
+import FileUpload from '../../components/FileUpload';
 
 export default () => (
   <div>
     <Helmet>
       <title>Home</title>
     </Helmet>
-    <VideoUpload
+    <FileUpload
       name="video"
       accept="video/*"
       label="Video Upload"

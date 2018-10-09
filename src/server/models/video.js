@@ -100,6 +100,7 @@ Video.statics.createDifferentVideoFormats = async function(
       ...opts
     })
   ]);
+  // eslint-disable-next-line no-console
   console.log('Finished creating files');
 };
 
