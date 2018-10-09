@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 // import styled from 'styled-components';
-// import Progress from './Progress';
+import Progress from './Progress';
 
 // const Img = styled.img`
 //   max-width: 300px;
@@ -13,12 +13,17 @@ class FileInput extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      chunkNumber: 0
+      chunkNumber: 0,
+      progress: 0
     };
   }
   componentDidMount() {
     this.reader = new FileReader();
   }
+  processError = async res => {
+    if (res.status > 299) throw new Error((await res.json()).message);
+    return res.json();
+  };
 
   getToken = () => {
     const {
@@ -42,7 +47,7 @@ class FileInput extends React.Component {
               size
             })
           )}`
-        ).then(res => res.json());
+        ).then(this.processError);
         // console.log(response);
         this.setState(
           {
@@ -59,7 +64,9 @@ class FileInput extends React.Component {
   };
   cleanUpUpload = async () => {
     this.setState({
-      uploadToken: undefined
+      uploadToken: undefined,
+      chunkNumber: 0,
+      progress: 0
     });
   };
   asyncSetState = state =>
@@ -67,20 +74,24 @@ class FileInput extends React.Component {
   sendFile = async blob => {
     const { uploadToken, chunkNumber } = this.state;
     const chunk = await this.provideBase64(blob);
-    if (!chunk) return this.cleanUpUpload();
-    const response = await fetch(`/api/upload`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        uploadToken,
-        chunk,
-        chunkNumber
-      })
-    }).then(res => res.json());
-    return response;
+    try {
+      const response = await fetch(`/api/upload`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          uploadToken,
+          chunk,
+          chunkNumber
+        })
+      }).then(this.processError);
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
   };
   getDimensionsOfImage = file =>
     new Promise((resolve, reject) => {
@@ -110,15 +121,28 @@ class FileInput extends React.Component {
     });
   processFile = async file => {
     const { chunkSize } = this.state;
-    await this.getToken();
-    for (let i = 0, limit = chunkSize; file.size > i; ) {
-      const { chunkNumber } = this.state;
-      const blob = file.slice(i, limit);
-      await this.asyncSetState({ chunkNumber: chunkNumber + 1 });
-      await this.sendFile(blob);
-      i = i + chunkSize;
-      limit = limit + chunkSize;
+    try {
+      await this.getToken();
+      for (let i = 0, limit = chunkSize; file.size > i; ) {
+        const { chunkNumber, size } = this.state;
+        const blob = file.slice(i, limit);
+        const progress = (((chunkNumber + 1) * chunkSize) / size) * 100;
+        await this.asyncSetState({
+          chunkNumber: chunkNumber + 1,
+          progress: progress > 100 ? 100 : progress
+        });
+        try {
+          await this.sendFile(blob);
+        } catch (error) {
+          if (error.message.toLowerCase().includes('finished')) break;
+        }
+        i = i + chunkSize;
+        limit = limit + chunkSize;
+      }
+    } catch (error) {
+      console.error(error);
     }
+    await this.cleanUpUpload();
   };
   onChange = async e => {
     e.preventDefault();
@@ -140,12 +164,22 @@ class FileInput extends React.Component {
   };
   render() {
     const { label, id, name } = this.props;
+    const { progress } = this.state;
     return (
       <React.Fragment>
-        <label htmlFor={id}>{label}</label>
-        <div>
-          <input type="file" name={name} onChange={this.onChange} />
-        </div>
+        <label htmlFor={id}>
+          {label}
+          <div>
+            <input
+              type="file"
+              id={id}
+              hidden
+              name={name}
+              onChange={this.onChange}
+            />
+          </div>
+          {progress && <Progress progress={progress} />}
+        </label>
       </React.Fragment>
     );
   }

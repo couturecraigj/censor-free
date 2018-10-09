@@ -7,12 +7,16 @@ const app = express.Router();
 
 app.get('/upload', async (req, res) => {
   // This is where we will check to see if the file already exists and also create an upload token and save it to the database
-  const token = await File.getUploadToken({
-    ...JSON.parse(req.query.json),
-    user: req.user.id
-  });
+  try {
+    const token = await File.getUploadToken({
+      ...JSON.parse(req.query.json),
+      user: req.user.id
+    });
 
-  res.json(token);
+    res.json(token);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
 app.post('/upload', bodyParser.json(), async (req, res, next) => {
@@ -22,8 +26,10 @@ app.post('/upload', bodyParser.json(), async (req, res, next) => {
     await File.saveChunk(req.body);
     res.json(req.body);
   } catch (e) {
-    if (e instanceof File.CHUNK_ALREADY_LOADED)
-      return res.statusCode(400).json({ message: 'already loaded' });
+    if (e.message === File.FILE_ALREADY_FINISHED.message)
+      return res.status(400).json({ message: e.message });
+    if (e.message === File.CHUNK_ALREADY_LOADED.message)
+      return res.status(400).json({ message: e.message });
     next(e);
   }
 });

@@ -31,8 +31,8 @@ const File = new Schema(
     uploadToken: { type: String, default: uuid, unique: true },
     user: { type: Schema.Types.ObjectId, required: true },
     originalFileName: { type: String, required: true },
-    size: { type: Number },
-    finished: { type: Boolean }
+    size: { type: Number, required: true },
+    finished: { type: Boolean, default: false }
   },
   {
     timestamps: true
@@ -49,10 +49,11 @@ File.pre('validate', function() {
 });
 
 File.statics.getUploadToken = async function(args) {
+  if (!args.user)
+    throw new Error('You need to be logged in to be able to upload anything');
   const file = await mongoose.models.File.findOne(args);
+  if (file?.finished) throw mongoose.models.File.FILE_ALREADY_FINISHED;
   if (file) return sendFileFields(file);
-  if (file?.finished)
-    throw new mongoose.models.File.File.statics.FILE_ALREADY_FINISHED();
   return mongoose.models.File.create(args).then(file => {
     fs.mkdirSync(file.path);
     return sendFileFields(file);
@@ -60,13 +61,14 @@ File.statics.getUploadToken = async function(args) {
 };
 
 File.statics.saveChunk = function({ uploadToken, chunk, chunkNumber }) {
+  if (!uploadToken) throw new Error('We need a token to process the upload');
   const chunkName = '' + chunkNumber + '.chunk';
   return new Promise(async (resolve, reject) => {
     try {
       const file = await mongoose.models.File.findOne({ uploadToken });
-      if (!file) return reject(new mongoose.models.File.NO_FILE_FOUND());
+      if (!file) return reject(mongoose.models.File.NO_FILE_FOUND());
       if (file.chunksLoaded.find(file => file === chunkName))
-        return reject(new mongoose.models.File.CHUNK_ALREADY_LOADED());
+        return reject(mongoose.models.File.CHUNK_ALREADY_LOADED);
       const buffer = Buffer.from(chunk, 'base64');
       const chunkPath = path.join(file.path, chunkName);
       const writeStream = fs.createWriteStream(chunkPath);
@@ -95,9 +97,9 @@ File.statics.saveChunk = function({ uploadToken, chunk, chunkNumber }) {
   });
 };
 
-File.statics.CHUNK_ALREADY_LOADED = Error('Chunk Already Uploaded');
-File.statics.NO_FILE_FOUND = Error('No File Found');
-File.statics.FILE_ALREADY_FINISHED = Error(
+File.statics.CHUNK_ALREADY_LOADED = new Error('Chunk Already Uploaded');
+File.statics.NO_FILE_FOUND = new Error('No File Found');
+File.statics.FILE_ALREADY_FINISHED = new Error(
   'File has already finished uploading'
 );
 File.statics.combineChunks = function({ uploadToken }) {
@@ -121,6 +123,7 @@ File.statics.combineChunks = function({ uploadToken }) {
         writeStream.end();
         await mongoose.models.File.findByIdAndUpdate(file.id, {
           finished: true,
+          chunksLoaded: [],
           finishedFileName
         });
         resolve({ finishedFileName });
