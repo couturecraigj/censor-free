@@ -14,7 +14,8 @@ class FileInput extends React.Component {
     super(props);
     this.state = {
       chunkNumber: 0,
-      progress: 0
+      progress: 0,
+      value: ''
     };
   }
   componentDidMount() {
@@ -139,7 +140,10 @@ class FileInput extends React.Component {
         i = i + chunkSize;
         limit = limit + chunkSize;
       }
+      const { uploadToken } = this.state;
+      this.setState({ value: uploadToken });
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error);
     }
     await this.cleanUpUpload();
@@ -164,7 +168,7 @@ class FileInput extends React.Component {
   };
   render() {
     const { label, id, name } = this.props;
-    const { progress } = this.state;
+    const { progress, value } = this.state;
     return (
       <React.Fragment>
         <label htmlFor={id}>
@@ -174,6 +178,8 @@ class FileInput extends React.Component {
               type="file"
               id={id}
               hidden
+              value={value}
+              readOnly
               name={name}
               onChange={this.onChange}
             />
