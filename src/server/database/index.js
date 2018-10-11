@@ -1,7 +1,9 @@
 import Database from 'mongoose';
 
+const __DEV__ = process.env.NODE_ENV !== 'production';
+
 Database.connect(
-  'mongodb://localhost/no_censor',
+  __DEV__ ? 'mongodb://localhost/no_censor' : 'mongodb://mongo:27017/no_censor',
   { useNewUrlParser: true }
 );
 

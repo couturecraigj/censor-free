@@ -28,7 +28,7 @@ const upload = multer({
   storage
 });
 // const csrfProtection = csrf({ cookie: true });
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 export default app => {
   app.enable('strict routing');
@@ -37,10 +37,17 @@ export default app => {
   // app.use(csrfProtection);
   app.use(express.static('public'));
   app.set('port', port);
-  app.set('url', 'http://localhost:3000');
+
   app.use(routeCache.hitCache);
   app.use(async (req, res, next) => {
     try {
+      if (!app.get('url'))
+        app.set(
+          'url',
+          `${req.headers['x-forwarded-proto'] || req.protocol}://${
+            req.headers.host
+          }`
+        );
       req.user = {
         id:
           req.cookies.token ||

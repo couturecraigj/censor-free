@@ -24,7 +24,7 @@ const routeCache = {
       try {
         directoryArray.reduce((p, c) => {
           const dir = path.join(p, c);
-          fs.mkdirSync(dir);
+          if (!fs.existsSync(dir)) fs.mkdirSync(dir);
           return dir;
         }, path.join(process.cwd(), 'public'));
         fs.writeFileSync(file, string);

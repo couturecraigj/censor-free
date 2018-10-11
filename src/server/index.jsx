@@ -38,7 +38,9 @@ app.use(function errorHandler(err, req, res, next) {
 app.get('*', async (req, res) => {
   try {
     // const csurfToken = req.csrfToken();
-    const queryUrl = app.get('url') + app.get('apollo').graphqlPath;
+    const queryUrl = `${req.headers['x-forwarded-proto'] || req.protocol}://${
+      req.headers.host
+    }${app.get('apollo').graphqlPath}`;
     const store = initiateStore({
       errorMessage:
         res.locals.errorMessage ||
@@ -58,6 +60,7 @@ app.get('*', async (req, res) => {
       // cookie,
       // 'x-xsurf-token': csurf
     };
+
     const client = apollo(fetch, {
       headers,
       req,

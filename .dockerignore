@@ -1,0 +1,7 @@
+node_modules
+npm-debug.log
+docker
+dist
+public
+server
+webpack-assets.json

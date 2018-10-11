@@ -17,29 +17,29 @@ const resolvers = {
   },
   Mutation: {
     logIn: async (parent, args, { res }) => {
-      const user = await User.findOne({
+      const me = await User.findOne({
         $or: [{ userName: args.nameEmail }, { email: args.nameEmail }]
       });
 
-      if (!user) {
+      if (!me) {
         throw AUTHENTICATION_ERROR;
       }
-      if (!(await user.passwordsMatch(args.password))) {
+      if (!(await me.passwordsMatch(args.password))) {
         throw AUTHENTICATION_ERROR;
       }
-      res.cookie('token', user.id, { httpOnly: true, maxAge: 9999999 });
+      res.cookie('token', me.id, { httpOnly: true, maxAge: 9999999 });
       return {
-        user,
-        token: user.id
+        me,
+        token: me.id
       };
     },
     signUp: async (parent, args, { res }) => {
-      const user = new User(args);
-      await user.save();
-      res.cookie('token', user.id, { httpOnly: true, maxAge: 9999999 });
+      const me = new User(args);
+      await me.save();
+      res.cookie('token', me.id, { httpOnly: true, maxAge: 9999999 });
       return {
-        user,
-        token: user.id
+        me,
+        token: me.id
       };
     },
     forgotPassword: async (parent, args, { res }) => {

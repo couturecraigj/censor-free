@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  app1:
+    container_name: censor_free_node
+    build: ./
+    volumes:
+      - npm-cache:/usr/.npm
+      - ./:/usr/src/website
+      - /usr/src/website/node_modules/
+    depends_on:
+      - mongo
+  # app2:
+  #   container_name: censor_free_node
+  #   build: ./
+  #   volumes:
+  #     - npm-cache:/usr/.npm
+  #     - ./:/usr/src/website
+  #     - /usr/src/website/node_modules/
+  #   depends_on:
+  #     - mongo
+  # app3:
+  #   container_name: censor_free_node
+  #   build: ./
+  #   volumes:
+  #     - npm-cache:/usr/.npm
+  #     - ./:/usr/src/website
+  #     - /usr/src/website/node_modules/
+  #   depends_on:
+  #     - mongo
+  mongo:
+    container_name: censor_free_mongo
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+  loadbalancer:
+    build: ./docker/nginx
+    restart: always
+    tty: true
+    links:
+      - app1
+      # - app2
+      # - app3
+    depends_on:
+      - app1
+    ports:
+      - 8003:8080
+
+volumes:
+  npm-cache:
+    external: false

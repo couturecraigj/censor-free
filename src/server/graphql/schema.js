@@ -1,5 +1,7 @@
 import { makeExecutableSchema, addMockFunctionsToSchema } from 'apollo-server';
 import { ApolloServer } from 'apollo-server-express';
+import { graphql, introspectionQuery } from 'graphql';
+import fs from 'fs';
 import typeDefs from './typeDefs';
 import mocks from './mocks';
 import resolvers from './resolvers';
@@ -24,6 +26,16 @@ export default app => {
       resolverValidationOptions: {
         requireResolversForResolveType: false
       }
+    });
+    graphql(schema, introspectionQuery).then(result => {
+      const filteredData = result.data.__schema.types.filter(
+        type => type.possibleTypes !== null
+      );
+
+      result.data.__schema.types = filteredData;
+      app.set('fragments', result.data);
+
+      fs.writeFileSync('fragmentTypes.json', JSON.stringify(result.data));
     });
     addMockFunctionsToSchema({ mocks, schema, preserveResolvers: true });
   }
