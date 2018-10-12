@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import FileInput from '../FileInput';
@@ -18,37 +19,16 @@ const SUBMIT_VIDEO = gql`
   }
 `;
 
-const getVariableValues = elements => {
-  return elements.reduce(
-    (p, el) => ({
-      ...p,
-      [el.name]: el.type.toLowerCase() === 'number' ? +el.value : el.value
-    }),
-    {}
-  );
-};
-
-const Video = () => {
+const Video = ({ handleSubmit }) => {
   let form;
   return (
     <Mutation mutation={SUBMIT_VIDEO}>
       {video => {
         return (
           <form
-            ref={ref => {
-              form = ref;
-            }}
             onSubmit={e => {
               e.preventDefault();
-              const elements = [...form.elements].filter(
-                el => el.tagName !== 'BUTTON'
-              );
-              const variables = getVariableValues(elements);
-              return (
-                video({ variables })
-                  // eslint-disable-next-line no-console
-                  .catch(console.error)
-              );
+              handleSubmit(video);
             }}
           >
             <FileInput
@@ -71,6 +51,10 @@ const Video = () => {
       }}
     </Mutation>
   );
+};
+
+Video.propTypes = {
+  handleSubmit: PropTypes.func.isRequired
 };
 
 export default Video;

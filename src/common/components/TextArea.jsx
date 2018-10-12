@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { Field } from 'formik';
 
 const Area = styled.textarea`
   width: 100%;
@@ -14,7 +15,11 @@ const TextInput = ({ label, name, id, ...props }) => (
     <div>
       <label htmlFor={id}>{label}</label>
     </div>
-    <Area {...props} name={name} id={id} placeholder={label} />
+    <Field name={name}>
+      {({ field }) => (
+        <Area {...props} {...field} id={id} placeholder={label} />
+      )}
+    </Field>
   </React.Fragment>
 );
 

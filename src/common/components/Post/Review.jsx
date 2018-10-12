@@ -1,10 +1,16 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import TextArea from '../TextArea';
 import TextInput from '../TextInput';
 import ScoreInput from '../ScoreInput';
 
-const Review = () => (
-  <form>
+const Review = ({ handleSubmit }) => (
+  <form
+    onSubmit={e => {
+      e.preventDefault();
+      handleSubmit(e);
+    }}
+  >
     <ScoreInput
       name="score"
       label="Score"
@@ -20,5 +26,9 @@ const Review = () => (
     </div>
   </form>
 );
+
+Review.propTypes = {
+  handleSubmit: PropTypes.func.isRequired
+};
 
 export default Review;

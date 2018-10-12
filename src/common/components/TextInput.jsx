@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { Field } from 'formik';
 
 const Input = styled.input`
   width: 100%;
@@ -17,7 +18,12 @@ const TextInput = ({ label, name, id, ...props }) => (
       <label htmlFor={id}>{label}</label>
     </div>
     <div>
-      <Input {...props} name={name} id={id} placeholder={label} />
+      <Field name={name}>
+        {({ field }) => (
+          <Input {...props} {...field} placeholder={label} id={id} />
+        )}
+      </Field>
+      {/* <Input {...props} name={name} id={id} placeholder={label} /> */}
     </div>
   </InputContainer>
 );

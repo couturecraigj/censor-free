@@ -1,8 +1,14 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import TextArea from '../TextArea';
 
-const Thought = () => (
-  <form>
+const Thought = ({ handleSubmit }) => (
+  <form
+    onSubmit={e => {
+      e.preventDefault();
+      handleSubmit(e);
+    }}
+  >
     <TextArea
       name="description"
       label="Tell me something..."
@@ -13,5 +19,9 @@ const Thought = () => (
     </div>
   </form>
 );
+
+Thought.propTypes = {
+  handleSubmit: PropTypes.func.isRequired
+};
 
 export default Thought;

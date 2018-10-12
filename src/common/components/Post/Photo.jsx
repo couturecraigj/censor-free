@@ -1,5 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Mutation } from 'react-apollo';
+// import { Form } from 'formik';
 import gql from 'graphql-tag';
 import FileInput from '../FileInput';
 import TextArea from '../TextArea';
@@ -26,37 +28,15 @@ const SUBMIT_PHOTO = gql`
   }
 `;
 
-const getVariableValues = eles => {
-  return eles.reduce(
-    (p, el) => ({
-      ...p,
-      [el.name]: el.type.toLowerCase() === 'number' ? +el.value : el.value
-    }),
-    {}
-  );
-};
-
-const Photo = () => {
-  let form;
+const Photo = ({ handleSubmit }) => {
   return (
     <Mutation mutation={SUBMIT_PHOTO}>
       {photo => {
         return (
           <form
-            ref={ref => {
-              form = ref;
-            }}
             onSubmit={e => {
               e.preventDefault();
-              const elements = [...form.elements].filter(
-                el => el.tagName !== 'BUTTON'
-              );
-              const variables = getVariableValues(elements);
-              return (
-                photo({ variables })
-                  // eslint-disable-next-line no-console
-                  .catch(console.error)
-              );
+              handleSubmit(photo);
             }}
           >
             <FileInput
@@ -79,6 +59,10 @@ const Photo = () => {
       }}
     </Mutation>
   );
+};
+
+Photo.propTypes = {
+  handleSubmit: PropTypes.func.isRequired
 };
 
 export default Photo;

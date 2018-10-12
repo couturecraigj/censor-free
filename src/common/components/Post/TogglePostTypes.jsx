@@ -45,7 +45,7 @@ class TogglePostTypes extends React.Component {
     this.setState({
       post: postType.name
     });
-    return selectedPost(postType.module);
+    return selectedPost(postType.module, postType.initialValues);
   };
 
   render() {
