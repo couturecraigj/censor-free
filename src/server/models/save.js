@@ -2,7 +2,9 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 const Save = new Schema(
-  {},
+  {
+    kind: { type: String, default: 'Save' }
+  },
   {
     timestamps: true
   }

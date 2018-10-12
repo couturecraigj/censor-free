@@ -18,8 +18,8 @@ const SUBMIT_VIDEO = gql`
   }
 `;
 
-const getVariableValues = eles => {
-  return eles.reduce(
+const getVariableValues = elements => {
+  return elements.reduce(
     (p, el) => ({
       ...p,
       [el.name]: el.type.toLowerCase() === 'number' ? +el.value : el.value

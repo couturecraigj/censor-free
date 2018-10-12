@@ -6,7 +6,8 @@ const Question = new Schema(
   {
     title: { type: String },
     description: { type: String },
-    products: [Schema.Types.ObjectId]
+    products: [Schema.Types.ObjectId],
+    kind: { type: String, default: 'Question' }
   },
   {
     timestamps: true

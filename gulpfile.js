@@ -1,9 +1,10 @@
 const gulp = require('gulp');
+const markdown = require('gulp-markdown');
+const todo = require('gulp-todo');
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 
 const __PROD__ = process.env.NODE_ENV === 'production';
-
 const config = __PROD__
   ? require('./utilities/bundling/production/service-worker/webpack.config.js')
   : require('./utilities/bundling/development/service-worker/webpack.config.js');
@@ -26,4 +27,12 @@ gulp.task('watch', function() {
     'default',
     gulp.watch(['src/**/*.js', '**/fragmentTypes.json'], ['default'])
   );
+});
+
+gulp.task('todos', function() {
+  gulp
+    .src(['src/**/*.{jsx,js}', 'utilities/**/*.{jsx,js}', './*.{jsx,js}'])
+    .pipe(markdown())
+    .pipe(todo())
+    .pipe(gulp.dest('./'));
 });

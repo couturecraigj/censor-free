@@ -2,6 +2,8 @@
 const MemoryFs = require('memory-fs');
 const webpack = require('webpack');
 
+// TODO: Make these run faster
+
 module.exports = (config, memory = true) => {
   const compiler = webpack(config);
   let fs;

@@ -25,6 +25,8 @@ const User = new Schema(
     birthMonth: { type: Number },
     birthDay: { type: Number },
 
+    kind: { type: String, default: 'User' },
+
     // PREFERENCES
     filterOut: [
       {
@@ -87,7 +89,7 @@ const User = new Schema(
         'Server',
         // Or from in blockchain
         'Decentralized',
-        // Or only when they are online (Use alot more data on their computer)
+        // Or only when they are online (Use allot more data on their computer)
         'Mobile'
       ]
     },
@@ -171,6 +173,9 @@ User.methods.passwordsMatch = async function(password) {
   return bcrypt.compare(password, this.hash);
 };
 
+User.statics.findMe = async function(args, context) {
+  return mongoose.models.User.findById(context.req.cookies.token);
+};
 User.statics.getResetToken = async function({ email }) {
   const timeOut = Date.now() + 360000;
   const user = await mongoose.models.User.findOne({ email });

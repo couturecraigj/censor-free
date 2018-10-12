@@ -10,7 +10,8 @@ const Comment = new Schema(
     },
     description: {
       type: String
-    }
+    },
+    kind: { type: String, default: 'Comment' }
   },
   {
     timestamps: true

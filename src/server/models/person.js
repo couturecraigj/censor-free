@@ -33,7 +33,8 @@ const Person = new Schema(
         ]
       }
     ],
-    emails: [String]
+    emails: [String],
+    kind: { type: String, default: 'Person' }
   },
   {
     timestamps: true

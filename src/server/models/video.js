@@ -39,6 +39,7 @@ const Video = new Schema(
     description: { type: String },
     imgs: [Schema.Types.ObjectId],
     img: Schema.Types.ObjectId,
+    kind: { type: String, default: 'Video' },
     uri: { type: String }
   },
   {

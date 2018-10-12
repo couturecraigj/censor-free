@@ -6,6 +6,7 @@ const Story = new Schema(
   {
     title: { type: String },
     description: { type: String },
+    kind: { type: String, default: 'Story' },
     excerpt: { type: String }
   },
   {

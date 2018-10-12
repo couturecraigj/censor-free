@@ -4,7 +4,8 @@ const { Schema } = mongoose;
 const Company = new Schema(
   {
     name: { type: String },
-    description: { type: String }
+    description: { type: String },
+    kind: { type: String, default: 'Company' }
   },
   {
     timestamps: true

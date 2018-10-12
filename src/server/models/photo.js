@@ -17,6 +17,7 @@ const Photo = new Schema(
     description: { type: String },
     height: { type: Number },
     width: { type: Number },
+    kind: { type: String, default: 'Photo' },
     imgUri: { type: String }
   },
   {
@@ -72,14 +73,11 @@ Photo.statics.createPhoto = async function(args, context) {
   );
   readStream.pipe(writeStream);
   readStream.pipe(thumbnailTransformingStream).pipe(thumbnailWriteStream);
-  const postNode = await PostNode.createPostNode(args, context);
   const photo = await mongoose.models.Photo.create({
     ...args,
     imgUri: '/' + context.req.user.id + '/' + fileName
   });
-  postNode.post = photo.id;
-  postNode.kind = 'Photo';
-  postNode.save();
+  await PostNode.createPostNode(args, context, photo);
   return photo;
 };
 

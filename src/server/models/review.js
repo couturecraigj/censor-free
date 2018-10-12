@@ -7,7 +7,8 @@ const Review = new Schema(
     title: { type: String },
     description: { type: String },
     score: { type: Number },
-    products: [Schema.Types.ObjectId]
+    products: [Schema.Types.ObjectId],
+    kind: { type: String, default: 'Review' }
   },
   {
     timestamps: true

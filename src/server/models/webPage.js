@@ -8,7 +8,8 @@ const WebPage = new Schema(
     description: { type: String },
     imgs: [Schema.Types.ObjectId],
     img: Schema.Types.ObjectId,
-    uri: { type: String }
+    uri: { type: String },
+    kind: { type: String, default: 'WebPage' }
   },
   {
     timestamps: true

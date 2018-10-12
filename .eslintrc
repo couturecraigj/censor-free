@@ -86,8 +86,9 @@
       "error",
       {
         "devDependencies": [
-          "**/*.test.js",
           "**/mocks/**/*.js",
+          "**/__mocks__/**/*.js",
+          "**/*.test.js",
           "test_utilities/**/*.js",
           "**/*.dev.js",
           "**/dev.js",

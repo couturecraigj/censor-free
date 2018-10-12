@@ -34,17 +34,28 @@ const typeDefs = gql`
     modified: AlterationStamp
   }
 
+  # ENUMS
+  enum POSTNODE_ENUM {
+    Answer
+    Photo
+    Question
+    Review
+    Story
+    Thought
+    Tip
+    Video
+    WebPage
+  }
   # UNIONS
-  union SavedRecord = Product | Company | Video | Photo | WebPage
-  union PostUnion =
-      Thought
-    | Review
-    | Question
-    | Answer
-    | Photo
+  union SavedRecord =
+      Company
+    | Product
+    | Story
+    | Thought
     | Video
+    | Photo
     | WebPage
-    | Tip
+    | User
 
   # TYPES
   type AlterationStamp {
@@ -123,7 +134,7 @@ const typeDefs = gql`
   type Comment implements Node & CommentNode & Searchable {
     id: ID!
     highlights: [Highlight]!
-    parent: PostUnion!
+    parent: PostNode!
     description: String!
     created: AlterationStamp!
     modified: AlterationStamp
@@ -206,7 +217,7 @@ const typeDefs = gql`
     imgs: [Photo]
   }
 
-  type Me implements Node & Searchable & UserNode {
+  type Me implements Node & UserNode {
     id: ID!
     highlights: [Highlight]!
     userName: String!
@@ -229,6 +240,21 @@ const typeDefs = gql`
       userName: String!
     ): Authentication!
     logOut: String!
+    frightening(id: ID!, type: POSTNODE_ENUM): PostNode
+    sex(id: ID!, type: POSTNODE_ENUM): PostNode
+    scam(id: ID!, type: POSTNODE_ENUM): PostNode
+    copyRightsViolation(id: ID!, type: POSTNODE_ENUM): PostNode
+    privacy(id: ID!, type: POSTNODE_ENUM): PostNode
+    like(id: ID!, type: POSTNODE_ENUM): PostNode
+    dislike(id: ID!, type: POSTNODE_ENUM): PostNode
+    nudity(id: ID!, type: POSTNODE_ENUM): PostNode
+    violence(id: ID!, type: POSTNODE_ENUM): PostNode
+    weapons(id: ID!, type: POSTNODE_ENUM): PostNode
+    gross(id: ID!, type: POSTNODE_ENUM): PostNode
+    smoking(id: ID!, type: POSTNODE_ENUM): PostNode
+    drugs(id: ID!, type: POSTNODE_ENUM): PostNode
+    alcohol(id: ID!, type: POSTNODE_ENUM): PostNode
+    language(id: ID!, type: POSTNODE_ENUM): PostNode
     forgotPassword(email: String!): String!
     resetPassword(
       token: String!

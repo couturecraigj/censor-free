@@ -4,7 +4,8 @@ const { Schema } = mongoose;
 const Product = new Schema(
   {
     name: { type: String },
-    description: { type: String }
+    description: { type: String },
+    kind: { type: String, default: 'Product' }
   },
   {
     timestamps: true

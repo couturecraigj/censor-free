@@ -5,7 +5,8 @@ const { Schema } = mongoose;
 const Thought = new Schema(
   {
     title: { type: String },
-    description: { type: String }
+    description: { type: String },
+    kind: { type: String, default: 'Thought' }
   },
   {
     timestamps: true
