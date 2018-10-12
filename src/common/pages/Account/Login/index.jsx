@@ -4,8 +4,14 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
+import { Formik, Form } from 'formik';
 import * as Routes from '../../Routes';
 import TextInput from '../../../components/TextInput';
+
+const initialValues = {
+  nameEmail: '',
+  password: ''
+};
 
 const LOGIN = gql`
   mutation Login($nameEmail: String!, $password: String!) {
@@ -20,10 +26,6 @@ const LOGIN = gql`
   }
 `;
 
-const getVariableValues = eles => {
-  return eles.reduce((p, el) => ({ ...p, [el.name]: el.value }), {});
-};
-
 // const clearVariableValues = eles => {
 //   return eles.forEach(el => {
 //     el.value = '';
@@ -31,7 +33,6 @@ const getVariableValues = eles => {
 // };
 
 const Login = () => {
-  let form;
   return (
     <div>
       <Helmet>
@@ -39,43 +40,38 @@ const Login = () => {
       </Helmet>
       <Mutation mutation={LOGIN}>
         {logIn => (
-          <form
-            ref={ref => {
-              form = ref;
-            }}
-            onSubmit={e => {
-              e.preventDefault();
-              const elements = [...form.elements].filter(
-                el => el.tagName !== 'BUTTON'
-              );
-              const variables = getVariableValues(elements);
-              return (
-                logIn({ variables })
-                  .then(result => {
-                    localStorage.setItem('token', result.data.logIn.token);
-                    // document.cookie = 'token=' + result.data.logIn.token;
-                    // location.reload();
-                  })
-                  // eslint-disable-next-line no-console
-                  .catch(console.error)
-              );
-            }}
+          <Formik
+            initialValues={initialValues}
+            onSubmit={variables =>
+              logIn({ variables })
+                .then(result => {
+                  localStorage.setItem('token', result.data.logIn.token);
+                  // document.cookie = 'token=' + result.data.logIn.token;
+                  // location.reload();
+                })
+                // eslint-disable-next-line no-console
+                .catch(console.error)
+            }
           >
-            <TextInput
-              autoComplete="username"
-              id="Login__name_email"
-              label="Name or Email"
-              name="nameEmail"
-            />
-            <TextInput
-              id="Login__password"
-              label="Password"
-              type="password"
-              autoComplete="password"
-              name="password"
-            />
-            <button type="submit">Submit</button>
-          </form>
+            {() => (
+              <Form>
+                <TextInput
+                  autoComplete="username"
+                  id="Login__name_email"
+                  label="Name or Email"
+                  name="nameEmail"
+                />
+                <TextInput
+                  id="Login__password"
+                  label="Password"
+                  type="password"
+                  autoComplete="password"
+                  name="password"
+                />
+                <button type="submit">Submit</button>
+              </Form>
+            )}
+          </Formik>
         )}
       </Mutation>
       <div>

@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import loadable from 'loadable-components';
 import styled from 'styled-components';
-import { Formik, withFormik } from 'formik';
 import TogglePostTypes from './TogglePostTypes';
 import Modal from '../Modal';
 
@@ -11,68 +10,45 @@ import Modal from '../Modal';
 const list = [
   {
     name: 'Thought',
-    initialValues: {
-      description: ''
-    },
     module: loadable(() =>
       import(/* webpackChunkName: 'new-thought' */ './Thought')
     )
   },
   {
     name: 'Video',
-    initialValues: {
-      title: '',
-      description: ''
-    },
     module: loadable(() =>
       import(/* webpackChunkName: 'new-video' */ './Video')
     )
   },
   {
     name: 'Photo',
-    initialValues: {
-      subject: '',
-      description: ''
-    },
+
     module: loadable(() =>
       import(/* webpackChunkName: 'new-photo' */ './Photo')
     )
   },
   {
     name: 'Review',
-    initialValues: {
-      score: 5,
-      subject: '',
-      description: ''
-    },
+
     module: loadable(() =>
       import(/* webpackChunkName: 'new-review' */ './Review')
     )
   },
   {
     name: 'Question',
-    initialValues: {
-      subject: '',
-      description: ''
-    },
+
     module: loadable(() =>
       import(/* webpackChunkName: 'new-question' */ './Question')
     )
   },
   {
     name: 'Tip',
-    initialValues: {
-      subject: '',
-      description: ''
-    },
+
     module: loadable(() => import(/* webpackChunkName: 'new-tip' */ './Tip'))
   },
   {
     name: 'Story',
-    initialValues: {
-      subject: '',
-      description: ''
-    },
+
     module: loadable(() =>
       import(/* webpackChunkName: 'new-story' */ './Story')
     )
@@ -152,19 +128,12 @@ class Post extends React.Component {
     }
     close(true);
   };
-  selectedPost = (component, initialValues = {}) => {
-    this.setState(
-      {
-        initialValues
-      },
-      () => {
-        this.setState({ Component: component });
-      }
-    );
+  selectedPost = component => {
+    this.setState({ Component: component });
   };
   render() {
     const { close } = this.props;
-    const { Component, initialValues } = this.state;
+    const { Component } = this.state;
     // const { postType, post } = this.state;
     // TODO: Create a Wizard that will ask for filterable categories
     return (
@@ -173,37 +142,24 @@ class Post extends React.Component {
           ref={this.outsideDiv}
           // style={{ overflow: 'scroll', maxHeight: '100%', maxWidth: '100%' }}
         >
-          <Formik
-            onSubmit={(...e) => {
-              this.handleSubmit(...e);
-            }}
-            enableReinitialize
-            initialValues={initialValues}
-          >
-            {({ handleSubmit }) => (
-              <Div>
-                <div>
-                  <Close type="button" onClick={close}>
-                    ✕
-                  </Close>
-                  <Tabs>
-                    <TogglePostTypes
-                      list={list}
-                      selectedPost={this.selectedPost}
-                    />
-                  </Tabs>
-                </div>
-                <Component handleSubmit={handleSubmit} />
+          <Div>
+            <div>
+              <Close type="button" onClick={close}>
+                ✕
+              </Close>
+              <Tabs>
+                <TogglePostTypes list={list} selectedPost={this.selectedPost} />
+              </Tabs>
+            </div>
+            <Component />
 
-                <button type="button" onClick={this.nextStep}>
-                  Next
-                </button>
-                <button type="button" onClick={this.previousStep}>
-                  Previous
-                </button>
-              </Div>
-            )}
-          </Formik>
+            <button type="button" onClick={this.nextStep}>
+              Next
+            </button>
+            <button type="button" onClick={this.previousStep}>
+              Previous
+            </button>
+          </Div>
         </div>
       </Modal>
     );
@@ -214,7 +170,4 @@ Post.propTypes = {
   close: PropTypes.func.isRequired
 };
 
-export default withFormik({
-  enableReinitialize: true,
-  displayName: 'PostForm'
-})(Post);
+export default Post;

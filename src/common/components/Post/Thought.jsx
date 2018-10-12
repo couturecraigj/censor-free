@@ -1,27 +1,20 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { Formik, Form } from 'formik';
 import TextArea from '../TextArea';
+import TextInput from '../TextInput';
 
-const Thought = ({ handleSubmit }) => (
-  <form
-    onSubmit={e => {
-      e.preventDefault();
-      handleSubmit(e);
-    }}
-  >
-    <TextArea
-      name="description"
-      label="Tell me something..."
-      id="Thought__TextArea"
-    />
-    <div>
-      <button type="submit">Submit</button>
-    </div>
-  </form>
+const Thought = () => (
+  <Formik>
+    {() => (
+      <Form>
+        <TextInput name="title" label="Subject" id="Thought__subject" />
+        <TextArea name="description" label="Body" id="Thought__body" />
+        <div>
+          <button type="submit">Submit</button>
+        </div>
+      </Form>
+    )}
+  </Formik>
 );
-
-Thought.propTypes = {
-  handleSubmit: PropTypes.func.isRequired
-};
 
 export default Thought;

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Resumable from 'resumablejs';
-// import { Field, ErrorMessage } from 'formik';
+import { Field, withFormik } from 'formik';
 import Progress from './Progress';
 
 const Img = styled.img`
@@ -18,10 +18,7 @@ class FileInput extends React.Component {
       ready: false,
       uploading: false,
       reader,
-      progress: 0,
-      value: '',
-      height: '',
-      width: ''
+      progress: 0
     };
     this.resumable = new Resumable({
       target: '/files',
@@ -33,6 +30,7 @@ class FileInput extends React.Component {
     this.video = React.createRef();
     this.input = React.createRef();
     reader.onload = e => {
+      const { setFieldValue } = this.props;
       if (!this.isAcceptableFile(e.target.result)) {
         return this.setState({
           error: 'File Type Unaccepted'
@@ -42,10 +40,8 @@ class FileInput extends React.Component {
         const img = new Image();
 
         img.onload = () => {
-          this.setState({
-            width: +img.width,
-            height: +img.height
-          });
+          setFieldValue('width', +img.width);
+          setFieldValue('height', +img.height);
         };
         this.setState({
           src: e.target.result
@@ -62,15 +58,16 @@ class FileInput extends React.Component {
   componentDidMount() {
     this.resumable.assignBrowse(this.input.current);
     this.resumable.on('fileAdded', file => {
+      const { setFieldValue, name } = this.props;
       if (!this.isAcceptableFile(file.file.type)) {
         return this.setState({
           error: 'File Type Unaccepted'
         });
       }
       // this.resumable.upload();
+      setFieldValue(name, file.file.name);
       this.setState({
         ready: true,
-        value: file.file.name,
         // eslint-disable-next-line node/no-unsupported-features/node-builtins
         url: URL.createObjectURL(file.file),
         error: ''
@@ -191,16 +188,14 @@ class FileInput extends React.Component {
   // };
   render() {
     const { label, id, name, ...props } = this.props;
+    console.log(props);
     const {
       ready,
       mimeType,
-      value,
       url,
       error,
       progress,
       finished,
-      height,
-      width,
       uploading
       // file
     } = this.state;
@@ -228,9 +223,15 @@ class FileInput extends React.Component {
             <track kind="captions" />
           </video>
           {this.getDisplay()}
-          <input name={name} hidden readOnly value={value} />
-          <input name="height" type="number" hidden readOnly value={height} />
-          <input name="width" type="number" hidden readOnly value={width} />
+          <Field name={name}>
+            {({ field }) => <input {...field} hidden readOnly />}
+          </Field>
+          <Field name="height">
+            {({ field }) => <input {...field} hidden readOnly />}
+          </Field>
+          <Field name="width">
+            {({ field }) => <input {...field} hidden readOnly />}
+          </Field>
           {error}
           {ready && <Progress progress={progress} />}
           {ready && !uploading && !progress ? (
@@ -262,9 +263,12 @@ class FileInput extends React.Component {
 
 FileInput.propTypes = {
   label: PropTypes.string.isRequired,
+  setFieldValue: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   accept: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired
 };
 
-export default FileInput;
+export default withFormik({
+  displayName: 'FileInput'
+})(FileInput);

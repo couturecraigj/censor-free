@@ -1,6 +1,7 @@
 /* env browser */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Field } from 'formik';
 // import styled from 'styled-components';
 import Progress from './Progress';
 
@@ -174,15 +175,20 @@ class FileInput extends React.Component {
         <label htmlFor={id}>
           {label}
           <div>
-            <input
-              type="file"
-              id={id}
-              hidden
-              value={value}
-              readOnly
-              name={name}
-              onChange={this.onChange}
-            />
+            <Field name={name}>
+              {({ field }) => (
+                <input
+                  name={name}
+                  value={value}
+                  {...field}
+                  type="file"
+                  id={id}
+                  hidden
+                  readOnly
+                  onChange={this.onChange}
+                />
+              )}
+            </Field>
           </div>
           {progress && <Progress progress={progress} />}
         </label>
