@@ -5,7 +5,7 @@ const __DEV__ = process.env.NODE_ENV !== 'production';
 const FormDebugger = () => {
   return (
     <Field name="___DEBUGGER___">
-      {props => <div>{JSON.stringify(props)}</div>}
+      {({ form }) => <pre>{JSON.stringify(form, null, 2)}</pre>}
     </Field>
   );
 };

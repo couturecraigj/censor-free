@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Resumable from 'resumablejs';
-import { Field, withFormik } from 'formik';
+import { Field } from 'formik';
 import Progress from './Progress';
 
 const Img = styled.img`
@@ -188,7 +188,7 @@ class FileInput extends React.Component {
   // };
   render() {
     const { label, id, name, ...props } = this.props;
-    console.log(props);
+    // console.log(props);
     const {
       ready,
       mimeType,
@@ -223,15 +223,7 @@ class FileInput extends React.Component {
             <track kind="captions" />
           </video>
           {this.getDisplay()}
-          <Field name={name}>
-            {({ field }) => <input {...field} hidden readOnly />}
-          </Field>
-          <Field name="height">
-            {({ field }) => <input {...field} hidden readOnly />}
-          </Field>
-          <Field name="width">
-            {({ field }) => <input {...field} hidden readOnly />}
-          </Field>
+          <input name={name} hidden readOnly />
           {error}
           {ready && <Progress progress={progress} />}
           {ready && !uploading && !progress ? (
@@ -269,6 +261,12 @@ FileInput.propTypes = {
   id: PropTypes.string.isRequired
 };
 
-export default withFormik({
-  displayName: 'FileInput'
-})(FileInput);
+export default FileInput;
+
+export const FormikFileInput = props => (
+  <Field {...props}>
+    {({ field, form: { setFieldValue } }) => (
+      <FileInput {...props} {...field} setFieldValue={setFieldValue} />
+    )}
+  </Field>
+);

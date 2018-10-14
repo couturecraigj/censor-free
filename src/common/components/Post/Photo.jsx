@@ -3,7 +3,7 @@ import { Mutation } from 'react-apollo';
 import { Formik, Form } from 'formik';
 // import { Form } from 'formik';
 import gql from 'graphql-tag';
-import FileUpload from '../FileUpload';
+import { FormikFileUpload } from '../FileUpload';
 import TextArea from '../TextArea';
 import TextInput from '../TextInput';
 import FormDebugger from '../FormDebug';
@@ -11,9 +11,7 @@ import FormDebugger from '../FormDebug';
 const initialValues = {
   title: '',
   description: '',
-  imgUri: '',
-  height: '',
-  weight: ''
+  imgUri: ''
 };
 
 const SUBMIT_PHOTO = gql`
@@ -47,7 +45,7 @@ const Photo = () => {
             initialValues={initialValues}
           >
             <Form>
-              <FileUpload
+              <FormikFileUpload
                 label="Photo"
                 id="Photo__file-input"
                 accept="image/*"

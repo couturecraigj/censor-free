@@ -10,7 +10,7 @@ import Progress from './Progress';
 //   height: auto;
 // `;
 
-class FileInput extends React.Component {
+class FileUpload extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -142,7 +142,12 @@ class FileInput extends React.Component {
         limit = limit + chunkSize;
       }
       const { uploadToken } = this.state;
-      this.setState({ value: uploadToken });
+      const { setFieldValue, name } = this.props;
+      if (setFieldValue) {
+        setFieldValue(name, uploadToken);
+      } else {
+        this.setState({ value: uploadToken });
+      }
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error);
@@ -168,27 +173,23 @@ class FileInput extends React.Component {
     // console.log(file);
   };
   render() {
-    const { label, id, name } = this.props;
+    const { label, id, name, accept } = this.props;
     const { progress, value } = this.state;
     return (
       <React.Fragment>
         <label htmlFor={id}>
           {label}
           <div>
-            <Field name={name}>
-              {({ field }) => (
-                <input
-                  name={name}
-                  value={value}
-                  {...field}
-                  type="file"
-                  id={id}
-                  hidden
-                  readOnly
-                  onChange={this.onChange}
-                />
-              )}
-            </Field>
+            <input
+              name={name}
+              accept={accept}
+              value={value}
+              type="file"
+              id={id}
+              hidden
+              readOnly
+              onChange={this.onChange}
+            />
           </div>
           {progress && <Progress progress={progress} />}
         </label>
@@ -197,11 +198,19 @@ class FileInput extends React.Component {
   }
 }
 
-FileInput.propTypes = {
+FileUpload.propTypes = {
   label: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  // accept: PropTypes.string.isRequired,
+  accept: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired
 };
 
-export default FileInput;
+export default FileUpload;
+
+export const FormikFileUpload = props => (
+  <Field {...props}>
+    {({ field, form: { setFieldValue } }) => (
+      <FileUpload {...props} {...field} setFieldValue={setFieldValue} />
+    )}
+  </Field>
+);
