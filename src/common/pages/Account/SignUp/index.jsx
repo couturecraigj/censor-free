@@ -5,6 +5,7 @@ import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import { Link } from 'react-router-dom';
 import { Formik, Form } from 'formik';
+import { Redirect } from 'react-router';
 import { FormikTextInput } from '../../../components/TextInput';
 import * as Routes from '../../Routes';
 
@@ -33,99 +34,76 @@ const SIGN_UP = gql`
   }
 `;
 
-const getVariableValues = eles => {
-  return eles.reduce((p, el) => ({ ...p, [el.name]: el.value }), {});
-};
-
-const clearVariableValues = eles => {
-  return eles.forEach(el => {
-    el.value = '';
-  });
-};
-
 const SignUp = () => {
-  const vars = {};
-  let form;
   return (
     <div>
       <Helmet>
         <title>Sign Up</title>
       </Helmet>
       <Mutation mutation={SIGN_UP}>
-        {(signUp, { client }) => (
-          <Formik
-            // initialValues={initialValues}
-            onSubmit={(variables, actions) =>
-              signUp({ variables })
-                .then(result => {
-                  localStorage.setItem('token', result.data.logIn.token);
-                  actions.resetForm();
-                  client.resetStore();
+        {(signUp, { client, data }) =>
+          data?.signUp ? (
+            <Redirect to="/" />
+          ) : (
+            <Formik
+              // initialValues={initialValues}
+              onSubmit={(variables, actions) =>
+                signUp({ variables })
+                  .then(result => {
+                    localStorage.setItem('token', result.data.logIn.token);
+                    actions.resetForm();
+                    client.resetStore();
 
-                  // document.cookie = 'token=' + result.data.logIn.token;
-                  // location.reload();
-                })
-                // eslint-disable-next-line no-console
-                .catch(console.error)
-            }
-          >
-            {() => (
-              <Form>
-                <FormikTextInput
-                  autoComplete="email"
-                  ref={ref => {
-                    vars.email = ref;
-                  }}
-                  id="SignUp__email"
-                  label="Email"
-                  type="email"
-                  name="email"
-                />
-                <FormikTextInput
-                  autoComplete="email"
-                  ref={ref => {
-                    vars.confirmEmail = ref;
-                  }}
-                  id="SignUp__confirm-email"
-                  label="Confirm Email"
-                  type="email"
-                  name="confirmEmail"
-                />
+                    // document.cookie = 'token=' + result.data.logIn.token;
+                    // location.reload();
+                  })
+                  // eslint-disable-next-line no-console
+                  .catch(console.error)
+              }
+            >
+              {() => (
+                <Form>
+                  <FormikTextInput
+                    autoComplete="email"
+                    id="SignUp__email"
+                    label="Email"
+                    type="email"
+                    name="email"
+                  />
+                  <FormikTextInput
+                    autoComplete="email"
+                    id="SignUp__confirm-email"
+                    label="Confirm Email"
+                    type="email"
+                    name="confirmEmail"
+                  />
 
-                <FormikTextInput
-                  autoComplete="username"
-                  ref={ref => {
-                    vars.username = ref;
-                  }}
-                  id="SignUp__name"
-                  label="Name"
-                  name="userName"
-                />
-                <FormikTextInput
-                  id="SignUp__password"
-                  ref={ref => {
-                    vars.password = ref;
-                  }}
-                  label="Password"
-                  type="password"
-                  autoComplete="new-password"
-                  name="password"
-                />
-                <FormikTextInput
-                  id="SignUp__confirm-password"
-                  ref={ref => {
-                    vars.confirmPassword = ref;
-                  }}
-                  label="Confirm Password"
-                  autoComplete="new-password"
-                  type="password"
-                  name="confirmPassword"
-                />
-                <button type="submit">Submit</button>
-              </Form>
-            )}
-          </Formik>
-        )}
+                  <FormikTextInput
+                    autoComplete="username"
+                    id="SignUp__name"
+                    label="Name"
+                    name="userName"
+                  />
+                  <FormikTextInput
+                    id="SignUp__password"
+                    label="Password"
+                    type="password"
+                    autoComplete="new-password"
+                    name="password"
+                  />
+                  <FormikTextInput
+                    id="SignUp__confirm-password"
+                    label="Confirm Password"
+                    autoComplete="new-password"
+                    type="password"
+                    name="confirmPassword"
+                  />
+                  <button type="submit">Submit</button>
+                </Form>
+              )}
+            </Formik>
+          )
+        }
       </Mutation>
       <div>
         <Link
