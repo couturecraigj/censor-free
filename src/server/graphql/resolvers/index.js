@@ -51,6 +51,8 @@ const resolvers = {
       res.cookie('reset-token', token, { httpOnly: true, maxAge: 3000 });
       return token;
     },
+    addVideoFilters: async (parent, args, context) =>
+      Video.addFilters(args, context),
     frightening: async (parents, args) => PostNode.flagFrightening(args),
     sex: async (parents, args) => PostNode.flagSex(args),
     scam: async (parents, args) => PostNode.flagScam(args),
@@ -85,20 +87,20 @@ const resolvers = {
       Thought.createThought(args, context),
     addTip: async (parent, args, context) => Tip.createTip(args, context),
     addVideo: async (parent, args, context) => {
-      await Video.createDifferentVideoFormats(args, context, {
+      return Video.createVideo(args, context, {
         // eslint-disable-next-line no-console
         progress: console.log
       });
-      return Video.createVideo(args, context);
+      // return Video.createVideo(args, context);
     },
     addWebPage: async (parent, args, context) =>
       WebPage.createWebPage(args, context)
   },
   Authentication: {
-    token: (me, args, { res }) => {
+    token: (me, args, { res, req }) => {
       // console.log(me);
-      res.cookie('token', me.id, { httpOnly: true, maxAge: 9999999 });
-      return me.id;
+      const token = User.getTokenFromUser(me, { req, res });
+      return token;
     },
     me: me => me
   },

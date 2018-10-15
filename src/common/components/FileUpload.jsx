@@ -148,6 +148,10 @@ class FileUpload extends React.Component {
     const { chunkSize } = this.state;
     try {
       await this.getToken();
+      const { finished } = this.state;
+      if (finished) {
+        return this.sendValue();
+      }
       for (let i = 0, limit = chunkSize; file.size > i; ) {
         const { chunkNumber, size } = this.state;
         const blob = file.slice(i, limit);
@@ -164,23 +168,29 @@ class FileUpload extends React.Component {
         i = i + chunkSize;
         limit = limit + chunkSize;
       }
-      const { uploadToken } = this.state;
-      const { setFieldValue, name } = this.props;
-      if (setFieldValue) {
-        setFieldValue(name, uploadToken);
-      } else {
-        this.setState({ value: uploadToken });
-      }
+      this.sendValue();
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error);
     }
     await this.cleanUpUpload();
   };
+  // eslint-disable-next-line react/destructuring-assignment
+  sendValue = value => {
+    const { uploadToken } = this.state;
+    if (typeof value === 'undefined') value = uploadToken;
+    const { onChange, name } = this.props;
+    if (onChange) {
+      onChange({ target: { name, value } });
+    } else {
+      this.setState({ value });
+    }
+  };
   onChange = async e => {
     e.preventDefault();
     if (!e.target.files[0]) return;
     const [file] = [...e.target.files];
+    this.sendValue('');
     if (file.type.startsWith('image')) await this.getDimensionsOfImage(file);
     const chunkSize = 50000;
     await this.asyncSetState({
@@ -223,6 +233,7 @@ FileUpload.propTypes = {
   label: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   accept: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
   id: PropTypes.string.isRequired
 };
 
@@ -230,8 +241,6 @@ export default FileUpload;
 
 export const FormikFileUpload = props => (
   <Field {...props}>
-    {({ field, form: { setFieldValue } }) => (
-      <FileUpload {...props} {...field} setFieldValue={setFieldValue} />
-    )}
+    {({ field }) => <FileUpload {...props} {...field} />}
   </Field>
 );

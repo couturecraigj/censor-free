@@ -231,6 +231,19 @@ const typeDefs = gql`
     me: Me!
   }
 
+  input CoordinatesInput {
+    fromTop: Int
+    fromLeft: Int
+    height: Int
+    width: Int
+  }
+
+  input VideoFilterInput {
+    startTimeCode: Int
+    endTimeCode: Int
+    coordinates: CoordinatesInput
+  }
+
   type Mutation {
     signUp(
       email: String!
@@ -277,6 +290,19 @@ const typeDefs = gql`
     addStory(title: String!): Story
     addTip(title: String!): Tip
     addVideo(title: String!, description: String!, videoUri: String!): Video
+    addVideoFilters(
+      id: ID!
+      sex: [VideoFilterInput]!
+      nudity: [VideoFilterInput]!
+      violence: [VideoFilterInput]!
+      frightening: [VideoFilterInput]!
+      weapons: [VideoFilterInput]!
+      gross: [VideoFilterInput]!
+      smoking: [VideoFilterInput]!
+      drugs: [VideoFilterInput]!
+      alcohol: [VideoFilterInput]!
+      language: [VideoFilterInput]!
+    ): Video
     addWebPage(title: String!): WebPage
   }
 

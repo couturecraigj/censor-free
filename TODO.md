@@ -1,5 +1,5 @@
 ### TODOs
 | Filename | line # | TODO
 |:------|:------:|:------
-| server/index.jsx | 25 | make it so Errors send everything to the Error Page
-| common/components/Post/index.jsx | 155 | Create a Wizard that will ask for filterable categories
+| server/index.jsx | 26 | make it so Errors send everything to the Error Page
+| common/components/Post/index.jsx | 108 | Create a Wizard that will ask for filterable categories

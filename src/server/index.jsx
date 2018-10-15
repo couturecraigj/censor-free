@@ -43,7 +43,8 @@ app.get('*', async (req, res) => {
     const queryUrl = `${req.headers['x-forwarded-proto'] || req.protocol}://${
       req.headers.host
     }${app.get('apollo').graphqlPath}`;
-    const loggedIn = req.user.id !== undefined;
+    // const loggedIn = req.user.id !== undefined;
+    const loggedIn = false;
     const store = initiateStore({
       errorMessage:
         res.locals.errorMessage ||

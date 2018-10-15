@@ -92,7 +92,7 @@ class Post extends React.Component {
     this.modalDiv = React.createRef();
     this.state = {
       Component: () => <div>Loading...</div>,
-      step: 1
+      tabsVisible: true
     };
   }
 
@@ -109,17 +109,11 @@ class Post extends React.Component {
       variables: values
     };
   };
-  nextStep = () => {
-    const { step: val } = this.state;
-    const step = val + 1;
-    if (val >= this.max) return;
-    this.setState({ step });
-  };
-  previousStep = () => {
-    const { step: val } = this.state;
-    const step = val - 1;
-    if (step <= 0) return;
-    this.setState({ step });
+  // eslint-disable-next-line react/destructuring-assignment
+  toggleTabs = (tabsVisible = !this.state.tabsVisible) => {
+    this.setState({
+      tabsVisible
+    });
   };
   handleClose = e => {
     const { close } = this.props;
@@ -133,7 +127,7 @@ class Post extends React.Component {
   };
   render() {
     const { close } = this.props;
-    const { Component } = this.state;
+    const { Component, tabsVisible } = this.state;
     // const { postType, post } = this.state;
     // TODO: Create a Wizard that will ask for filterable categories
     return (
@@ -147,18 +141,16 @@ class Post extends React.Component {
               <Close type="button" onClick={close}>
                 ✕
               </Close>
-              <Tabs>
-                <TogglePostTypes list={list} selectedPost={this.selectedPost} />
-              </Tabs>
+              {tabsVisible && (
+                <Tabs>
+                  <TogglePostTypes
+                    list={list}
+                    selectedPost={this.selectedPost}
+                  />
+                </Tabs>
+              )}
             </div>
-            <Component />
-
-            <button type="button" onClick={this.nextStep}>
-              Next
-            </button>
-            <button type="button" onClick={this.previousStep}>
-              Previous
-            </button>
+            <Component toggleTabs={this.toggleTabs} />
           </Div>
         </div>
       </Modal>

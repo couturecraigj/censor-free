@@ -144,6 +144,27 @@ User.virtual('confirmEmail').set(function(value) {
   this._confirmEmail = value;
 });
 
+User.statics.getUserFromToken = function(token, { res }) {
+  const maxAge = 3999999999;
+  const date = Date.now() + maxAge;
+  res.cookie('token', token, {
+    httpOnly: true,
+    expires: new Date(date),
+    maxAge
+  });
+  return token;
+};
+User.statics.getTokenFromUser = function(user, { res }) {
+  const maxAge = 3999999999;
+  const date = Date.now() + maxAge;
+  res.cookie('token', user.id, {
+    httpOnly: true,
+    expires: new Date(date),
+    maxAge
+  });
+  return user.id;
+};
+
 User.pre('save', async function() {
   if (this._password) {
     const salt = await bcrypt.genSalt(10);

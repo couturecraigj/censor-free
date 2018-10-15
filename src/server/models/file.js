@@ -5,6 +5,7 @@ import fs from 'fs';
 import rimraf from 'rimraf';
 
 const sendFileFields = file => ({
+  finished: file.finished,
   uploadToken: file.uploadToken,
   chunkSize: file.chunkSize,
   chunksLoaded: file.chunksLoaded
@@ -32,7 +33,9 @@ const File = new Schema(
     user: { type: Schema.Types.ObjectId, required: true },
     originalFileName: { type: String, required: true },
     size: { type: Number, required: true },
-    finished: { type: Boolean, default: false }
+    finished: { type: Boolean, default: false },
+    convertedPath: { type: String },
+    converted: { type: Boolean, default: false }
   },
   {
     timestamps: true
@@ -52,7 +55,6 @@ File.statics.getUploadToken = async function(args) {
   if (!args.user)
     throw new Error('You need to be logged in to be able to upload anything');
   const file = await mongoose.models.File.findOne(args);
-  if (file?.finished) throw mongoose.models.File.FILE_ALREADY_FINISHED;
   if (file) return sendFileFields(file);
   return mongoose.models.File.create(args).then(file => {
     fs.mkdirSync(file.path);

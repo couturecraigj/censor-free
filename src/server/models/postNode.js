@@ -53,7 +53,9 @@ const Flag = new Schema(
     },
     coordinates: {
       fromTop: Number,
-      fromLeft: Number
+      fromLeft: Number,
+      height: Number,
+      width: Number
     },
     investigation: {
       type: String,
@@ -79,6 +81,10 @@ const PostNode = new Schema(
     node: {
       type: Schema.Types.ObjectId,
       required: true
+    },
+    submittedFilters: {
+      type: Boolean,
+      default: false
     },
     kind: {
       type: String,

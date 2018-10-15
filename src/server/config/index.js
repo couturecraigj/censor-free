@@ -8,6 +8,7 @@ import path from 'path';
 import resumable from 'express-resumablejs';
 import apolloSchemaSetup from '../graphql/schema';
 import DataBase from '../database';
+import User from '../models/user';
 import Photo from '../models/photo';
 import routeCache from '../routeCache';
 import api from './api';
@@ -50,9 +51,20 @@ export default app => {
         );
       req.user = {
         id: (() => {
-          if (req.cookies.token) return req.cookies.token;
-          if (req.headers.authorization)
-            return req.headers.authorization.replace('Bearer ', '');
+          if (req.cookies.token) {
+            const userId = User.getUserFromToken(req.cookies.token, {
+              req,
+              res
+            });
+            return userId;
+          }
+          if (req.headers.authorization) {
+            const userId = User.getUserFromToken(
+              req.headers.authorization.replace('Bearer ', ''),
+              { req, res }
+            );
+            return userId;
+          }
           return;
         })()
       };

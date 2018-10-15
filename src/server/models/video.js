@@ -1,10 +1,9 @@
 import mongoose from 'mongoose';
-// import MediaConverter from 'html5-media-converter';
 import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
 import uuid from 'uuid/v4';
 import { makeDirectory } from '../utils/fileSystem';
-// import fs from 'fs';
+import File from './file';
 import PostNode from './postNode';
 
 function scale(width, height) {
@@ -29,7 +28,6 @@ const parseHoursMinutesSecondsHundredSecondsToSeconds = str => {
 };
 
 const cwd = process.cwd();
-const uploadPath = path.join(cwd, 'uploads');
 const publicPath = path.join(cwd, 'public');
 
 const { Schema } = mongoose;
@@ -47,13 +45,37 @@ const Video = new Schema(
   }
 );
 
-Video.statics.createVideo = async function(args, context) {
-  const postNode = await PostNode.createPostNode(args, context);
-  return mongoose.models.Video.create(args, postNode);
+Video.statics.addFilters = async function() {};
+
+Video.statics.createVideo = async function(args, context, extras) {
+  const file = await File.findOne({ uploadToken: args.videoUri });
+  let filePath;
+  if (!file.converted) {
+    filePath = await mongoose.models.Video.createDifferentVideoFormats(
+      file,
+      // args,
+      context,
+      extras
+    );
+  } else {
+    filePath = file.convertedPath;
+  }
+  let video = await mongoose.models.Video.findOne({ uri: filePath });
+  if (!video) {
+    video = await mongoose.models.Video.create({
+      uri: filePath.replace(publicPath, ''),
+      ...args
+    });
+    await PostNode.createPostNode(args, context, video);
+  }
+  // if (file) console.log(file);
+
+  return video;
 };
 
 Video.statics.createDifferentVideoFormats = async function(
-  args,
+  file,
+  // args,
   context,
   { progress: reportProgress = () => {}, ...opts } = {}
 ) {
@@ -69,8 +91,11 @@ Video.statics.createDifferentVideoFormats = async function(
       if (currentTime <= duration && 0 <= currentTime) {
         progressMap[key] = currentTime;
         reportProgress(
-          Object.values(progressMap).reduce((p, c) => p + c, 0) /
-            (Object.keys(progressMap).length * duration)
+          Math.round(
+            (Object.values(progressMap).reduce((p, c) => p + c, 0) /
+              (Object.keys(progressMap).length * duration)) *
+              10000
+          ) / 100
         );
       }
     };
@@ -81,43 +106,45 @@ Video.statics.createDifferentVideoFormats = async function(
   const webmProgress = progress('webm');
   const targetDir = path.join(publicPath, context.req.user.id, fileDirectory);
   await makeDirectory(targetDir);
+
   const targetName = path.join(targetDir, fileName);
   await Promise.all([
-    await mongoose.models.Video.createHLSStream(args, context, targetName, {
+    mongoose.models.Video.createHLSStream(file, targetName, {
       progress: hlsProgress,
       ...opts
     }),
-    mongoose.models.Video.createMP4Format(args, context, targetName, {
+    mongoose.models.Video.createMP4Format(file, targetName, {
       progress: mp4Progress,
       ...opts
     }),
-    mongoose.models.Video.createOGVFormat(args, context, targetName, {
+    mongoose.models.Video.createOGVFormat(file, targetName, {
       progress: ogvProgress,
       ...opts
     }),
 
-    mongoose.models.Video.createWEBMFormat(args, context, targetName, {
+    mongoose.models.Video.createWEBMFormat(file, targetName, {
       progress: webmProgress,
       ...opts
-    })
+    }),
+    mongoose.models.Video.getScreenshots(file, targetName)
   ]);
+  file.converted = true;
+  file.convertedPath = targetName;
+  await file.save();
   // eslint-disable-next-line no-console
   console.log('Finished creating files');
+  return targetName;
 };
 
 Video.statics.createOGVFormat = async function(
-  args,
-  context,
+  file,
+  // args,
+  // context,
   targetName,
   { height, width, progress } = {}
 ) {
-  const originalVideoPath = path.join(
-    uploadPath,
-    context.req.user.id,
-    args.videoUri
-  );
   await mongoose.models.Video.__convertFile(
-    originalVideoPath,
+    file.finishedFileName,
     {
       height,
       width,
@@ -139,18 +166,14 @@ Video.statics.createOGVFormat = async function(
   );
 };
 Video.statics.createWEBMFormat = async function(
-  args,
-  context,
+  file,
+  // args,
+  // context,
   targetName,
   { height, width, progress } = {}
 ) {
-  const originalVideoPath = path.join(
-    uploadPath,
-    context.req.user.id,
-    args.videoUri
-  );
   await mongoose.models.Video.__convertFile(
-    originalVideoPath,
+    file.finishedFileName,
     {
       height,
       progress,
@@ -177,30 +200,50 @@ Video.statics.createWEBMFormat = async function(
 };
 
 Video.statics.createHLSStream = function(
-  args,
-  context,
+  file,
+  // args,
+  // context,
   targetName,
   { height, width, progress = () => {} } = {}
 ) {
-  const originalVideoPath = path.join(
-    uploadPath,
-    context.req.user.id,
-    args.videoUri
-  );
   return new Promise((resolve, reject) => {
-    const ffm = ffmpeg(originalVideoPath).outputOptions([
+    /**
+     * TODO: Make sure you provide all the different video inputs URL BELOW
+     *  https://publishing-project.rivendellweb.net/creating-hls-content/
+     */
+    const ffm = ffmpeg(file.finishedFileName).outputOptions([
+      '-vf',
+      'scale=w=640:h=360:force_original_aspect_ratio=decrease',
+      '-c:a',
+      'aac',
+      '-ar',
+      '48000',
+      '-c:v',
+      'h264',
       '-profile:v',
-      'baseline',
-      '-level',
-      '3.0',
-      '-start_number',
+      'main',
+      '-crf',
+      '20',
+      '-sc_threshold',
       '0',
+      '-g',
+      '48',
+      '-keyint_min',
+      '48',
       '-hls_time',
-      '10',
-      '-hls_list_size',
-      '0',
-      '-f',
-      'hls'
+      '4',
+      '-hls_playlist_type',
+      'vod',
+      '-b:v',
+      '800k',
+      '-maxrate',
+      '856k',
+      '-bufsize',
+      '1200k',
+      '-b:a',
+      '96k',
+      '-hls_segment_filename',
+      path.join(targetName, '360p_%03d.ts')
     ]);
     // ffm.on('start', function(commandLine) {
     //   console.log(commandLine);
@@ -208,7 +251,7 @@ Video.statics.createHLSStream = function(
     if (width && height) {
       ffm.addOutputOptions('-s', `${width}x${height}`);
     }
-    ffm.output(targetName + '.m3u8');
+    ffm.output(path.join(targetName, '360p.m3u8'));
     ffm.on('error', function(error, stdout, stderr) {
       error.stderr = stderr;
       reject(error);
@@ -270,18 +313,14 @@ Video.statics.__convertFile = function(
 };
 
 Video.statics.createMP4Format = async function(
-  args,
-  context,
+  file,
+  // args,
+  // context,
   targetName,
   { height, width, progress } = {}
 ) {
-  const originalVideoPath = path.join(
-    uploadPath,
-    context.req.user.id,
-    args.videoUri
-  );
   await mongoose.models.Video.__convertFile(
-    originalVideoPath,
+    file.finishedFileName,
     {
       height,
       progress,
@@ -305,6 +344,27 @@ Video.statics.createMP4Format = async function(
     },
     targetName + '.mp4'
   );
+};
+
+Video.statics.getScreenshots = function(file, targetName) {
+  return new Promise((resolve, reject) => {
+    let files = [];
+    ffmpeg(file.finishedFileName)
+      .on('filenames', function(filenames) {
+        files = filenames;
+      })
+      .on('end', function() {
+        resolve(files);
+      })
+      .on('error', function(e) {
+        reject(e);
+      })
+      .screenshots({
+        count: 4,
+        folder: targetName,
+        filename: '%i.png'
+      });
+  });
 };
 Video.statics.edit = function() {};
 Video.statics.addComment = function() {};
