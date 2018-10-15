@@ -57,7 +57,7 @@ app.get('*', async (req, res) => {
 
     const sheet = new ServerStyleSheet();
     const headers = {
-      // cookie,
+      cookie: req.headers.cookie
       // 'x-xsurf-token': csurf
     };
 

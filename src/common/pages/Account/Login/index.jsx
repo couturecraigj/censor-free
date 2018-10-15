@@ -5,8 +5,8 @@ import { Helmet } from 'react-helmet';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import { Formik, Form } from 'formik';
+import { FormikTextInput } from '../../../components/TextInput';
 import * as Routes from '../../Routes';
-import TextInput from '../../../components/TextInput';
 
 const initialValues = {
   nameEmail: '',
@@ -39,13 +39,17 @@ const Login = () => {
         <title>Login</title>
       </Helmet>
       <Mutation mutation={LOGIN}>
-        {logIn => (
+        {(logIn, { client }) => (
           <Formik
             initialValues={initialValues}
-            onSubmit={variables =>
+            onSubmit={(variables, actions) =>
               logIn({ variables })
                 .then(result => {
+                  actions.resetForm();
+                  console.log(actions);
                   localStorage.setItem('token', result.data.logIn.token);
+                  client.resetStore();
+
                   // document.cookie = 'token=' + result.data.logIn.token;
                   // location.reload();
                 })
@@ -55,13 +59,13 @@ const Login = () => {
           >
             {() => (
               <Form>
-                <TextInput
+                <FormikTextInput
                   autoComplete="username"
                   id="Login__name_email"
                   label="Name or Email"
                   name="nameEmail"
                 />
-                <TextInput
+                <FormikTextInput
                   id="Login__password"
                   label="Password"
                   type="password"

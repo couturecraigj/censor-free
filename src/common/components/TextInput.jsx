@@ -18,12 +18,9 @@ const TextInput = ({ label, name, id, ...props }) => (
       <label htmlFor={id}>{label}</label>
     </div>
     <div>
-      <Field name={name}>
-        {({ field }) => (
-          <Input {...props} {...field} placeholder={label} id={id} />
-        )}
-      </Field>
-      {/* <Input {...props} name={name} id={id} placeholder={label} /> */}
+      {/* <Input {...props} {...field} placeholder={label} id={id} /> */}
+
+      <Input {...props} name={name} id={id} placeholder={label} />
     </div>
   </InputContainer>
 );
@@ -35,3 +32,7 @@ TextInput.propTypes = {
 };
 
 export default TextInput;
+
+export const FormikTextInput = props => (
+  <Field {...props}>{({ field }) => <TextInput {...props} {...field} />}</Field>
+);

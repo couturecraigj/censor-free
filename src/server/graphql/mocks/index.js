@@ -19,6 +19,10 @@ const mocks = {
     description: casual.description,
     __typename: 'Thought'
   }),
+  Me: () => ({
+    id: '',
+    firstName: ''
+  }),
   Story: () => {
     const description = casual.sentences(50);
     const excerpt = description
@@ -145,8 +149,10 @@ const mocks = {
       console.log(args);
     }
   }),
+
   Query: () => ({
     feed: () => new MockList([0, 20], mocks.PostUnion),
+    me: () => 'null',
     saved: () => new MockList([8, 20], mocks.Save),
     companies: () => new MockList([0, 20]),
     products: () => new MockList([0, 20], mocks.Product),

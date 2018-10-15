@@ -4,8 +4,8 @@ import { Formik, Form } from 'formik';
 // import { Form } from 'formik';
 import gql from 'graphql-tag';
 import { FormikFileUpload } from '../FileUpload';
-import TextArea from '../TextArea';
-import TextInput from '../TextInput';
+import { FormikTextArea } from '../TextArea';
+import { FormikTextInput } from '../TextInput';
 import FormDebugger from '../FormDebug';
 
 const initialValues = {
@@ -51,8 +51,12 @@ const Photo = () => {
                 accept="image/*"
                 name="imgUri"
               />
-              <TextInput name="title" label="Subject" id="Photo__subject" />
-              <TextArea
+              <FormikTextInput
+                name="title"
+                label="Subject"
+                id="Photo__subject"
+              />
+              <FormikTextArea
                 name="description"
                 label="Description"
                 id="Photo_description"

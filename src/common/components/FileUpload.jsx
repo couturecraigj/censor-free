@@ -2,13 +2,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Field } from 'formik';
-// import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Progress from './Progress';
 
-// const Img = styled.img`
-//   max-width: 300px;
-//   height: auto;
-// `;
+const Button = styled.label`
+  text-align: center;
+  width: 100%;
+  height: auto;
+`;
+const Input = styled.input`
+  width: 100%;
+  height: auto;
+`;
+const Div = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #aaa;
+  border: 1px solid #999;
+  ${props =>
+    !props.loading
+      ? css`
+          padding-top: 0.5em;
+          padding-bottom: 0.5em;
+        `
+      : css`
+          height: 2em;
+        `} border-radius: 0.3em;
+  width: 100%;
+  /* height: auto; */
+`;
 
 class FileUpload extends React.Component {
   constructor(props) {
@@ -176,24 +199,22 @@ class FileUpload extends React.Component {
     const { label, id, name, accept } = this.props;
     const { progress, value } = this.state;
     return (
-      <React.Fragment>
-        <label htmlFor={id}>
+      <Div loading={progress > 0 && progress < 100}>
+        <Button htmlFor={id}>
           {label}
-          <div>
-            <input
-              name={name}
-              accept={accept}
-              value={value}
-              type="file"
-              id={id}
-              hidden
-              readOnly
-              onChange={this.onChange}
-            />
-          </div>
-          {progress && <Progress progress={progress} />}
-        </label>
-      </React.Fragment>
+          <Input
+            name={name}
+            accept={accept}
+            value={value}
+            type="file"
+            id={id}
+            hidden
+            readOnly
+            onChange={this.onChange}
+          />
+          {progress ? <Progress progress={progress} /> : null}
+        </Button>
+      </Div>
     );
   }
 }

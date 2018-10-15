@@ -17,7 +17,14 @@ const resolvers = {
   Query: {
     feed: (root, args, context) => PostNode.findPostNodes(args, context),
     search: (root, args, context) => Searchable.findSearchable(args, context),
-    me: (root, args, context) => User.findMe(args, context)
+    me: (root, args, context) => {
+      try {
+        return User.findMe(args, context);
+      } catch (e) {
+        // console.log(e);
+        return e;
+      }
+    }
   },
   Mutation: {
     logIn: async (parent, args) => {

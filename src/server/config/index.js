@@ -49,9 +49,12 @@ export default app => {
           }`
         );
       req.user = {
-        id:
-          req.cookies.token ||
-          (req.headers.authorization || '').replace('Bearer ', '')
+        id: (() => {
+          if (req.cookies.token) return req.cookies.token;
+          if (req.headers.authorization)
+            return req.headers.authorization.replace('Bearer ', '');
+          return;
+        })()
       };
       req.db = await dbPromise;
       next();

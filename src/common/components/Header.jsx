@@ -3,8 +3,16 @@ import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import gql from 'graphql-tag';
-import { withApollo } from 'react-apollo';
+import { withApollo, Query } from 'react-apollo';
 import * as Routes from '../pages/Routes';
+
+const ME = gql`
+  query Me {
+    me {
+      id
+    }
+  }
+`;
 
 const LOG_OUT = gql`
   mutation LogOut {
@@ -139,33 +147,46 @@ const Layout = ({ togglePost, client }) => (
       </Link>
     </LinksDiv>
     <Account>
-      <Logout
-        onClick={e => {
-          e.preventDefault();
-          localStorage.removeItem('token');
-          client.resetStore();
-          return (
-            client
-              .mutate({ mutation: LOG_OUT })
-              // eslint-disable-next-line no-console
-              .then(result => console.log(result))
-              // eslint-disable-next-line no-console
-              .catch(err => console.error(err))
-          );
-        }}
-      >
-        Logout
-      </Logout>
-      <Link
-        to="/login"
-        onMouseOver={Routes.Login.load}
-        onFocus={Routes.Login.load}
-      >
-        Login
-      </Link>
-      <Button type="submit" onClick={togglePost}>
-        +
-      </Button>
+      <Query query={ME}>
+        {({ data: { me } }) => (
+          <React.Fragment>
+            {me && (
+              <Logout
+                onClick={e => {
+                  e.preventDefault();
+                  localStorage.removeItem('token');
+
+                  return (
+                    client
+                      .mutate({ mutation: LOG_OUT })
+                      // eslint-disable-next-line no-console
+                      .then(result => console.log(result))
+                      .then(client.resetStore)
+                      // eslint-disable-next-line no-console
+                      .catch(err => console.error(err))
+                  );
+                }}
+              >
+                Logout
+              </Logout>
+            )}
+            {!me && (
+              <Link
+                to="/login"
+                onMouseOver={Routes.Login.load}
+                onFocus={Routes.Login.load}
+              >
+                Login
+              </Link>
+            )}
+            {me && (
+              <Button type="submit" onClick={togglePost}>
+                +
+              </Button>
+            )}
+          </React.Fragment>
+        )}
+      </Query>
     </Account>
   </Nav>
 );

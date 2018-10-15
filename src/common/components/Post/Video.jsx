@@ -2,7 +2,7 @@ import React from 'react';
 import { Mutation } from 'react-apollo';
 import { Formik, Form } from 'formik';
 import gql from 'graphql-tag';
-import FileInput from '../FileInput';
+import FileUpload from '../FileUpload';
 import TextInput from '../TextInput';
 import TextArea from '../TextArea';
 
@@ -31,7 +31,7 @@ const Video = () => {
           >
             {() => (
               <Form>
-                <FileInput
+                <FileUpload
                   label="Video"
                   accept="video/*"
                   name="videoUri"

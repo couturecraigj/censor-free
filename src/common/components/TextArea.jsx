@@ -10,23 +10,24 @@ const Area = styled.textarea`
   border: 1px solid black;
 `;
 
-const TextInput = ({ label, name, id, ...props }) => (
+const TextArea = ({ label, name, id, ...props }) => (
   <React.Fragment>
     <div>
       <label htmlFor={id}>{label}</label>
     </div>
-    <Field name={name}>
-      {({ field }) => (
-        <Area {...props} {...field} id={id} placeholder={label} />
-      )}
-    </Field>
+
+    <Area {...props} name={name} id={id} placeholder={label} />
   </React.Fragment>
 );
 
-TextInput.propTypes = {
+TextArea.propTypes = {
   label: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired
 };
 
-export default TextInput;
+export default TextArea;
+
+export const FormikTextArea = props => (
+  <Field {...props}>{({ field }) => <TextArea {...props} {...field} />}</Field>
+);

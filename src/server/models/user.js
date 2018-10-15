@@ -174,7 +174,9 @@ User.methods.passwordsMatch = async function(password) {
 };
 
 User.statics.findMe = async function(args, context) {
-  return mongoose.models.User.findById(context.req.cookies.token);
+  if (!context?.req?.user.id) return null;
+  const user = await mongoose.models.User.findById(context.req.user.id);
+  return user;
 };
 User.statics.getResetToken = async function({ email }) {
   const timeOut = Date.now() + 360000;

@@ -16,7 +16,6 @@ export default (
     uri = '/',
     ssrMode = false,
     headers,
-    req,
     fragments: introspectionQueryResultData
   } = {}
 ) => {
@@ -62,9 +61,8 @@ export default (
           uri,
           fetch,
           credentials: 'same-origin',
-          headers: req
+          headers: ssrMode
             ? {
-                cookie: [headers.cookie].filter(v => v).join(';'),
                 ...headers
               }
             : undefined
