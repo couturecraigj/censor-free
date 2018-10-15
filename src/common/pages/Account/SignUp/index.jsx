@@ -1,11 +1,12 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import { Link } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import { Redirect } from 'react-router';
+import { connect } from 'react-redux';
 import { FormikTextInput } from '../../../components/TextInput';
 import * as Routes from '../../Routes';
 
@@ -34,12 +35,13 @@ const SIGN_UP = gql`
   }
 `;
 
-const SignUp = () => {
+const SignUp = ({ loggedIn }) => {
   return (
     <div>
       <Helmet>
         <title>Sign Up</title>
       </Helmet>
+      {loggedIn && <Redirect to="/" />}
       <Mutation mutation={SIGN_UP}>
         {(signUp, { client, data }) =>
           data?.signUp ? (
@@ -128,11 +130,10 @@ const SignUp = () => {
 };
 
 SignUp.propTypes = {
-  // match: PropTypes.shape({
-  //   params: PropTypes.shape({
-  //     id: PropTypes.string.isRequired
-  //   })
-  // }).isRequired
+  loggedIn: PropTypes.bool
+};
+SignUp.defaultProps = {
+  loggedIn: false
 };
 
-export default SignUp;
+export default connect(({ loggedIn }) => ({ loggedIn }))(SignUp);

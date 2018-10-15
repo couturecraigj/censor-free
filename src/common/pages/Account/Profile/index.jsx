@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
+import { Redirect } from 'react-router';
+import { connect } from 'react-redux';
 import { Query } from 'react-apollo';
 import { Helmet } from 'react-helmet';
 
@@ -34,11 +36,12 @@ const Container = styled.div`
   padding: 0 400px;
 `;
 
-const SingleGroup = ({ match: { params } }) => (
+const Profile = ({ match: { params }, loggedIn }) => (
   <div>
     <Helmet>
       <title>Group</title>
     </Helmet>
+    {!loggedIn && <Redirect to="/" />}
     <Query query={GET_GROUP} variables={params}>
       {({ loading, error, data }) => {
         if (loading) return 'Loading...';
@@ -65,12 +68,13 @@ const SingleGroup = ({ match: { params } }) => (
   </div>
 );
 
-SingleGroup.propTypes = {
+Profile.propTypes = {
   match: PropTypes.shape({
     params: PropTypes.shape({
       id: PropTypes.string.isRequired
     })
-  }).isRequired
+  }).isRequired,
+  loggedIn: PropTypes.bool.isRequired
 };
 
-export default SingleGroup;
+export default connect(({ loggedIn }) => ({ loggedIn }))(Profile);

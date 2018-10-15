@@ -15,6 +15,8 @@ import routeCache from './routeCache';
 import config from './config';
 import setup from './setup';
 
+const __INTERNAL_QUERY_URI__ = process.env.INTERNAL_QUERY_URI;
+
 const __PROD__ = process.env.NODE_ENV === 'production';
 
 const app = express();
@@ -41,11 +43,14 @@ app.get('*', async (req, res) => {
     const queryUrl = `${req.headers['x-forwarded-proto'] || req.protocol}://${
       req.headers.host
     }${app.get('apollo').graphqlPath}`;
+    const loggedIn = req.user.id !== undefined;
     const store = initiateStore({
       errorMessage:
         res.locals.errorMessage ||
-        (req.url === '/error' && 'Internal Server Error')
+        (req.url === '/error' && 'Internal Server Error'),
+      loggedIn
     });
+
     // eslint-disable-next-line prefer-const
     let context = {};
     // const [csurf, cookie] = await fetch(
@@ -65,28 +70,29 @@ app.get('*', async (req, res) => {
       headers,
       req,
       ssrMode: true,
-      uri: queryUrl,
+      uri: __INTERNAL_QUERY_URI__ || queryUrl,
       fragments: app.get('fragments')
     });
     const spaApp = (
-      <StaticRouter location={req.url} context={context}>
-        <ApolloProvider client={client}>
+      <ApolloProvider client={client}>
+        <StaticRouter location={req.url} context={context}>
           <App store={store} />
-        </ApolloProvider>
-      </StaticRouter>
+        </StaticRouter>
+      </ApolloProvider>
     );
 
     const preloadedState = store.getState();
-
-    if (context.url) {
-      return res.redirect(context.status, context.url);
-    }
     return Promise.all([
       getLoadableState(spaApp),
       getDataFromTree(spaApp)
     ]).then(async ([loadableState]) => {
       const body = ReactDOMServer.renderToString(spaApp);
       const reactHelmet = Helmet.renderStatic();
+      if (context.url) {
+        if (context.status) return res.redirect(context.status, context.url);
+        return res.redirect(context.url);
+      }
+
       res.send(
         await routeCache.preCache(
           html({

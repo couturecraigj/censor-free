@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
+import { Formik, Form } from 'formik';
+import { FormikTextInput } from '../../../components/TextInput';
 import * as Routes from '../../Routes';
-import TextInput from '../../../components/TextInput';
 
 const LOGIN = gql`
   mutation ResetPassword(
@@ -26,23 +27,11 @@ const LOGIN = gql`
     }
   }
 `;
-
-const getVariableValues = eles => {
-  return eles.reduce((p, el) => ({ ...p, [el.name]: el.value }), {});
-};
-
-// const clearVariableValues = eles => {
-//   return eles.forEach(el => {
-//     el.value = '';
-//   });
-// };
-
 const ResetPassword = ({
   match: {
     params: { token }
   }
 }) => {
-  let form;
   return (
     <div>
       <Helmet>
@@ -50,48 +39,28 @@ const ResetPassword = ({
       </Helmet>
       <Mutation mutation={LOGIN}>
         {resetPassword => (
-          <form
-            ref={ref => {
-              form = ref;
-            }}
-            onSubmit={e => {
-              e.preventDefault();
-              const elements = [...form.elements].filter(
-                el => el.tagName !== 'BUTTON'
-              );
-              const variables = getVariableValues(elements);
-              return (
-                resetPassword({ variables })
-                  .then(result => {
-                    localStorage.setItem(
-                      'token',
-                      result.data.resetPassword.token
-                    );
-                    // document.cookie = 'token=' + result.data.resetPassword.token;
-                    // location.reload();
-                  })
-                  // eslint-disable-next-line no-console
-                  .catch(console.error)
-              );
-            }}
+          <Formik
+            initialValues={{ token }}
+            onSubmit={variables => resetPassword({ variables })}
           >
-            <input readOnly value={token} hidden id="" name="token" />
-            <TextInput
-              autoComplete="new-password"
-              id="Reset__password"
-              label="New Password"
-              type="password"
-              name="password"
-            />
-            <TextInput
-              id="Reset__confirm-password"
-              label="Confirm Password"
-              type="password"
-              autoComplete="new-password"
-              name="confirmPassword"
-            />
-            <button type="submit">Submit</button>
-          </form>
+            <Form>
+              <FormikTextInput
+                autoComplete="new-password"
+                id="Reset__password"
+                label="New Password"
+                type="password"
+                name="password"
+              />
+              <FormikTextInput
+                id="Reset__confirm-password"
+                label="Confirm Password"
+                type="password"
+                autoComplete="new-password"
+                name="confirmPassword"
+              />
+              <button type="submit">Submit</button>
+            </Form>
+          </Formik>
         )}
       </Mutation>
       <div>

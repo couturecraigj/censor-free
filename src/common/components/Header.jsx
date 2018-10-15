@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import gql from 'graphql-tag';
-import { withApollo, Query } from 'react-apollo';
+import { Query } from 'react-apollo';
+import { connect } from 'react-redux';
 import * as Routes from '../pages/Routes';
 
 const ME = gql`
@@ -71,7 +72,7 @@ const Account = styled.div`
   border-radius: 2rem;
 `;
 
-const Layout = ({ togglePost, client }) => (
+const Layout = ({ togglePost, dispatch }) => (
   <Nav>
     <LinksDiv>
       <Link
@@ -148,7 +149,7 @@ const Layout = ({ togglePost, client }) => (
     </LinksDiv>
     <Account>
       <Query query={ME}>
-        {({ data: { me } }) => (
+        {({ data: { me }, client }) => (
           <React.Fragment>
             {me && (
               <Logout
@@ -162,6 +163,11 @@ const Layout = ({ togglePost, client }) => (
                       // eslint-disable-next-line no-console
                       .then(result => console.log(result))
                       .then(client.resetStore)
+                      .then(
+                        dispatch({
+                          type: '@LOGOUT'
+                        })
+                      )
                       // eslint-disable-next-line no-console
                       .catch(err => console.error(err))
                   );
@@ -194,9 +200,7 @@ const Layout = ({ togglePost, client }) => (
 Layout.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   togglePost: PropTypes.func.isRequired,
-  client: PropTypes.shape({
-    resetStore: PropTypes.func.isRequired
-  }).isRequired
+  dispatch: PropTypes.func.isRequired
 };
 
-export default withApollo(Layout);
+export default connect()(Layout);

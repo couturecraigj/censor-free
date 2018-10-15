@@ -1,10 +1,13 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
-import TextInput from '../../../components/TextInput';
+import { Redirect } from 'react-router';
+import { connect } from 'react-redux';
+import { Formik, Form } from 'formik';
+import { FormikTextInput } from '../../../components/TextInput';
 import * as Routes from '../../Routes';
 
 const LOGIN = gql`
@@ -13,57 +16,26 @@ const LOGIN = gql`
   }
 `;
 
-const getVariableValues = eles => {
-  return eles.reduce((p, el) => ({ ...p, [el.name]: el.value }), {});
-};
-
-const clearVariableValues = eles => {
-  return eles.forEach(el => {
-    el.value = '';
-  });
-};
-
-const ForgotPassword = () => {
-  let form;
+const ForgotPassword = ({ loggedIn }) => {
   return (
     <div>
       <Helmet>
         <title>ForgotPassword</title>
       </Helmet>
+      {loggedIn && <Redirect to="/" />}
       <Mutation mutation={LOGIN}>
         {forgotPassword => (
-          <form
-            ref={ref => {
-              form = ref;
-            }}
-            onSubmit={e => {
-              e.preventDefault();
-              const elements = [...form.elements].filter(
-                el => el.tagName !== 'BUTTON'
-              );
-              const variables = getVariableValues(elements);
-              return (
-                forgotPassword({ variables })
-                  .then(result => {
-                    localStorage.setItem(
-                      'token',
-                      result.data.forgotPassword.token
-                    );
-                    clearVariableValues(elements);
-                  })
-                  // eslint-disable-next-line no-console
-                  .catch(console.error)
-              );
-            }}
-          >
-            <TextInput
-              autoComplete="email"
-              id="Forgot__name_email"
-              label="Email"
-              name="email"
-            />
-            <button type="submit">Submit</button>
-          </form>
+          <Formik onSubmit={variables => forgotPassword({ variables })}>
+            <Form>
+              <FormikTextInput
+                autoComplete="email"
+                id="Forgot__name_email"
+                label="Email"
+                name="email"
+              />
+              <button type="submit">Submit</button>
+            </Form>
+          </Formik>
         )}
       </Mutation>
       <Link
@@ -78,11 +50,7 @@ const ForgotPassword = () => {
 };
 
 ForgotPassword.propTypes = {
-  // match: PropTypes.shape({
-  //   params: PropTypes.shape({
-  //     id: PropTypes.string.isRequired
-  //   })
-  // }).isRequired
+  loggedIn: PropTypes.bool.isRequired
 };
 
-export default ForgotPassword;
+export default connect(({ loggedIn }) => ({ loggedIn }))(ForgotPassword);

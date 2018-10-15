@@ -8,8 +8,16 @@ const errorMessage = (state = '', action) => {
       return state;
   }
 };
+const loggedIn = (state = false, action) => {
+  switch (action.type) {
+    case '@LOGOUT':
+      return false;
+    default:
+      return state;
+  }
+};
 const initiateStore = (initialState = {}) => {
-  const rootReducer = combineReducers({ errorMessage });
+  const rootReducer = combineReducers({ errorMessage, loggedIn });
   const store = createStore(rootReducer, initialState);
   return store;
 };
