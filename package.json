@@ -71,6 +71,7 @@
         "loadable-components": "^2.2.3",
         "mongoose": "^5.3.2",
         "multer": "^1.4.0",
+        "mux.js": "^5.0.0",
         "node-fetch": "^2.2.0",
         "node-hot-loader": "^1.12.1",
         "prop-types": "^15.6.2",

@@ -39,7 +39,7 @@ const VideoFirstStep = ({ nextStep }) => (
             <Form>
               <FormikFileUpload
                 label="Video"
-                accept="video/*"
+                accept="video/mp4,video/x-m4v,video/*"
                 name="videoUri"
                 id="Video__file-input"
               />
