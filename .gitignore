@@ -64,3 +64,5 @@ typings/
 /server/
 /dist/
 /webpack-assets.json
+
+ffmpeg2pass*

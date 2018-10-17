@@ -35,12 +35,14 @@ class VideoPlayer extends React.Component {
     console.error('Error code', error.code, 'object', error);
   };
   onClick = e => {
+    // eslint-disable-next-line no-console
     console.log(e);
   };
   initPlayer = async (appended = '/playlist.m3u8') => {
     const { src } = this.props;
     const manifestUri = src + appended;
-    console.log(manifestUri);
+    // eslint-disable-next-line no-console
+    console.log('loading', manifestUri);
     // try {
     //   const result = await fetch(manifestUri).then(response => response.text());
     //   this.video.current.src = manifestUri;

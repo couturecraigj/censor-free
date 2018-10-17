@@ -10,8 +10,8 @@ export default () => (
     </Helmet>
     <div>
       <VideoPlayer
-        src="http://localhost:3000/5bb3b25e69b02ed5724ab2ac/4cb4de65-4bfe-47b7-a6cd-b46d65d98c62/37c5f878-647e-4aad-accf-1ee12bf45809"
-        poster="http://localhost:3000/5bb3b25e69b02ed5724ab2ac/4cb4de65-4bfe-47b7-a6cd-b46d65d98c62/37c5f878-647e-4aad-accf-1ee12bf45809/1.png"
+        src="http://localhost:3000/5bb3b25e69b02ed5724ab2ac/8fbd2a3a-e8c7-4d97-be09-b9054a1ad1ff/7c2e062b-883e-4eda-8515-801f8d24059d"
+        poster="http://localhost:3000/5bb3b25e69b02ed5724ab2ac/8fbd2a3a-e8c7-4d97-be09-b9054a1ad1ff/7c2e062b-883e-4eda-8515-801f8d24059d/1.png"
         width="640"
         controls
       />

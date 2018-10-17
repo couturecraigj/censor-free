@@ -218,14 +218,14 @@ Video.statics.createDashStream = function(
 ) {
   return new Promise((resolve, reject) => {
     const ffm = ffmpeg(`${file.path}.${file.extension}`)
-      .output(targetName + '.264')
+      .output(targetName + '-intermediary.mp4')
       .outputOptions([
         '-preset',
         'slow',
         '-c:v',
         'libx264',
         '-b:v',
-        '2400',
+        '2400k',
         '-maxrate',
         '4800k',
         '-bufsize',
@@ -252,10 +252,7 @@ Video.statics.createDashStream = function(
     ffm
       .on('end', () => {
         childProcess.exec(
-          `MP4Box -add ${path.join(
-            targetName,
-            'intermediate_2400k.264'
-          )}.mp4 -fps 24 ${targetName}-dash.mp4`,
+          `MP4Box -add ${targetName}-intermediary.mp4 -fps 24 ${targetName}-dash.mp4`,
           err => {
             if (err) {
               return reject(err);
