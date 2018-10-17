@@ -270,6 +270,7 @@ Video.statics.createDashStream = function(
         );
       })
       .on('error', e => {
+        // eslint-disable-next-line no-console
         console.error(e);
         reject(e);
       });
