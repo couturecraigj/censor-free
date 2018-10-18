@@ -1,5 +1,6 @@
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
+const TodoWebpackPlugin = require('todo-webpack-plugin');
 const webpack = require('webpack');
 const { CheckerPlugin } = require('awesome-typescript-loader');
 // const path = require('path');
@@ -64,6 +65,11 @@ module.exports = {
     ]
   },
   plugins: [
+    new TodoWebpackPlugin({
+      console: true,
+      reporter: 'markdown',
+      filename: 'TODO.md'
+    }),
     new CheckerPlugin(),
     new CleanWebpackPlugin(['server', 'dist'], {
       root: process.cwd(),

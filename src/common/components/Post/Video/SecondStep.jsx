@@ -6,6 +6,10 @@ import gql from 'graphql-tag';
 import VideoPlayer from '../../VideoPlayer';
 import FormDebug from '../../FormDebug';
 
+/**
+ * TODO: get the second step finished
+ */
+
 const filterInitialValues = {
   startTimeCode: '',
   endTimeCode: '',
@@ -115,6 +119,7 @@ const VideoSecondStep = ({ videoId, previousStep, videoUri, nextStep }) => {
                   src={videoUri}
                   poster={`${videoUri}/1.png`}
                   controls
+                  editing
                   autoPlay
                 />
                 <FieldArray

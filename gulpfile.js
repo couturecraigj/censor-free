@@ -1,6 +1,4 @@
 const gulp = require('gulp');
-const markdown = require('gulp-markdown');
-const todo = require('gulp-todo');
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 
@@ -27,12 +25,4 @@ gulp.task('watch', function() {
     'default',
     gulp.watch(['src/**/*.js', '**/fragmentTypes.json'], ['default'])
   );
-});
-
-gulp.task('todos', function() {
-  gulp
-    .src(['src/**/*.{jsx,js}', 'utilities/**/*.{jsx,js}', './*.{jsx,js}'])
-    .pipe(markdown())
-    .pipe(todo())
-    .pipe(gulp.dest('./'));
 });

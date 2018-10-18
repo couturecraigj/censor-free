@@ -5,6 +5,8 @@ import { Query } from 'react-apollo';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 
+// TODO: Make it so this actually searches
+
 const SEARCH_SEARCHABLE = gql`
   {
     search {

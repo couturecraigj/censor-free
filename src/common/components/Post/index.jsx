@@ -129,7 +129,6 @@ class Post extends React.Component {
     const { close } = this.props;
     const { Component, tabsVisible } = this.state;
     // const { postType, post } = this.state;
-    // TODO: Create a Wizard that will ask for filterable categories
     return (
       <Modal close={close} ref={this.modalDiv}>
         <div

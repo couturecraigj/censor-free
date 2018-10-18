@@ -1,6 +1,8 @@
 ### TODOs
 | Filename | line # | TODO
 |:------|:------:|:------
-| server/index.jsx | 26 | make it so Errors send everything to the Error Page
-| server/models/video.js | 198 | Make sure you provide all the different video inputs URL BELOW
-| common/components/Post/index.jsx | 108 | Create a Wizard that will ask for filterable categories
+| src/common/components/Post/Video/SecondStep.jsx | 10 | get the second step finished
+| src/common/components/Post/index.jsx | 8 | Figure out how to get these to submit from each individual
+| src/common/components/VideoPlayer/index.jsx | 5 | Add a Broken Video Image when a video does not load
+| src/common/pages/Home/index.jsx | 5 | Make it so main pages gives a good overview
+| src/common/pages/Search/index.jsx | 8 | Make it so this actually searches

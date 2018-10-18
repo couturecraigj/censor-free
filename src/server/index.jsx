@@ -27,8 +27,6 @@ app.use(function errorHandler(err, req, res, next) {
   if (res.headersSent) {
     return next(err);
   }
-  // console.log(req.url);
-  // TODO: make it so Errors send everything to the Error Page
   res.status(500);
   if (__PROD__) {
     res.locals.errorMessage = 'Internal Server Error';
