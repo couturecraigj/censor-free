@@ -49,8 +49,12 @@ const Video = new Schema(
 
 Video.statics.addFilters = async function() {};
 
+/**
+ * TODO: Make it so that all these jobs are queued
+ * instead of executing immediately
+ */
 Video.statics.createVideo = async function(args, context, extras) {
-  const file = await File.findOne({ uploadToken: args.videoUri });
+  const file = await File.findOne({ uploadToken: args.uploadToken });
   let filePath;
   if (!file.converted) {
     filePath = await mongoose.models.Video.createDifferentVideoFormats(
@@ -61,6 +65,7 @@ Video.statics.createVideo = async function(args, context, extras) {
     );
   } else {
     filePath = file.convertedPath;
+    extras.progress(100);
   }
   let video = await mongoose.models.Video.findOne({ uri: filePath });
   if (!video) {
@@ -72,7 +77,7 @@ Video.statics.createVideo = async function(args, context, extras) {
   }
   // if (file) console.log(file);
 
-  return video;
+  return { ...video.toJSON(), ...file.toJSON() };
 };
 
 Video.statics.createDifferentVideoFormats = async function(
@@ -107,12 +112,12 @@ Video.statics.createDifferentVideoFormats = async function(
   const mp4Progress = progress('mp4');
   const ogvProgress = progress('ogv');
   const dashProgress = progress('dash');
-  const webmProgress = progress('webm');
+  // const webmProgress = progress('webm');
   const targetDir = path.join(publicPath, context.req.user.id, fileDirectory);
   await makeDirectory(targetDir);
 
   const targetName = path.join(targetDir, fileName);
-  await Promise.all([
+  Promise.all([
     Video.createHLSStream(file, targetName, {
       progress: hlsProgress,
       ...opts
@@ -126,21 +131,23 @@ Video.statics.createDifferentVideoFormats = async function(
       ...opts
     }),
 
-    Video.createWEBMFormat(file, targetName, {
-      progress: webmProgress,
-      ...opts
-    }),
+    // Video.createWEBMFormat(file, targetName, {
+    //   progress: webmProgress,
+    //   ...opts
+    // }),
     Video.createDashStream(file, targetName, {
       progress: dashProgress,
       ...opts
     }),
     Video.getScreenshots(file, targetName)
-  ]);
-  file.converted = true;
-  file.convertedPath = targetName;
-  await file.save();
+  ]).then(() => {
+    reportProgress(100);
+    file.converted = true;
+    file.convertedPath = targetName;
+    return file.save();
+  });
   // eslint-disable-next-line no-console
-  console.log('Finished creating files');
+  console.log('File Conversion Started');
   return targetName;
 };
 

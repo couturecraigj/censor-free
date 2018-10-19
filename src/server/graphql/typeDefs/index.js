@@ -154,6 +154,7 @@ const typeDefs = gql`
   type Video implements Node & PostNode & Searchable {
     id: ID!
     highlights: [Highlight]!
+    converted: Boolean
     title: String!
     description: String!
     imgs: [Photo]
@@ -289,7 +290,7 @@ const typeDefs = gql`
     addReview(title: String!): Review
     addStory(title: String!): Story
     addTip(title: String!): Tip
-    addVideo(title: String!, description: String!, videoUri: String!): Video
+    addVideo(title: String!, description: String!, uploadToken: String!): Video
     addVideoFilters(
       id: ID!
       sex: [VideoFilterInput]!
@@ -305,7 +306,9 @@ const typeDefs = gql`
     ): Video
     addWebPage(title: String!): WebPage
   }
-
+  type Subscription {
+    fileConversionProgress(uploadToken: String!): Float!
+  }
   type Query {
     feed: [PostNode]!
     saved: [Save]!

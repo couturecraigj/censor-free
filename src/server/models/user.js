@@ -144,7 +144,7 @@ User.virtual('confirmEmail').set(function(value) {
   this._confirmEmail = value;
 });
 
-User.statics.getUserFromToken = function(token, { res }) {
+User.statics.getUserIdFromToken = async function(token, { res }) {
   const maxAge = 3999999999;
   const date = Date.now() + maxAge;
   res.cookie('token', token, {
@@ -153,6 +153,21 @@ User.statics.getUserFromToken = function(token, { res }) {
     maxAge
   });
   return token;
+};
+User.statics.getUserFromToken = async function(token, { res } = {}) {
+  if (!token) return;
+  if (res) {
+    const maxAge = 3999999999;
+    const date = Date.now() + maxAge;
+    res.cookie('token', token, {
+      httpOnly: true,
+      expires: new Date(date),
+      maxAge
+    });
+  }
+  const user = await mongoose.models.User.findById(token);
+  if (!user) return;
+  return user;
 };
 User.statics.getTokenFromUser = function(user, { res }) {
   const maxAge = 3999999999;

@@ -1,32 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Mutation } from 'react-apollo';
-import { Formik, Form, Field, FieldArray } from 'formik';
+import { Field, Form, Formik, FieldArray } from 'formik';
 import gql from 'graphql-tag';
 import VideoPlayer from '../../VideoPlayer';
 import FormDebug from '../../FormDebug';
+import { secondsToHours } from '../../../utilities/convertNumberIntoTime';
 
 /**
  * TODO: get the second step finished
  */
 
-const filterInitialValues = {
-  startTimeCode: '',
-  endTimeCode: '',
-  coordinates: {
-    fromTop: '',
-    fromLeft: ''
-  }
-};
-
 const ADD_VIDEO_FILTERS = gql`
   mutation AddVideoFilters(
-    $videoUri: String!
+    $uploadToken: String!
     $description: String!
     $title: String!
   ) {
     addVideoFilters(
-      videoUri: $videoUri
+      uploadToken: $uploadToken
       description: $description
       title: $title
     ) {
@@ -36,188 +28,100 @@ const ADD_VIDEO_FILTERS = gql`
   }
 `;
 
-const renderArray = ({ label, key, values }) => arrayHelpers => (
-  <div>
-    <div>
-      <label>{label}</label>
-    </div>
-    {values?.[key]?.length > 0 ? (
-      <div>
-        {values[key].map((sex, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <div key={index}>
-            <Field
-              name={`${key}.${index}.startTimeCode`}
-              type="number"
-              placeholder="Start Time"
-            />
-            <Field
-              name={`${key}.${index}.endTimeCode`}
-              type="number"
-              placeholder="Stop Time"
-            />
-            <Field
-              name={`${key}.${index}.coordinates.fromTop`}
-              type="number"
-              placeholder="Cooridinate From Top"
-            />
-            <Field
-              name={`${key}.${index}.coordinates.fromLeft`}
-              type="number"
-              placeholder="Coordinate From Left"
-            />
-            <button type="button" onClick={() => arrayHelpers.remove(index)}>
-              -
-            </button>
-          </div>
-        ))}
-        <button
-          type="button"
-          onClick={() => arrayHelpers.push(filterInitialValues)}
-        >
-          +
-        </button>
-      </div>
-    ) : (
-      <button
-        type="button"
-        onClick={() => arrayHelpers.push(filterInitialValues)}
-      >
-        +
-      </button>
-    )}
-  </div>
-);
+class VideoSecondStep extends React.Component {
+  state = {
+    positions: []
+  };
+  addPositionToList = position => {
+    // const { handleSubmit } = this.props;
+    const { positions } = this.state;
+    this.setState({
+      positions: [...positions, position]
+    });
+    // handleSubmit({ positions });
+  };
+  render() {
+    const { videoUri } = this.props;
 
-const VideoSecondStep = ({ videoId, previousStep, videoUri, nextStep }) => {
-  return (
-    <Mutation mutation={ADD_VIDEO_FILTERS}>
-      {addFilters => {
-        return (
-          <Formik
-            initialValues={{
-              id: videoId,
-              sex: [],
-              nudity: [],
-              violence: [],
-              weapons: [],
-              frightening: [],
-              gross: [],
-              smoking: [],
-              drugs: [],
-              alcohol: [],
-              language: []
-            }}
-            onSubmit={variables => {
-              addFilters({ variables }).then(({ data }) => nextStep(data));
-            }}
-          >
-            {({ values }) => (
-              <Form>
-                <VideoPlayer
-                  width="640"
-                  src={videoUri}
-                  poster={`${videoUri}/1.png`}
-                  controls
-                  editing
-                  autoPlay
-                />
-                <FieldArray
-                  name="sex"
-                  render={renderArray({ label: 'Sex', key: 'sex', values })}
-                />
-                <FieldArray
-                  name="nudity"
-                  render={renderArray({
-                    label: 'Nudity',
-                    key: 'nudity',
-                    values
-                  })}
-                />
-                <FieldArray
-                  name="violence"
-                  render={renderArray({
-                    label: 'Violence',
-                    key: 'violence',
-                    values
-                  })}
-                />
-                <FieldArray
-                  name="weapons"
-                  render={renderArray({
-                    label: 'Weapons',
-                    key: 'weapons',
-                    values
-                  })}
-                />
-                <FieldArray
-                  name="frightening"
-                  render={renderArray({
-                    label: 'Frightening',
-                    key: 'frightening',
-                    values
-                  })}
-                />
-                <FieldArray
-                  name="gross"
-                  render={renderArray({
-                    label: 'Gross',
-                    key: 'gross',
-                    values
-                  })}
-                />
-                <FieldArray
-                  name="smoking"
-                  render={renderArray({
-                    label: 'Smoking',
-                    key: 'smoking',
-                    values
-                  })}
-                />
-                <FieldArray
-                  name="drugs"
-                  render={renderArray({
-                    label: 'Drugs',
-                    key: 'drugs',
-                    values
-                  })}
-                />
-                <FieldArray
-                  name="alcohol"
-                  render={renderArray({
-                    label: 'Alcohol',
-                    key: 'alcohol',
-                    values
-                  })}
-                />
-                <FieldArray
-                  name="language"
-                  render={renderArray({
-                    label: 'Language',
-                    key: 'language',
-                    values
-                  })}
-                />
-                <FormDebug />
-                <div>
-                  <button type="button" onClick={previousStep}>
-                    Cancel
-                  </button>
-                  <button type="submit">Submit</button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        );
-      }}
-    </Mutation>
-  );
-};
+    return (
+      <Mutation mutation={ADD_VIDEO_FILTERS}>
+        {() => {
+          return (
+            <Formik initialValues={{ positions: [] }}>
+              {({ values }) => (
+                <React.Fragment>
+                  <Field name="position">
+                    {({ field, form }) => (
+                      <VideoPlayer
+                        {...field}
+                        onSubmit={position =>
+                          form.setValues({
+                            ...form.values,
+                            positions: [...form.values.positions, position],
+                            position: {}
+                          })
+                        }
+                        form={form}
+                        width="640"
+                        src={videoUri}
+                        poster={`${videoUri}/1.png`}
+                        editing
+                      />
+                    )}
+                  </Field>
+                  <Form>
+                    <FieldArray name="positions">
+                      {arrayHelpers => (
+                        <div>
+                          <h3>Below are the filterable listed events</h3>
+                          {values.positions.map((position, index) => (
+                            // eslint-disable-next-line react/no-array-index-key
+                            <div key={index}>
+                              <Field name={`positions.${index}`}>
+                                {({ field: { value }, form }) => (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      form.setFieldValue('position', value)
+                                    }
+                                  >
+                                    <strong>{value.filterType}</strong>
+                                    {` issue from ${secondsToHours(
+                                      value.startTimeCode
+                                    )} until ${secondsToHours(
+                                      value.endTimeCode
+                                    )}`}
+                                  </button>
+                                )}
+                              </Field>
+                              <button
+                                type="button"
+                                onClick={() => arrayHelpers.remove(index)}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </FieldArray>
+                  </Form>
+                  <FormDebug />
+                </React.Fragment>
+              )}
+            </Formik>
+          );
+        }}
+      </Mutation>
+    );
+  }
+}
 
 VideoSecondStep.propTypes = {
   videoId: PropTypes.string.isRequired,
   videoUri: PropTypes.string.isRequired,
   nextStep: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
   previousStep: PropTypes.func.isRequired
 };
 

@@ -3,11 +3,24 @@ import { ApolloServer } from 'apollo-server-express';
 import { graphql, introspectionQuery } from 'graphql';
 import fs from 'fs';
 import typeDefs from './typeDefs';
+import User from '../models/user';
 import mocks from './mocks';
 import resolvers from './resolvers';
 
 const __DEV__ = process.env.NODE_ENV === 'development';
 export default app => {
+  const context = async ({ req, res, connection }) => {
+    // authScope: getScope(req.headers.authorization)
+    if (connection) {
+      // check connection for metadata
+      return {};
+    }
+    return {
+      db: req.db,
+      res,
+      req
+    };
+  };
   let schema;
   if (__DEV__) {
     schema = makeExecutableSchema({
@@ -17,12 +30,7 @@ export default app => {
         // eslint-disable-next-line no-console
         log: console.log
       },
-      context: ({ req, res }) => ({
-        // authScope: getScope(req.headers.authorization)
-        db: req.db,
-        res,
-        req
-      }),
+      context,
       resolverValidationOptions: {
         requireResolversForResolveType: false
       }
@@ -59,11 +67,23 @@ export default app => {
           }
         }
       : false,
-    context: ({ req, res }) => ({
-      db: req.db,
-      res,
-      req
-    }),
+    context,
+    subscriptions: {
+      onConnect: async connectionParams => {
+        if (connectionParams.authToken) {
+          return User.getUserFromToken(connectionParams.authToken);
+          // return validateToken(connectionParams.authToken)
+          //   .then(findUser(connectionParams.authToken))
+          //   .then(user => {
+          //     return {
+          //       currentUser: user,
+          //     };
+          //   });
+        }
+
+        throw new Error('Missing auth token!');
+      }
+    },
     tracing: true,
     cacheControl: true,
     formatError: error => {
@@ -80,6 +100,7 @@ export default app => {
     debug: true
   });
   server.applyMiddleware({ app });
+
   app.set('apollo', server);
   return server;
 };

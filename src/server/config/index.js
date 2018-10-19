@@ -50,16 +50,16 @@ export default app => {
           }`
         );
       req.user = {
-        id: (() => {
+        id: await (async () => {
           if (req.cookies.token) {
-            const userId = User.getUserFromToken(req.cookies.token, {
+            const userId = await User.getUserIdFromToken(req.cookies.token, {
               req,
               res
             });
             return userId;
           }
           if (req.headers.authorization) {
-            const userId = User.getUserFromToken(
+            const userId = await User.getUserIdFromToken(
               req.headers.authorization.replace('Bearer ', ''),
               { req, res }
             );

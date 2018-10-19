@@ -63,46 +63,60 @@ class VideoControls extends React.Component {
     optionsVisible: false
   };
   componentDidMount() {
-    const { video } = this.props;
-    // console.log(video.current);
     this.getCurrentTime();
-    video.current.addEventListener('playing', this.playing);
-    video.current.addEventListener('play', this.playing);
-    video.current.addEventListener('timeupdate', this.getCurrentTime);
-    video.current.addEventListener('pause', this.paused);
-    video.current.addEventListener('ended', this.paused);
-    video.current.addEventListener('volumechange', this.volumeChanged);
-    video.current.addEventListener(
-      'webkitfullscreenchange',
-      this.fullScreenChange
-    );
-    video.current.addEventListener(
-      'mozfullscreenchange',
-      this.fullScreenChange
-    );
-    video.current.addEventListener('fullscreenchange', this.fullScreenChange);
+    this.addListeners();
   }
   componentWillUnmount() {
-    const { video } = this.props;
-    video.current.removeEventListener('playing', this.playing);
-    video.current.removeEventListener('play', this.playing);
-    video.current.removeEventListener('timeupdate', this.getCurrentTime);
-    video.current.removeEventListener('pause', this.paused);
-    video.current.removeEventListener('ended', this.paused);
-    video.current.removeEventListener('volumechange', this.volumeChanged);
-    video.current.removeEventListener(
-      'webkitfullscreenchange',
-      this.fullScreenChange
-    );
-    video.current.removeEventListener(
-      'mozfullscreenchange',
-      this.fullScreenChange
-    );
-    video.current.removeEventListener(
-      'fullscreenchange',
-      this.fullScreenChange
-    );
+    this.removeListeners();
   }
+  removeListeners = () => {
+    const { video } = this.props;
+    try {
+      video.current.removeEventListener('playing', this.playing);
+      video.current.removeEventListener('play', this.playing);
+      video.current.removeEventListener('timeupdate', this.getCurrentTime);
+      video.current.removeEventListener('pause', this.paused);
+      video.current.removeEventListener('ended', this.paused);
+      video.current.removeEventListener('volumechange', this.volumeChanged);
+      video.current.removeEventListener(
+        'webkitfullscreenchange',
+        this.fullScreenChange
+      );
+      video.current.removeEventListener(
+        'mozfullscreenchange',
+        this.fullScreenChange
+      );
+      video.current.removeEventListener(
+        'fullscreenchange',
+        this.fullScreenChange
+      );
+    } catch (e) {
+      //
+    }
+  };
+  addListeners = () => {
+    const { video } = this.props;
+    try {
+      video.current.addEventListener('playing', this.playing);
+      video.current.addEventListener('play', this.playing);
+      video.current.addEventListener('timeupdate', this.getCurrentTime);
+      video.current.addEventListener('pause', this.paused);
+      video.current.addEventListener('ended', this.paused);
+      video.current.addEventListener('volumechange', this.volumeChanged);
+      video.current.addEventListener(
+        'webkitfullscreenchange',
+        this.fullScreenChange
+      );
+      video.current.addEventListener(
+        'mozfullscreenchange',
+        this.fullScreenChange
+      );
+      video.current.addEventListener('fullscreenchange', this.fullScreenChange);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
+  };
   getDurationText = () => {
     const { video } = this.props;
     if (!video.current) return '';

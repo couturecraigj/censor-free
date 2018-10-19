@@ -42,19 +42,22 @@ function startServer() {
 
     httpServer.once('listening', () => resolve(httpServer));
   }).then(httpServer => {
+    app.get('apollo').installSubscriptionHandlers(httpServer);
     const { port } = httpServer.address();
     console.info(completedFunction(port, app.get('apollo').graphqlPath));
 
     setup(app, httpServer);
-
     // Hot Module Replacement API
     if (module.hot) {
       let currentApp = app;
       module.hot.accept('.', () => {
         httpServer.removeListener('request', currentApp);
+
         import('.')
           .then(({ default: nextApp }) => {
+            currentApp.get('apollo').stop();
             currentApp = nextApp;
+            nextApp.get('apollo').installSubscriptionHandlers(httpServer);
             setup(currentApp, httpServer);
             httpServer.on('request', currentApp);
 

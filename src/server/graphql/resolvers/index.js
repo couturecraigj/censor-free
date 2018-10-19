@@ -1,3 +1,4 @@
+import { PubSub, withFilter } from 'apollo-server';
 import Answer from '../../models/answer';
 import Photo from '../../models/photo';
 import Question from '../../models/question';
@@ -10,10 +11,23 @@ import Video from '../../models/video';
 import WebPage from '../../models/webPage';
 import PostNode from '../../models/postNode';
 import Searchable from '../../models/searchable';
+import * as Types from '../types';
+
+const pubsub = new PubSub();
 
 const AUTHENTICATION_ERROR = new Error('Authentication Error');
 
 const resolvers = {
+  Subscription: {
+    fileConversionProgress: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator([Types.FILE_UPLOAD_PROGRESS]),
+        (payload, variables) => {
+          return payload.uploadToken === variables.uploadToken;
+        }
+      )
+    }
+  },
   Query: {
     feed: (root, args, context) => PostNode.findPostNodes(args, context),
     search: (root, args, context) => Searchable.findSearchable(args, context),
@@ -89,7 +103,11 @@ const resolvers = {
     addVideo: async (parent, args, context) => {
       return Video.createVideo(args, context, {
         // eslint-disable-next-line no-console
-        progress: console.log
+        progress: value =>
+          pubsub.publish(Types.FILE_UPLOAD_PROGRESS, {
+            fileConversionProgress: value,
+            uploadToken: args.uploadToken
+          })
       });
       // return Video.createVideo(args, context);
     },

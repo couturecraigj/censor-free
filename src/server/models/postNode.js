@@ -51,6 +51,12 @@ const Flag = new Schema(
     endTimeCode: {
       type: Number
     },
+    width: {
+      type: Number
+    },
+    height: {
+      type: Number
+    },
     coordinates: {
       fromTop: Number,
       fromLeft: Number,

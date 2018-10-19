@@ -18,6 +18,7 @@ async function render(ele) {
   localStorage.setItem('csurf-token', window.__CSURF__);
   const client = apollo(fetch, {
     uri: window.QUERY_URL,
+    subscriptionUrl: window.SUBSCRIPTION_URL,
     state: window.__APOLLO_STATE__,
     fragments: window.__FRAGMENTS__
   });

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import FirstStep from './FirstStep';
 import SecondStep from './SecondStep';
+import Conversion from './Conversion';
 
 class Video extends React.Component {
   state = {
@@ -31,15 +32,17 @@ class Video extends React.Component {
   };
 
   render() {
-    const { step, videoId, videoUri } = this.state;
+    const { step, videoId, videoUri, uploadToken, converted } = this.state;
     if (step === 1)
       return (
         <FirstStep
-          nextStep={data => {
+          nextStep={(data, variables) => {
             this.setState(
               {
                 videoId: data.addVideo.id,
-                videoUri: data.addVideo.uri
+                videoUri: data.addVideo.uri,
+                converted: data.addVideo.converted,
+                uploadToken: variables.uploadToken
               },
               () => {
                 this.nextStep();
@@ -48,11 +51,24 @@ class Video extends React.Component {
           }}
         />
       );
+    if (!converted)
+      return (
+        <Conversion
+          uploadToken={uploadToken}
+          nextStep={() =>
+            this.setState({
+              converted: true
+            })
+          }
+        />
+      );
     if (step === 2)
       return (
         <SecondStep
           videoId={videoId}
           videoUri={videoUri}
+          uploadToken={uploadToken}
+          converted={converted}
           previousStep={() => {
             const { toggleTabs } = this.props;
             this.previousStep();

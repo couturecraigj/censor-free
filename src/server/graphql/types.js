@@ -1,0 +1,2 @@
+export const POST_ADDED = 'POST_ADDED';
+export const FILE_UPLOAD_PROGRESS = 'FILE_UPLOAD_PROGRESS';

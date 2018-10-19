@@ -2,6 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+/**
+ * TODO: Make sure that when sending down props they are merged into state
+ */
+
 const RangeSlider = styled.input.attrs({
   type: 'range'
 })`
@@ -15,32 +19,68 @@ const RangeContainer = styled.div`
   position: absolute;
 `;
 
+const filterOptions = [
+  'Sex',
+  'Nudity',
+  'Violence',
+  'Weapons',
+  'Frightening',
+  'Gross',
+  'Smoking',
+  'Drugs',
+  'Alcohol',
+  'Language',
+  'Privacy',
+  'Scam',
+  'Copyright'
+];
+
 class VideoEditingControls extends React.Component {
   canvas = React.createRef();
   dialog = React.createRef();
-  state = {
-    height: 0,
-    width: 0,
-    mouseDown: false,
-    dialogHidden: true,
-    duration: 0,
-    startTime: 0,
-    endTime: ''
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      height: 0,
+      width: 0,
+      mouseDown: false,
+      dialogHidden: true,
+      filterType: '',
+      duration: 0,
+      startTimeCode: 0,
+      endTimeCode: '',
+      ...props.value
+    };
+  }
   componentDidMount() {
     this.ctx = this.canvas.current.getContext('2d');
     this.setDimensions();
-    const { video } = this.props;
-    video.current.addEventListener('mouseup', this.onMouseUp);
-    video.current.addEventListener('mouseleave', this.onMouseUp);
-    video.current.addEventListener('mousedown', this.onMouseDown);
+    this.addListeners();
   }
   componentWillUnmount() {
-    const { video } = this.props;
-    video.current.removeEventListener('mouseup', this.onMouseUp);
-    video.current.removeEventListener('mouseleave', this.onMouseUp);
-    video.current.removeEventListener('mousedown', this.onMouseDown);
+    this.removeListeners();
   }
+
+  removeListeners = () => {
+    const { video } = this.props;
+    try {
+      video.current.removeEventListener('mouseup', this.onMouseUp);
+      video.current.removeEventListener('mouseleave', this.onMouseUp);
+      video.current.removeEventListener('mousedown', this.onMouseDown);
+    } catch (e) {
+      //
+    }
+  };
+  addListeners = () => {
+    const { video } = this.props;
+    try {
+      video.current.addEventListener('mouseup', this.onMouseUp);
+      video.current.addEventListener('mouseleave', this.onMouseUp);
+      video.current.addEventListener('mousedown', this.onMouseDown);
+    } catch (e) {
+      //
+    }
+  };
   setDimensions = () => {
     const { video } = this.props;
     const {
@@ -81,7 +121,7 @@ class VideoEditingControls extends React.Component {
       () => {
         let dialogTop;
         let dialogLeft;
-        const { height, width, startTime } = this.state;
+        const { height, width, startTimeCode } = this.state;
         // setTimeout(() => {});
         const [dialogHeight, dialogWidth, top, left] = [
           this.dialog.current.offsetHeight,
@@ -107,7 +147,7 @@ class VideoEditingControls extends React.Component {
           dialogLeft = left;
         }
         this.setState({
-          endTime: startTime,
+          endTimeCode: startTimeCode,
           dialogHidden: false,
           dialogTop,
           dialogLeft
@@ -128,15 +168,15 @@ class VideoEditingControls extends React.Component {
         temporaryPause: true
       });
     }
-    const startTime = Math.floor(vid.currentTime);
+    const startTimeCode = Math.floor(vid.currentTime);
     const marker = {
-      startTime,
+      startTimeCode,
       top: e.layerY,
       left: e.layerX
     };
     this.setState({
       startPosition: marker,
-      startTime
+      startTimeCode
     });
   };
   onMouseUp = e => {
@@ -145,12 +185,13 @@ class VideoEditingControls extends React.Component {
     this.setState({
       mouseDown: false
     });
-    const { video } = this.props;
+
+    const { video, onChange } = this.props;
     const vid = video.current;
     const { temporaryPause, startPosition } = this.state;
-    const startTime = Math.floor(vid.currentTime);
+    const startTimeCode = Math.floor(vid.currentTime);
     const marker = {
-      startTime,
+      startTimeCode,
       top: e.layerY,
       left: e.layerX
     };
@@ -184,10 +225,16 @@ class VideoEditingControls extends React.Component {
           return Math.abs(marker.top - startPosition.top);
         })()
       };
+      onChange({
+        target: {
+          name,
+          value: position
+        }
+      });
       this.addPositionToCanvas(position);
       this.setState(
         {
-          startTime,
+          startTimeCode,
           position,
           startPosition: undefined
         },
@@ -195,17 +242,35 @@ class VideoEditingControls extends React.Component {
       );
     }
   };
-  onSubmit = e => {
+  handleSubmit = e => {
+    const { onSubmit } = this.props;
+    const { position } = this.state;
     e.preventDefault();
-    const { video } = this.props;
-    const { position, startTime } = this.state;
-    e.persist();
+    if (
+      !filterOptions.includes(position.filterType) ||
+      typeof position.endTimeCode !== 'number'
+    )
+      return;
+    onSubmit(position);
+    this.removePositionFromCanvas(position);
     this.setState({
       dialogHidden: true,
-      endTime: 0
+      endTimeCode: '',
+      filterType: '',
+      position: null
     });
-    video.current.currentTime = startTime || 0;
+  };
+  onChange = () => {
+    // const { form } = this.props;
+    const { video, onSubmit } = this.props;
+    const { position, startTimeCode } = this.state;
+    this.setState({
+      dialogHidden: true,
+      endTimeCode: 0
+    });
+    video.current.currentTime = startTimeCode || 0;
     this.removePositionFromCanvas(position);
+    onSubmit(position);
   };
   cancelDialog = () => {
     const { position } = this.state;
@@ -225,24 +290,69 @@ class VideoEditingControls extends React.Component {
       position.height
     );
   };
+  handleChange = (e, value) => {
+    const {
+      startTimeCode,
+      width,
+      height,
+      filterType,
+      top,
+      left,
+      endTimeCode
+    } = this.state;
+    const { onChange, name } = this.props;
+    let state = {};
+    if (value) {
+      state = {
+        [e]: value,
+        position: {
+          startTimeCode,
+          filterType,
+          width,
+          height,
+          top,
+          left,
+          endTimeCode,
+          [e]: value
+        }
+      };
+    } else {
+      e.preventDefault();
+      state = {
+        [e.target.name]: e.target.value,
+        position: {
+          startTimeCode,
+          width,
+          height,
+          top,
+          left,
+          endTimeCode,
+          [e.target.name]: e.target.value
+        }
+      };
+    }
+    onChange({
+      target: {
+        name,
+        value: state.position
+      }
+    });
+    this.setState(state);
+  };
   changeEndTime = e => {
     const { video } = this.props;
-    const endTime = +e.target.value;
-    if (endTime <= e.target.max && endTime >= e.target.min) {
-      this.setState({
-        endTime
-      });
-      video.current.currentTime = endTime;
+    const endTimeCode = +e.target.value;
+    if (endTimeCode <= e.target.max && endTimeCode >= e.target.min) {
+      this.handleChange('endTimeCode', endTimeCode);
+      video.current.currentTime = endTimeCode;
     }
   };
   changeStartTime = e => {
     const { video } = this.props;
-    const startTime = +e.target.value;
-    if (startTime <= e.target.max && startTime >= e.target.min) {
-      this.setState({
-        startTime
-      });
-      video.current.currentTime = startTime;
+    const startTimeCode = +e.target.value;
+    if (startTimeCode <= e.target.max && startTimeCode >= e.target.min) {
+      this.handleChange('startTimeCode', startTimeCode);
+      video.current.currentTime = startTimeCode;
     }
   };
   removePositionFromCanvas = () => {
@@ -263,11 +373,12 @@ class VideoEditingControls extends React.Component {
       width,
       duration,
       height,
-      endTime,
+      endTimeCode,
       dialogLeft,
       dialogTop,
       dialogHidden,
-      startTime
+      startTimeCode,
+      filterType
     } = this.state;
 
     return (
@@ -288,49 +399,57 @@ class VideoEditingControls extends React.Component {
         >
           &nbsp;
         </canvas>
-        <div
-          ref={this.dialog}
-          hidden={dialogHidden}
-          style={{
-            backgroundColor: 'white',
-            padding: 2,
-            position: 'absolute',
-            zIndex: 2,
-            top: dialogTop,
-            left: dialogLeft
-          }}
-        >
-          <form onSubmit={this.onSubmit}>
+        <form onSubmit={this.handleSubmit}>
+          <div
+            ref={this.dialog}
+            hidden={dialogHidden}
+            style={{
+              backgroundColor: 'white',
+              padding: 2,
+              position: 'absolute',
+              zIndex: 2,
+              top: dialogTop,
+              left: dialogLeft
+            }}
+          >
             <div>
-              <input placeholder="which" />
+              <select
+                required
+                name="filterType"
+                value={filterType}
+                onChange={this.handleChange}
+                placeholder="which"
+              >
+                <option value>--Select One--</option>
+                {filterOptions.map(val => (
+                  <option key={val}>{val}</option>
+                ))}
+              </select>
             </div>
             <div>
-              <input placeholder="which" />
-            </div>
-            <div>
-              <input placeholder="which" />
-            </div>
-            <div>
-              <span>{`Starting at ${startTime} of ${duration}`}</span>
+              <span>{`Starting at ${startTimeCode} of ${duration}`}</span>
               <input
+                name="endTimeCode"
+                required
                 placeholder="until"
                 type="number"
                 step={0.25}
-                min={startTime}
-                value={endTime}
+                min={startTimeCode}
+                value={endTimeCode}
                 max={duration}
                 onChange={this.changeEndTime}
               />
             </div>
-            <input type="submit" />
+            <button type="submit">Add To List</button>
             <button type="button" onClick={this.cancelDialog}>
               Cancel
             </button>
-          </form>
-        </div>
+          </div>
+        </form>
+
         <RangeContainer>
           <RangeSlider
-            value={dialogHidden ? startTime : endTime}
+            value={dialogHidden ? startTimeCode : endTimeCode}
             disabled={!dialogHidden}
             max={duration}
             min={0}
@@ -346,7 +465,21 @@ class VideoEditingControls extends React.Component {
 VideoEditingControls.propTypes = {
   video: PropTypes.shape({
     current: PropTypes.object
-  }).isRequired
+  }).isRequired,
+  value: PropTypes.shape({
+    startTimeCode: PropTypes.number,
+    endTimeCode: PropTypes.number,
+    height: PropTypes.number
+  }),
+  onSubmit: PropTypes.func,
+  onChange: PropTypes.func,
+  name: PropTypes.string.isRequired
+};
+
+VideoEditingControls.defaultProps = {
+  value: {},
+  onSubmit: () => {},
+  onChange: () => {}
 };
 
 export default VideoEditingControls;

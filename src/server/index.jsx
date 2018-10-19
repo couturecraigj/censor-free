@@ -41,6 +41,9 @@ app.get('*', async (req, res) => {
     const queryUrl = `${req.headers['x-forwarded-proto'] || req.protocol}://${
       req.headers.host
     }${app.get('apollo').graphqlPath}`;
+    const subscriptionUrl = `ws://${req.headers.host}${
+      app.get('apollo').subscriptionsPath
+    }`;
     // const loggedIn = req.user.id !== undefined;
     const loggedIn = false;
     const store = initiateStore({
@@ -99,7 +102,7 @@ app.get('*', async (req, res) => {
               preloadedState
             )};window.__FRAGMENTS__=${JSON.stringify(
               app.get('fragments')
-            )};window.QUERY_URL="${queryUrl}";window.__APOLLO_STATE__=${JSON.stringify(
+            )};window.QUERY_URL="${queryUrl}";window.SUBSCRIPTION_URL="${subscriptionUrl}";window.__APOLLO_STATE__=${JSON.stringify(
               client.extract()
             )};</script>${loadableState.getScriptTag()}${reactHelmet.title.toString()}${sheet.getStyleTags()}`,
             body,
@@ -121,7 +124,9 @@ app.get('*', async (req, res) => {
 });
 
 if (module === require.main) {
-  app.listen(app.get('port'), () => {
+  const httpServer = require('http').createServer(app);
+  app.get('apollo').installSubscriptionHandlers(httpServer);
+  httpServer.listen(app.get('port'), () => {
     // eslint-disable-next-line no-console
     console.info(`server listening on http://localhost:${app.get('port')}`);
     setup(app);

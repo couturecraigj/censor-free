@@ -10,12 +10,17 @@ import FormDebug from '../../FormDebug';
 
 const SUBMIT_VIDEO = gql`
   mutation AddVideo(
-    $videoUri: String!
+    $uploadToken: String!
     $description: String!
     $title: String!
   ) {
-    addVideo(videoUri: $videoUri, description: $description, title: $title) {
+    addVideo(
+      uploadToken: $uploadToken
+      description: $description
+      title: $title
+    ) {
       id
+      converted
       uri
     }
   }
@@ -32,7 +37,7 @@ const VideoFirstStep = ({ nextStep }) => (
             // videoId: ''
           }}
           onSubmit={variables => {
-            video({ variables }).then(({ data }) => nextStep(data));
+            video({ variables }).then(({ data }) => nextStep(data, variables));
           }}
         >
           {() => (
@@ -40,7 +45,7 @@ const VideoFirstStep = ({ nextStep }) => (
               <FormikFileUpload
                 label="Video"
                 accept="video/mp4,video/x-m4v,video/*"
-                name="videoUri"
+                name="uploadToken"
                 id="Video__file-input"
               />
               <FormikTextInput name="title" label="Title" id="Video__title" />

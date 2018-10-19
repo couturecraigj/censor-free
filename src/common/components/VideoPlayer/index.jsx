@@ -6,6 +6,8 @@ import VideoEditingControls from './VideoEditingControls';
 
 class VideoPlayer extends React.Component {
   video = React.createRef();
+  editor = React.createRef();
+  controls = React.createRef();
   state = {
     height: 0,
     width: 0,
@@ -29,6 +31,12 @@ class VideoPlayer extends React.Component {
     );
   }
   componentWillUnmount() {
+    try {
+      this.editor.current.removeListeners();
+      this.controls.current.removeListeners();
+    } catch (e) {
+      //
+    }
     this.player.removeEventListener('error', this.onErrorEvent);
   }
   initPlayer = async (appended = '/playlist.m3u8') => {
@@ -83,11 +91,13 @@ class VideoPlayer extends React.Component {
     this.onError(event.detail);
   };
   onKeyDown = e => {
+    const { editing } = this.props;
+    if (editing) return;
     if (document.activeElement === this.video.current) {
       e.preventDefault();
       e.persist();
       const video = this.video.current;
-      console.log(e.keyCode);
+      // console.log(e.keyCode);
       switch (e.keyCode) {
         case 32:
           return video.paused ? video.play() : video.pause();
@@ -182,14 +192,30 @@ class VideoPlayer extends React.Component {
       poster,
       src,
       width: propWidth,
+      onSubmit,
       controls,
       autoPlay,
-      editing
+      editing,
+      ...props
     } = this.props;
     const { width, height, hide } = this.state;
 
     return (
       <React.Fragment>
+        {editing && (
+          <div>
+            <h1>Please help to edit this video</h1>
+            <div>
+              You can Scrub to the beginning of where a potential event is
+              happening then drag over the area that is of concern and then add
+              the appropriate amount of time that the event has occurred before
+              submitting.
+            </div>
+            <div>
+              Also, you need to provide a category for each filterable event
+            </div>
+          </div>
+        )}
         <div
           hidden={hide}
           style={{
@@ -208,13 +234,16 @@ class VideoPlayer extends React.Component {
             onKeyDown={this.onKeyDown}
             src={src + '/playlist.m3u8'}
             poster={poster}
-            autoPlay={autoPlay}
+            autoPlay={!editing && autoPlay}
           >
             <track kind="captions" />
           </video>
           {editing &&
             !hide && (
               <VideoEditingControls
+                {...props}
+                ref={this.editor}
+                onSubmit={onSubmit}
                 width={width}
                 height={height}
                 video={this.video}
@@ -222,7 +251,9 @@ class VideoPlayer extends React.Component {
             )}
           {controls &&
             !hide &&
-            !editing && <VideoControls video={this.video} />}
+            !editing && (
+              <VideoControls ref={this.controls} video={this.video} />
+            )}
         </div>
       </React.Fragment>
     );
@@ -235,13 +266,15 @@ VideoPlayer.propTypes = {
   poster: PropTypes.string.isRequired,
   controls: PropTypes.bool,
   editing: PropTypes.bool,
+  onSubmit: PropTypes.func,
   autoPlay: PropTypes.bool
 };
 
 VideoPlayer.defaultProps = {
   controls: false,
   autoPlay: false,
-  editing: false
+  editing: false,
+  onSubmit: () => {}
 };
 
 export default VideoPlayer;
