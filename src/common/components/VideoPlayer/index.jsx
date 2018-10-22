@@ -4,12 +4,19 @@ import VideoControls from './VideoControls';
 import VideoEditingControls from './VideoEditingControls';
 // TODO: Add a Broken Video Image when a video does not load
 
+/**
+ * Contacts: National
+ * Contacts: Local
+ * Contacts: Owned by Andrews Profiles
+ * Contacts:
+ */
 class VideoPlayer extends React.Component {
   video = React.createRef();
   editor = React.createRef();
   controls = React.createRef();
   state = {
     height: 0,
+    currentTime: 0,
     width: 0,
     hide: true
   };
@@ -39,6 +46,21 @@ class VideoPlayer extends React.Component {
     }
     this.player.removeEventListener('error', this.onErrorEvent);
   }
+
+  handleTimeChange = value => {
+    const { current: video } = this.video;
+    video.currentTime = value;
+  };
+  addListeners = () => {};
+  removeListeners = () => {
+    const { current: video } = this.video;
+    video.removeEventListener('timeupdate', this.onTimeUpdate);
+  };
+  onTimeUpdate = e => {
+    this.setState({
+      currentTime: e.target.currentTime
+    });
+  };
   initPlayer = async (appended = '/playlist.m3u8') => {
     const { src } = this.props;
     const manifestUri = src + appended;
@@ -67,11 +89,8 @@ class VideoPlayer extends React.Component {
       .catch(this.onError);
   };
   setDimensions = () => {
-    const {
-      offsetHeight: height,
-      offsetWidth: width,
-      duration
-    } = this.video.current;
+    const { offsetHeight: height, offsetWidth: width, duration } =
+      this.video.current || {};
     if (!duration) {
       setTimeout(this.setDimensions, 200);
       this.setState({
@@ -196,9 +215,11 @@ class VideoPlayer extends React.Component {
       controls,
       autoPlay,
       editing,
+      value,
+      onEdit,
       ...props
     } = this.props;
-    const { width, height, hide } = this.state;
+    const { width, height, hide, currentTime } = this.state;
 
     return (
       <React.Fragment>
@@ -217,9 +238,9 @@ class VideoPlayer extends React.Component {
           </div>
         )}
         <div
-          hidden={hide}
           style={{
             position: 'relative',
+            visibility: hide && 'hidden',
             width,
             height: editing ? height + 25 : height
           }}
@@ -242,6 +263,10 @@ class VideoPlayer extends React.Component {
             !hide && (
               <VideoEditingControls
                 {...props}
+                value={value}
+                onChange={onEdit}
+                changeTime={this.handleTimeChange}
+                currentTime={currentTime}
                 ref={this.editor}
                 onSubmit={onSubmit}
                 width={width}
@@ -264,9 +289,11 @@ VideoPlayer.propTypes = {
   src: PropTypes.string.isRequired,
   width: PropTypes.string.isRequired,
   poster: PropTypes.string.isRequired,
+  value: PropTypes.shape({}),
   controls: PropTypes.bool,
   editing: PropTypes.bool,
   onSubmit: PropTypes.func,
+  onEdit: PropTypes.func,
   autoPlay: PropTypes.bool
 };
 
@@ -274,7 +301,9 @@ VideoPlayer.defaultProps = {
   controls: false,
   autoPlay: false,
   editing: false,
-  onSubmit: () => {}
+  value: {},
+  onSubmit: () => {},
+  onEdit: () => {}
 };
 
 export default VideoPlayer;

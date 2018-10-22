@@ -67,7 +67,9 @@ Video.statics.createVideo = async function(args, context, extras) {
     filePath = file.convertedPath;
     extras.progress(100);
   }
-  let video = await mongoose.models.Video.findOne({ uri: filePath });
+  let video = await mongoose.models.Video.findOne({
+    uri: filePath.replace(publicPath, '')
+  });
   if (!video) {
     video = await mongoose.models.Video.create({
       uri: filePath.replace(publicPath, ''),

@@ -32,6 +32,7 @@ class VideoSecondStep extends React.Component {
   state = {
     positions: []
   };
+
   addPositionToList = position => {
     // const { handleSubmit } = this.props;
     const { positions } = this.state;
@@ -50,25 +51,20 @@ class VideoSecondStep extends React.Component {
             <Formik initialValues={{ positions: [] }}>
               {({ values }) => (
                 <React.Fragment>
-                  <Field name="position">
-                    {({ field, form }) => (
-                      <VideoPlayer
-                        {...field}
-                        onSubmit={position =>
-                          form.setValues({
-                            ...form.values,
-                            positions: [...form.values.positions, position],
-                            position: {}
-                          })
-                        }
-                        form={form}
-                        width="640"
-                        src={videoUri}
-                        poster={`${videoUri}/1.png`}
-                        editing
-                      />
+                  {console.log(values)}
+                  <VideoPlayer
+                    formComponent={() => (
+                      <form>
+                        <Field name="position.type" />
+                      </form>
                     )}
-                  </Field>
+                    width="640"
+                    value={values.position}
+                    src={videoUri}
+                    poster={`${videoUri}/1.png`}
+                    editing
+                  />
+
                   <Form>
                     <FieldArray name="positions">
                       {arrayHelpers => (
