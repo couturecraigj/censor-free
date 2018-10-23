@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 // import styled from 'styled-components';
 import { Rect as Rectangle } from 'react-konva';
 
-class Rect extends React.Component {
+class Rect extends React.PureComponent {
   handleChange = e => {
     const { onTransform, x, y, width, height } = this.props;
     const shape = e.target;

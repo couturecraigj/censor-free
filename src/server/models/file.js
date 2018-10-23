@@ -55,7 +55,11 @@ File.statics.getUploadToken = async function(args) {
   if (!args.user)
     throw new Error('You need to be logged in to be able to upload anything');
   const file = await mongoose.models.File.findOne(args);
-  if (file) return sendFileFields(file);
+  if (file) {
+    if (!file.finishedFileName) return sendFileFields(file);
+    if (fs.existsSync(file.finishedFileName)) return sendFileFields(file);
+    await file.destroy();
+  }
   return mongoose.models.File.create(args).then(file => {
     fs.mkdirSync(file.path);
     return sendFileFields(file);

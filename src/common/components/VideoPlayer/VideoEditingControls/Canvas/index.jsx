@@ -10,6 +10,7 @@ import Rect from './Rect';
  */
 const Div = styled.div`
   position: absolute;
+  z-index: 4;
   top: 0;
   bottom: 0;
   left: 0;

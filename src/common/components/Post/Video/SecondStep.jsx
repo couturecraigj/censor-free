@@ -48,10 +48,16 @@ class VideoSecondStep extends React.Component {
       <Mutation mutation={ADD_VIDEO_FILTERS}>
         {() => {
           return (
-            <Formik initialValues={{ positions: [] }}>
-              {({ values }) => (
+            <Formik
+              initialValues={{
+                positions: [],
+                position: {
+                  type: ''
+                }
+              }}
+            >
+              {({ values, handleChange }) => (
                 <React.Fragment>
-                  {console.log(values)}
                   <VideoPlayer
                     formComponent={() => (
                       <form>
@@ -59,6 +65,8 @@ class VideoSecondStep extends React.Component {
                       </form>
                     )}
                     width="640"
+                    onEdit={handleChange}
+                    name="position"
                     value={values.position}
                     src={videoUri}
                     poster={`${videoUri}/1.png`}
@@ -114,11 +122,11 @@ class VideoSecondStep extends React.Component {
 }
 
 VideoSecondStep.propTypes = {
-  videoId: PropTypes.string.isRequired,
-  videoUri: PropTypes.string.isRequired,
-  nextStep: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  previousStep: PropTypes.func.isRequired
+  // videoId: PropTypes.string.isRequired,
+  // nextStep: PropTypes.func.isRequired,
+  // handleSubmit: PropTypes.func.isRequired,
+  // previousStep: PropTypes.func.isRequired,
+  videoUri: PropTypes.string.isRequired
 };
 
 export default VideoSecondStep;

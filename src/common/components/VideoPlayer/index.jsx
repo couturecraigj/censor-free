@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import VideoControls from './VideoControls';
 import VideoEditingControls from './VideoEditingControls';
+import { Provider } from './Context';
 // TODO: Add a Broken Video Image when a video does not load
 
 /**
@@ -12,8 +13,6 @@ import VideoEditingControls from './VideoEditingControls';
  */
 class VideoPlayer extends React.Component {
   video = React.createRef();
-  editor = React.createRef();
-  controls = React.createRef();
   state = {
     height: 0,
     currentTime: 0,
@@ -37,13 +36,8 @@ class VideoPlayer extends React.Component {
       }
     );
   }
+
   componentWillUnmount() {
-    try {
-      this.editor.current.removeListeners();
-      this.controls.current.removeListeners();
-    } catch (e) {
-      //
-    }
     this.player.removeEventListener('error', this.onErrorEvent);
   }
 
@@ -261,24 +255,23 @@ class VideoPlayer extends React.Component {
           </video>
           {editing &&
             !hide && (
-              <VideoEditingControls
-                {...props}
-                value={value}
-                onChange={onEdit}
-                changeTime={this.handleTimeChange}
-                currentTime={currentTime}
-                ref={this.editor}
-                onSubmit={onSubmit}
-                width={width}
-                height={height}
-                video={this.video}
-              />
+              <Provider value={props}>
+                <VideoEditingControls
+                  {...props}
+                  value={value}
+                  onChange={onEdit}
+                  changeTime={this.handleTimeChange}
+                  currentTime={currentTime}
+                  onSubmit={onSubmit}
+                  width={width}
+                  height={height}
+                  video={this.video}
+                />
+              </Provider>
             )}
           {controls &&
             !hide &&
-            !editing && (
-              <VideoControls ref={this.controls} video={this.video} />
-            )}
+            !editing && <VideoControls video={this.video} />}
         </div>
       </React.Fragment>
     );

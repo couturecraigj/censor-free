@@ -4,7 +4,7 @@ import ErrorMessage from './ErrorMessage';
 
 const __DEV__ = process.env.NODE_ENV !== 'production';
 
-class ErrorBoundary extends React.Component {
+class ErrorBoundary extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = { hasError: false, errorMessage: '' };

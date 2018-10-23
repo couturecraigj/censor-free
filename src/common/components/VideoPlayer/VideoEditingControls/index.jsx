@@ -22,28 +22,23 @@ const RangeContainer = styled.div`
 `;
 
 class VideoEditingControls extends React.Component {
-  canvas = React.createRef();
-  dialog = React.createRef();
   state = {
-    height: 0,
-    width: 0,
     dialogHidden: true,
     duration: 0,
     startTimeCode: 0,
     endTimeCode: ''
   };
   componentDidMount() {
-    this.setDimensions();
     this.replacePoster();
   }
-  static getDerivedStateFromProps(props) {
-    if (props.value) {
-      return {
-        value: props.value
-      };
-    }
-    return null;
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   if (this.props.width !== nextProps.width) return true;
+  //   const { value } = this.props;
+  //   return (
+  //     JSON.stringify(value) !== JSON.stringify(nextProps.value) ||
+  //     JSON.stringify(this.state) !== JSON.stringify(nextState)
+  //   );
+  // }
   replacePoster = () => {
     const { changeTime } = this.props;
     setTimeout(() => {
@@ -59,34 +54,14 @@ class VideoEditingControls extends React.Component {
     const { startTimeCode } = this.state;
     changeTime(startTimeCode);
     this.setState({
-      value: undefined,
       dialogHidden: true,
       startTimeCode: 0
     });
   };
 
-  setDimensions = () => {
-    const { video } = this.props;
-    const {
-      offsetHeight: height,
-      offsetWidth: width,
-      duration
-    } = video.current;
-    if (!duration) {
-      setTimeout(this.setDimensions, 10);
-    } else {
-      this.setState({
-        duration: +duration,
-        height,
-        width
-      });
-    }
-  };
-
   changePosition = value => {
     const { onChange, name } = this.props;
     this.setState({
-      value,
       dialogHidden: value ? false : true
     });
     onChange({ target: { name, value } });
@@ -94,12 +69,11 @@ class VideoEditingControls extends React.Component {
 
   onChange = () => {
     // const { form } = this.props;
-    const { video, onSubmit } = this.props;
-    const { value, startTimeCode } = this.state;
+    const { video, onSubmit, value } = this.props;
+    const { startTimeCode } = this.state;
     this.setState({
       dialogHidden: true,
-      endTimeCode: 0,
-      value: undefined
+      endTimeCode: 0
     });
     video.current.currentTime = startTimeCode || 0;
     onSubmit(value);
@@ -107,14 +81,21 @@ class VideoEditingControls extends React.Component {
 
   render() {
     const {
-      width,
       duration,
-      height,
+
       endTimeCode,
       dialogHidden,
       startTimeCode
     } = this.state;
-    const { currentTime, value, name, changeTime, ...props } = this.props;
+    const {
+      currentTime,
+      value,
+      name,
+      changeTime,
+      width,
+      height,
+      ...props
+    } = this.props;
     // console.log({ width, height, value });
     return (
       <React.Fragment>

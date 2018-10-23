@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Consumer } from '../Context';
 // import styled from 'styled-components';
 
 /**
@@ -9,58 +10,19 @@ import PropTypes from 'prop-types';
 class Dialog extends React.Component {
   dialog = React.createRef();
   state = {};
-  static getDerivedStateFromProps = (props, state) => {
-    if (props.position) {
-      const position = {
-        ...state?.position,
-        ...props?.position
-      };
-      return {
-        ...state,
-        position
-      };
-    }
-    return null;
-  };
+  // shouldComponentUpdate(nextProps) {
+  //   console.log(nextProps);
+  //   console.log(this.props);
+  //   if (JSON.stringify(nextProps) !== JSON.stringify(this.props)) return true;
+  //   return true;
+  // }
   getDimensions = () => {
     return {
       dialogHeight: this.dialog.current?.offsetHeight,
       dialogWidth: this.dialog.current?.offsetWidth
     };
   };
-  handleSubmit = e => {
-    const { onSubmit, value } = this.props;
-    e.preventDefault();
-    onSubmit(value);
-  };
-  cancelDialog = () => {
-    const { onCancel } = this.props;
-    onCancel();
-  };
-  handleChange = (e, newValue) => {
-    const { onChange, value } = this.props;
-    const state = {};
-    if (!newValue) {
-      e.preventDefault();
-      e.persist();
-    }
-    this.setState(state, () => {
-      onChange({
-        ...value,
-        ...(newValue
-          ? { [e]: newValue }
-          : { [e.target?.name]: e.target?.value })
-      });
-    });
-  };
-  changeEndTime = e => {
-    const { changeTime, onChange, value } = this.props;
-    changeTime(e.target.value);
-    onChange({
-      ...value,
-      endTimeCode: +e.target.value
-    });
-  };
+
   getCoordinatesOfDialogue = () => {
     let dialogTop;
     let dialogLeft;
@@ -100,29 +62,29 @@ class Dialog extends React.Component {
     return { left: dialogLeft, top: dialogTop };
   };
   render() {
-    const { isOpen, formComponent: Form } = this.props;
+    const { isOpen } = this.props;
     return (
-      <Form
-        innerRef={this.dialog}
-        style={{
-          visibility: !isOpen && 'hidden',
-          backgroundColor: 'white',
-          padding: 2,
-          position: 'absolute',
-          zIndex: 2,
-          ...this.getCoordinatesOfDialogue()
-        }}
-      />
+      <Consumer>
+        {({ formComponent: Form }) => (
+          <Form
+            deepRef={this.dialog}
+            style={{
+              visibility: !isOpen && 'hidden',
+              backgroundColor: 'white',
+              padding: 2,
+              position: 'absolute',
+              zIndex: 5,
+              ...this.getCoordinatesOfDialogue()
+            }}
+          />
+        )}
+      </Consumer>
     );
   }
 }
 
 Dialog.propTypes = {
-  onSubmit: PropTypes.func,
-  onChange: PropTypes.func,
-  formComponent: PropTypes.func,
-  onCancel: PropTypes.func,
-  changeTime: PropTypes.func,
+  // onCancel: PropTypes.func,
   isOpen: PropTypes.bool.isRequired,
   // duration: PropTypes.number.isRequired,
 
@@ -141,15 +103,10 @@ Dialog.propTypes = {
 };
 
 Dialog.defaultProps = {
-  onSubmit: () => {},
-  onChange: () => {},
-  formComponent: ({ innerRef, ...props }) => (
-    <form {...props} ref={innerRef}>
-      <input />
-    </form>
-  ),
-  changeTime: () => {},
-  onCancel: () => {},
+  // onSubmit: () => {},
+  // onChange: () => {},
+  // changeTime: () => {},
+  // onCancel: () => {},
   value: {}
 };
 

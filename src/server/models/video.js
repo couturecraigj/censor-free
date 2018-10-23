@@ -56,7 +56,7 @@ Video.statics.addFilters = async function() {};
 Video.statics.createVideo = async function(args, context, extras) {
   const file = await File.findOne({ uploadToken: args.uploadToken });
   let filePath;
-  if (!file.converted) {
+  if (!file.converted || !fs.existsSync(file.convertedPath)) {
     filePath = await mongoose.models.Video.createDifferentVideoFormats(
       file,
       // args,
