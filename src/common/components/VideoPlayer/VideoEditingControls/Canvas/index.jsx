@@ -43,8 +43,8 @@ class Canvas extends React.Component {
     const startTimeCode = Math.floor(currentTime);
     const marker = {
       startTimeCode,
-      y: e.evt.layerY,
-      x: e.evt.layerX
+      y: e.layerY,
+      x: e.layerX
     };
     this.setState({
       startPosition: marker
@@ -112,7 +112,7 @@ class Canvas extends React.Component {
       this.setState({
         selectedShapeName: ''
       });
-      return this.onMouseDown(e);
+      return this.onMouseDown(e.evt);
     }
 
     // clicked on transformer - do nothing

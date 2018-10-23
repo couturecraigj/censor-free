@@ -12,9 +12,11 @@ const RangeSlider = styled.input.attrs({
   type: 'range'
 })`
   width: 100%;
+  z-index: 10;
 `;
 const RangeContainer = styled.div`
   display: block;
+  z-index: 10;
   left: 0;
   right: 0;
   bottom: 0;
@@ -24,10 +26,13 @@ const RangeContainer = styled.div`
 class VideoEditingControls extends React.Component {
   state = {
     dialogHidden: true,
-    duration: 0,
-    startTimeCode: 0,
-    endTimeCode: ''
+    startTimeCode: 0
   };
+  static getDerivedStateFromProps(props) {
+    if (props.value) {
+      return props.value;
+    }
+  }
   componentDidMount() {
     this.replacePoster();
   }
@@ -58,7 +63,15 @@ class VideoEditingControls extends React.Component {
       startTimeCode: 0
     });
   };
-
+  changeStartTime = e => {
+    const { onChange, changeTime } = this.props;
+    const { value, name } = e.target;
+    // this.setState({
+    //   [name]: value
+    // });
+    onChange({ target: { name, value } });
+    changeTime(value);
+  };
   changePosition = value => {
     const { onChange, name } = this.props;
     this.setState({
@@ -72,31 +85,25 @@ class VideoEditingControls extends React.Component {
     const { video, onSubmit, value } = this.props;
     const { startTimeCode } = this.state;
     this.setState({
-      dialogHidden: true,
-      endTimeCode: 0
+      dialogHidden: true
     });
     video.current.currentTime = startTimeCode || 0;
     onSubmit(value);
   };
 
   render() {
-    const {
-      duration,
-
-      endTimeCode,
-      dialogHidden,
-      startTimeCode
-    } = this.state;
+    const { dialogHidden } = this.state;
     const {
       currentTime,
+      duration,
       value,
       name,
       changeTime,
       width,
       height,
+      canvas,
       ...props
     } = this.props;
-    // console.log({ width, height, value });
     return (
       <React.Fragment>
         <Canvas
@@ -122,7 +129,8 @@ class VideoEditingControls extends React.Component {
         />
         <RangeContainer>
           <RangeSlider
-            value={dialogHidden ? startTimeCode : endTimeCode}
+            value={dialogHidden ? value.endTimeCode : value.startTimeCode}
+            name={dialogHidden ? 'endTimeCode' : 'startTimeCode'}
             disabled={!dialogHidden}
             max={duration}
             min={0}
@@ -136,9 +144,9 @@ class VideoEditingControls extends React.Component {
 }
 
 VideoEditingControls.propTypes = {
-  video: PropTypes.shape({
-    current: PropTypes.object
-  }).isRequired,
+  // video: PropTypes.shape({
+  //   current: PropTypes.object
+  // }).isRequired,
   value: PropTypes.shape({
     startTimeCode: PropTypes.number,
     endTimeCode: PropTypes.number,

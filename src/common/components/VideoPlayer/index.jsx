@@ -5,14 +5,9 @@ import VideoEditingControls from './VideoEditingControls';
 import { Provider } from './Context';
 // TODO: Add a Broken Video Image when a video does not load
 
-/**
- * Contacts: National
- * Contacts: Local
- * Contacts: Owned by Andrews Profiles
- * Contacts:
- */
 class VideoPlayer extends React.Component {
   video = React.createRef();
+  canvas = React.createRef();
   state = {
     height: 0,
     currentTime: 0,
@@ -82,6 +77,8 @@ class VideoPlayer extends React.Component {
       // onError is executed if the asynchronous load fails.
       .catch(this.onError);
   };
+  // onMouseDown = e => this.canvas.current.onMouseDown(e);
+  // onMouseUp = e => this.canvas.current.onMouseUp(e);
   setDimensions = () => {
     const { offsetHeight: height, offsetWidth: width, duration } =
       this.video.current || {};
@@ -94,6 +91,7 @@ class VideoPlayer extends React.Component {
     } else {
       this.setState({
         height,
+        duration,
         width,
         hide: false
       });
@@ -213,7 +211,7 @@ class VideoPlayer extends React.Component {
       onEdit,
       ...props
     } = this.props;
-    const { width, height, hide, currentTime } = this.state;
+    const { width, height, hide, currentTime, duration } = this.state;
 
     return (
       <React.Fragment>
@@ -241,11 +239,13 @@ class VideoPlayer extends React.Component {
         >
           <div style={{ width, height, zIndex: 1 }}>&nbsp;</div>
           <video
-            tabIndex="-1"
+            tabIndex={!editing ? '-1' : undefined}
             style={{ position: 'absolute', top: 0, left: 0, zIndex: 0 }}
             ref={this.video}
             onClick={this.focus}
             width={propWidth}
+            onMouseDown={this.onMouseDown}
+            onMouseUp={this.onMouseUp}
             onKeyDown={this.onKeyDown}
             src={src + '/playlist.m3u8'}
             poster={poster}
@@ -258,6 +258,8 @@ class VideoPlayer extends React.Component {
               <Provider value={props}>
                 <VideoEditingControls
                   {...props}
+                  duration={duration}
+                  canvas={this.canvas}
                   value={value}
                   onChange={onEdit}
                   changeTime={this.handleTimeChange}
@@ -265,7 +267,6 @@ class VideoPlayer extends React.Component {
                   onSubmit={onSubmit}
                   width={width}
                   height={height}
-                  video={this.video}
                 />
               </Provider>
             )}

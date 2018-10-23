@@ -59,15 +59,20 @@ class Dialog extends React.Component {
       dialogLeft = x + valueWidth;
     }
 
-    return { left: dialogLeft, top: dialogTop };
+    return {
+      left: Number.isNaN(dialogLeft) ? 0 : dialogLeft,
+      top: Number.isNaN(dialogTop) ? 0 : dialogTop
+    };
   };
   render() {
-    const { isOpen } = this.props;
+    const { isOpen, value, duration, changeTime } = this.props;
     return (
       <Consumer>
         {({ formComponent: Form }) => (
           <Form
             deepRef={this.dialog}
+            values={{ ...value, duration }}
+            changeTime={changeTime}
             style={{
               visibility: !isOpen && 'hidden',
               backgroundColor: 'white',
@@ -86,7 +91,8 @@ class Dialog extends React.Component {
 Dialog.propTypes = {
   // onCancel: PropTypes.func,
   isOpen: PropTypes.bool.isRequired,
-  // duration: PropTypes.number.isRequired,
+  duration: PropTypes.number.isRequired,
+  changeTime: PropTypes.func.isRequired,
 
   value: PropTypes.shape({
     endTimeCode: PropTypes.number,

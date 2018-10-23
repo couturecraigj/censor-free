@@ -9,11 +9,11 @@ import App from '../common/App';
 import apollo from '../common/apollo';
 import initiateStore from '../common/redux';
 
-if (process.env.NODE_ENV !== 'production') {
-  // eslint-disable-next-line import/no-extraneous-dependencies
-  const { whyDidYouUpdate } = require('why-did-you-update');
-  whyDidYouUpdate(React);
-}
+// if (process.env.NODE_ENV !== 'production') {
+//   // eslint-disable-next-line import/no-extraneous-dependencies
+//   const { whyDidYouUpdate } = require('why-did-you-update');
+//   whyDidYouUpdate(React);
+// }
 
 const rootElement = document.getElementById('root');
 // import component from "../common";
