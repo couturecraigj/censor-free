@@ -255,21 +255,9 @@ const typeDefs = gql`
       userName: String!
     ): Authentication!
     logOut: String!
-    frightening(id: ID!, type: POSTNODE_ENUM): PostNode
-    sex(id: ID!, type: POSTNODE_ENUM): PostNode
-    scam(id: ID!, type: POSTNODE_ENUM): PostNode
-    copyRightsViolation(id: ID!, type: POSTNODE_ENUM): PostNode
-    privacy(id: ID!, type: POSTNODE_ENUM): PostNode
+    addProduct(name:String!, description:String): Product
     like(id: ID!, type: POSTNODE_ENUM): PostNode
     dislike(id: ID!, type: POSTNODE_ENUM): PostNode
-    nudity(id: ID!, type: POSTNODE_ENUM): PostNode
-    violence(id: ID!, type: POSTNODE_ENUM): PostNode
-    weapons(id: ID!, type: POSTNODE_ENUM): PostNode
-    gross(id: ID!, type: POSTNODE_ENUM): PostNode
-    smoking(id: ID!, type: POSTNODE_ENUM): PostNode
-    drugs(id: ID!, type: POSTNODE_ENUM): PostNode
-    alcohol(id: ID!, type: POSTNODE_ENUM): PostNode
-    language(id: ID!, type: POSTNODE_ENUM): PostNode
     forgotPassword(email: String!): String!
     resetPassword(
       token: String!

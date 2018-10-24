@@ -48,11 +48,13 @@ const App = ({ store }) => {
             component={Routes.TermsAndConditions}
           />
           <Route path="/company/list" exact component={Routes.CompanyList} />
+          <Route path="/company/new" exact component={Routes.CompanyNew} />
           <Route path="/company/:id/:slug?" component={Routes.Company} />
           <Route path="/feed" component={Routes.Feed} />
           <Route path="/group/list" exact component={Routes.GroupList} />
           <Route path="/group/:id/:slug?" component={Routes.Group} />
           <Route path="/product/list" exact component={Routes.ProductList} />
+          <Route path="/product/new" exact component={Routes.ProductNew} />
           <Route path="/product/:id/:slug?" component={Routes.Product} />
           <Route path="/saved" component={Routes.Saved} />
           <Route path="/search" component={Routes.Search} />

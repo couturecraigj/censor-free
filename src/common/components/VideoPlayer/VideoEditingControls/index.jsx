@@ -5,10 +5,6 @@ import { Field, Formik, Form } from 'formik';
 import { FILTER_TYPE_MAP } from '../../../types';
 import Canvas from './Canvas';
 
-/**
- * TODO: Make sure that when sending down props they are merged into state
- */
-
 const initialValues = {
   position: { startTimeCode: 0, type: '', endTimeCode: 0 }
 };
@@ -46,25 +42,10 @@ const Buttons = styled.div`
 `;
 
 class VideoEditingControls extends React.Component {
-  state = {
-    startTimeCode: 0
-  };
-  static getDerivedStateFromProps(props) {
-    if (props.value) {
-      return props.value;
-    }
-  }
   componentDidMount() {
     this.replacePoster();
   }
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   if (this.props.width !== nextProps.width) return true;
-  //   const { value } = this.props;
-  //   return (
-  //     JSON.stringify(value) !== JSON.stringify(nextProps.value) ||
-  //     JSON.stringify(this.state) !== JSON.stringify(nextState)
-  //   );
-  // }
+
   onSubmit = (values, { resetForm }) => {
     resetForm();
   };

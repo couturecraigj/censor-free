@@ -40,33 +40,36 @@ export default () => (
     <Helmet>
       <title>Product List</title>
     </Helmet>
-    <Query query={GET_PRODUCT_LIST}>
-      {({ loading, error, data }) => {
-        if (loading) return 'Loading...';
-        if (error) return `Error! ${error.message}`;
+    <ProductList>
+      <Query query={GET_PRODUCT_LIST}>
+        {({ loading, error, data }) => {
+          if (loading) return 'Loading...';
+          if (error) return `Error! ${error.message}`;
 
-        return (
-          <ProductList name="dog">
-            {data.products.map(product => (
-              <Link
-                key={product.id}
-                to={`/product/${product.id}/${product.name}`}
-                onMouseOver={ProductRoute.load}
-                onFocus={ProductRoute.load}
-              >
-                <Product key={product.id} value={product.name}>
-                  <div>{product.name}</div>
-                  {product.img &&
-                    product.img.imgUri && (
-                      <img src={product.img.imgUri} alt={product.name} />
-                    )}
-                  <div>{product.description}</div>
-                </Product>
-              </Link>
-            ))}
-          </ProductList>
-        );
-      }}
-    </Query>
+          return (
+            <React.Fragment>
+              {data.products.map(product => (
+                <Link
+                  key={product.id}
+                  to={`/product/${product.id}/${product.name}`}
+                  onMouseOver={ProductRoute.load}
+                  onFocus={ProductRoute.load}
+                >
+                  <Product key={product.id} value={product.name}>
+                    <div>{product.name}</div>
+                    {product.img &&
+                      product.img.imgUri && (
+                        <img src={product.img.imgUri} alt={product.name} />
+                      )}
+                    <div>{product.description}</div>
+                  </Product>
+                </Link>
+              ))}
+            </React.Fragment>
+          );
+        }}
+      </Query>
+      <Link to="/product/new">New Product</Link>
+    </ProductList>
   </div>
 );

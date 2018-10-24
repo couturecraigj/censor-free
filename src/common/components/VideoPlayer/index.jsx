@@ -77,7 +77,7 @@ class VideoPlayer extends React.Component {
           if (b.width === a.width) return b.bandwidth - a.bandwidth;
           return b.width - a.width;
         });
-        console.log(track);
+        // console.log(track);
         this.player.configure('abr.enabled', false);
         this.player.selectVariantTrack(track);
         // This runs if the asynchronous load is successful.

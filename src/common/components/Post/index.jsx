@@ -5,8 +5,6 @@ import styled from 'styled-components';
 import TogglePostTypes from './TogglePostTypes';
 import Modal from '../Modal';
 
-// TODO: Figure out how to get these to submit from each individual
-
 const list = [
   {
     name: 'Thought',

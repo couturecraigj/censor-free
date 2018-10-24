@@ -123,6 +123,7 @@ class Canvas extends React.Component {
   };
   handleStageMouseDown = e => {
     const { value } = this.state;
+
     if (e.target === e.target.getStage()) {
       this.setState({
         selectedShapeName: ''

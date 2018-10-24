@@ -46,6 +46,12 @@ export const Company = loadable(
     LoadingComponent
   }
 );
+export const CompanyNew = loadable(
+  () => import(/* webpackChunkName: 'company-new' */ './Company/New'),
+  {
+    LoadingComponent
+  }
+);
 
 export const CompanyList = loadable(
   () => import(/* webpackChunkName: 'company-list' */ './Company/List'),
@@ -82,6 +88,13 @@ export const Home = loadable(
 );
 export const Product = loadable(
   () => import(/* webpackChunkName: 'product' */ './Product'),
+  {
+    LoadingComponent
+  }
+);
+
+export const ProductNew = loadable(
+  () => import(/* webpackChunkName: 'product-new' */ './Product/New'),
   {
     LoadingComponent
   }

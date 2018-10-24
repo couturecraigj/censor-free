@@ -40,33 +40,36 @@ export default () => (
     <Helmet>
       <title>Company List</title>
     </Helmet>
-    <Query query={GET_COMPANYLIST}>
-      {({ loading, error, data }) => {
-        if (loading) return 'Loading...';
-        if (error) return `Error! ${error.message}`;
+    <CompanyList name="dog">
+      <Query query={GET_COMPANYLIST}>
+        {({ loading, error, data }) => {
+          if (loading) return 'Loading...';
+          if (error) return `Error! ${error.message}`;
 
-        return (
-          <CompanyList name="dog">
-            {data.companies.map(company => (
-              <Link
-                key={company.id}
-                to={`/company/${company.id}/${company.name}`}
-                onMouseOver={CompanyRoute.load}
-                onFocus={CompanyRoute.load}
-              >
-                <Company key={company.id} value={company.name}>
-                  <div>{company.name}</div>
-                  {company.img &&
-                    company.img.imgUri && (
-                      <img src={company.img.imgUri} alt={company.name} />
-                    )}
-                  <div>{company.description}</div>
-                </Company>
-              </Link>
-            ))}
-          </CompanyList>
-        );
-      }}
-    </Query>
+          return (
+            <React.Fragment>
+              {data.companies.map(company => (
+                <Link
+                  key={company.id}
+                  to={`/company/${company.id}/${company.name}`}
+                  onMouseOver={CompanyRoute.load}
+                  onFocus={CompanyRoute.load}
+                >
+                  <Company key={company.id} value={company.name}>
+                    <div>{company.name}</div>
+                    {company.img &&
+                      company.img.imgUri && (
+                        <img src={company.img.imgUri} alt={company.name} />
+                      )}
+                    <div>{company.description}</div>
+                  </Company>
+                </Link>
+              ))}
+            </React.Fragment>
+          );
+        }}
+      </Query>
+      <Link to="/company/new">New Company</Link>
+    </CompanyList>
   </div>
 );

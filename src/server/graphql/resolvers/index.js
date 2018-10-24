@@ -9,6 +9,7 @@ import Tip from '../../models/tip';
 import User from '../../models/user';
 import Video from '../../models/video';
 import WebPage from '../../models/webPage';
+import Product from '../../models/product';
 import PostNode from '../../models/postNode';
 import Searchable from '../../models/searchable';
 import * as Types from '../types';
@@ -31,6 +32,7 @@ const resolvers = {
   Query: {
     feed: (root, args, context) => PostNode.findPostNodes(args, context),
     search: (root, args, context) => Searchable.findSearchable(args, context),
+    products: () => Product.find(),
     me: (root, args, context) => {
       try {
         return User.findMe(args, context);
@@ -67,22 +69,8 @@ const resolvers = {
     },
     addVideoFilters: async (parent, args, context) =>
       Video.addFilters(args, context),
-    frightening: async (parents, args) => PostNode.flagFrightening(args),
-    sex: async (parents, args) => PostNode.flagSex(args),
-    scam: async (parents, args) => PostNode.flagScam(args),
-    copyRightsViolation: async (parents, args) =>
-      PostNode.flagCopyRightsViolation(args),
-    privacy: async (parents, args) => PostNode.flagPrivacy(args),
     like: async (parents, args) => PostNode.like(args),
     dislike: async (parents, args) => PostNode.dislike(args),
-    nudity: async (parents, args) => PostNode.flagNudity(args),
-    violence: async (parents, args) => PostNode.flagViolence(args),
-    weapons: async (parents, args) => PostNode.flagWeapons(args),
-    gross: async (parents, args) => PostNode.flagGross(args),
-    smoking: async (parents, args) => PostNode.flagSmoking(args),
-    drugs: async (parents, args) => PostNode.flagDrugs(args),
-    alcohol: async (parents, args) => PostNode.flagAlcohol(args),
-    language: async (parents, args) => PostNode.flagLanguage(args),
     resetPassword: async (parent, args) => {
       const me = await User.resetPassword(args);
       return me;
