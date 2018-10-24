@@ -56,7 +56,12 @@ Video.statics.addFilters = async function() {};
 Video.statics.createVideo = async function(args, context, extras) {
   const file = await File.findOne({ uploadToken: args.uploadToken });
   let filePath;
-  if (!file.converted || !fs.existsSync(file.convertedPath)) {
+  if (file.converted && !fs.existsSync(file.convertedPath)) {
+    file.converted = false;
+    file.convertedPath = undefined;
+    await file.save();
+  }
+  if (!file.converted) {
     filePath = await mongoose.models.Video.createDifferentVideoFormats(
       file,
       // args,
@@ -229,10 +234,10 @@ Video.statics.createDashStream = function(
     const ffm = ffmpeg(`${file.path}.${file.extension}`)
       .output(targetName + '.mpd')
       .outputOptions([
-        '-map',
-        '0',
-        '-map',
-        '0',
+        // '-map',
+        // '0',
+        // '-map',
+        // '0',
         '-c:a',
         'libfdk_aac',
         '-c:v',

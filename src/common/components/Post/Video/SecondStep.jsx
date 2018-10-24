@@ -11,6 +11,36 @@ import { secondsToHours } from '../../../utilities/convertNumberIntoTime';
  * TODO: get the second step finished
  */
 
+const renderForm = ({ deepRef, values, changeTime, ...props }) => {
+  return (
+    <Form>
+      <div {...props} ref={deepRef}>
+        <div>
+          <Field name="position.type">
+            {({ field }) => <input {...field} />}
+          </Field>
+        </div>
+        <div>
+          <Field name="position.endTimeCode">
+            {({ field }) => {
+              if (field.value !== undefined) changeTime(+field.value);
+              return (
+                <input
+                  {...field}
+                  min={values.startTimeCode}
+                  max={values.duration}
+                  step="0.01"
+                  type="number"
+                />
+              );
+            }}
+          </Field>
+        </div>
+      </div>
+    </Form>
+  );
+};
+
 const ADD_VIDEO_FILTERS = gql`
   mutation AddVideoFilters(
     $uploadToken: String!
@@ -52,18 +82,15 @@ class VideoSecondStep extends React.Component {
               initialValues={{
                 positions: [],
                 position: {
-                  type: ''
+                  type: '',
+                  endTimeCode: ''
                 }
               }}
             >
               {({ values, handleChange }) => (
                 <React.Fragment>
                   <VideoPlayer
-                    formComponent={() => (
-                      <form>
-                        <Field name="position.type" />
-                      </form>
-                    )}
+                    formComponent={renderForm}
                     width="640"
                     onEdit={handleChange}
                     name="position"

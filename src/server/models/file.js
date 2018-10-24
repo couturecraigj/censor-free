@@ -58,7 +58,7 @@ File.statics.getUploadToken = async function(args) {
   if (file) {
     if (!file.finishedFileName) return sendFileFields(file);
     if (fs.existsSync(file.finishedFileName)) return sendFileFields(file);
-    await file.destroy();
+    await file.remove();
   }
   return mongoose.models.File.create(args).then(file => {
     fs.mkdirSync(file.path);

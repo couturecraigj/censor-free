@@ -1,31 +1,52 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { Field, Formik, Form } from 'formik';
+import { FILTER_TYPE_MAP } from '../../../types';
 import Canvas from './Canvas';
-import Dialog from './Dialog';
 
 /**
  * TODO: Make sure that when sending down props they are merged into state
  */
 
+const initialValues = {
+  position: { startTimeCode: 0, type: '', endTimeCode: 0 }
+};
+
 const RangeSlider = styled.input.attrs({
   type: 'range'
 })`
+  z-index: 6;
   width: 100%;
-  z-index: 10;
 `;
-const RangeContainer = styled.div`
+const EditContainer = styled.div`
   display: block;
   z-index: 10;
+  padding: 0.6em 0.3em;
+  border: solid #eee 1px;
+  background-color: #ddd;
   left: 0;
   right: 0;
-  bottom: 0;
   position: absolute;
+`;
+const SliderGroup = styled.div`
+  margin: 0 10px;
+`;
+const EditRelative = styled.div`
+  display: block;
+  display: flex;
+  z-index: 6;
+  position: relative;
+`;
+const Buttons = styled.div`
+  display: block;
+  display: flex;
+  z-index: 6;
+  position: relative;
 `;
 
 class VideoEditingControls extends React.Component {
   state = {
-    dialogHidden: true,
     startTimeCode: 0
   };
   static getDerivedStateFromProps(props) {
@@ -44,6 +65,12 @@ class VideoEditingControls extends React.Component {
   //     JSON.stringify(this.state) !== JSON.stringify(nextState)
   //   );
   // }
+  onSubmit = (values, { resetForm }) => {
+    resetForm();
+  };
+  onReset = (values, { resetForm }) => {
+    resetForm();
+  };
   replacePoster = () => {
     const { changeTime } = this.props;
     setTimeout(() => {
@@ -54,91 +81,110 @@ class VideoEditingControls extends React.Component {
     }, 500);
   };
 
-  handleCancel = () => {
-    const { changeTime } = this.props;
-    const { startTimeCode } = this.state;
-    changeTime(startTimeCode);
-    this.setState({
-      dialogHidden: true,
-      startTimeCode: 0
-    });
-  };
-  changeStartTime = e => {
-    const { onChange, changeTime } = this.props;
-    const { value, name } = e.target;
-    // this.setState({
-    //   [name]: value
-    // });
-    onChange({ target: { name, value } });
-    changeTime(value);
-  };
-  changePosition = value => {
-    const { onChange, name } = this.props;
-    this.setState({
-      dialogHidden: value ? false : true
-    });
-    onChange({ target: { name, value } });
-  };
+  changeTime = (field, values) => {
+    const innerChange = e => {
+      const { changeTime } = this.props;
+      const { value } = e.target;
 
-  onChange = () => {
-    // const { form } = this.props;
-    const { video, onSubmit, value } = this.props;
-    const { startTimeCode } = this.state;
-    this.setState({
-      dialogHidden: true
-    });
-    video.current.currentTime = startTimeCode || 0;
-    onSubmit(value);
+      // onChange({ target: { name, value: +value } });
+      changeTime(value);
+
+      if (typeof field.onChange === 'function') {
+        if (
+          field.name.includes('startTime') &&
+          +e.target.value > values.position.endTimeCode
+        )
+          field.onChange({
+            target: { name: 'position.endTimeCode', value: e.target.value }
+          });
+        field.onChange(e);
+      }
+    };
+    if (typeof field.onChange === 'function') return innerChange;
+    return innerChange(field);
   };
 
   render() {
-    const { dialogHidden } = this.state;
-    const {
-      currentTime,
-      duration,
-      value,
-      name,
-      changeTime,
-      width,
-      height,
-      canvas,
-      ...props
-    } = this.props;
+    const { currentTime, duration, width, height } = this.props;
     return (
-      <React.Fragment>
-        <Canvas
-          width={width}
-          height={height}
-          currentTime={currentTime}
-          value={value}
-          onChange={this.changePosition}
-        />
-        <Dialog
-          isOpen={!dialogHidden}
-          {...props}
-          name={name}
-          height={height}
-          width={width}
-          duration={duration}
-          changeTime={changeTime}
-          onCancel={this.handleCancel}
-          onSubmit={this.onChange}
-          onChange={this.changePosition}
-          value={value}
-          currentTime={currentTime}
-        />
-        <RangeContainer>
-          <RangeSlider
-            value={dialogHidden ? value.endTimeCode : value.startTimeCode}
-            name={dialogHidden ? 'endTimeCode' : 'startTimeCode'}
-            disabled={!dialogHidden}
-            max={duration}
-            min={0}
-            step={0.1}
-            onChange={this.changeStartTime}
-          />
-        </RangeContainer>
-      </React.Fragment>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={this.onSubmit}
+        onReset={this.onReset}
+      >
+        {({ values, handleReset }) => (
+          <React.Fragment>
+            <Field name="position">
+              {({ field }) => (
+                <Canvas
+                  {...field}
+                  width={width}
+                  height={height}
+                  currentTime={currentTime}
+                />
+              )}
+            </Field>
+            <Form>
+              <EditContainer>
+                <EditRelative>
+                  <Field name="position.type">
+                    {({ field }) => (
+                      <select {...field}>
+                        <option value="" disabled>
+                          -- None --
+                        </option>
+                        {Object.entries(FILTER_TYPE_MAP).map(([key, value]) => (
+                          <option key={key} value={key}>
+                            {value}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </Field>
+                  <SliderGroup>
+                    <label>
+                      {`Start Time ${
+                        values.position.startTimeCode
+                      }/${duration}`}
+                      <Field name="position.startTimeCode">
+                        {({ field }) => (
+                          <RangeSlider
+                            {...field}
+                            max={duration}
+                            min={0}
+                            step={0.1}
+                            onChange={this.changeTime(field, values)}
+                          />
+                        )}
+                      </Field>
+                    </label>
+                    <label>
+                      {`End Time ${values.position.endTimeCode}/${duration}`}
+                      <Field name="position.endTimeCode">
+                        {({ field }) => (
+                          <RangeSlider
+                            {...field}
+                            max={duration}
+                            min={values.position.startTimeCode}
+                            step={0.1}
+                            onChange={this.changeTime(field)}
+                          />
+                        )}
+                      </Field>
+                    </label>
+                  </SliderGroup>
+                  <Buttons>
+                    <button type="submit">Submit</button>
+                    <button type="button" onClick={handleReset}>
+                      Cancel
+                    </button>
+                  </Buttons>
+                </EditRelative>
+              </EditContainer>
+            </Form>
+          </React.Fragment>
+        )}
+      </Formik>
     );
   }
 }

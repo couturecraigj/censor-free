@@ -4,6 +4,7 @@ import VideoControls from './VideoControls';
 import VideoEditingControls from './VideoEditingControls';
 import { Provider } from './Context';
 // TODO: Add a Broken Video Image when a video does not load
+// TODO: Make it so editing is a different bundle using React-Loadable
 
 class VideoPlayer extends React.Component {
   video = React.createRef();
@@ -15,7 +16,7 @@ class VideoPlayer extends React.Component {
     hide: true
   };
   componentDidMount() {
-    this.setDimensions();
+    this.video.current.addEventListener('loadeddata', this.setDimensions);
     Promise.all([import('mux.js'), import('shaka-player')]).then(
       ([muxjs, result]) => {
         window.muxjs = muxjs.default;
@@ -33,6 +34,7 @@ class VideoPlayer extends React.Component {
   }
 
   componentWillUnmount() {
+    this.video.current.removeEventListener('loadeddata', this.setDimensions);
     this.player.removeEventListener('error', this.onErrorEvent);
   }
 
@@ -70,6 +72,14 @@ class VideoPlayer extends React.Component {
       .load(manifestUri)
       .then(() => {
         this.setDimensions();
+        const tracks = this.player.getVariantTracks();
+        const [track] = tracks.sort((a, b) => {
+          if (b.width === a.width) return b.bandwidth - a.bandwidth;
+          return b.width - a.width;
+        });
+        console.log(track);
+        this.player.configure('abr.enabled', false);
+        this.player.selectVariantTrack(track);
         // This runs if the asynchronous load is successful.
         // eslint-disable-next-line no-console
         console.log('The video has now been loaded!');
@@ -270,6 +280,7 @@ class VideoPlayer extends React.Component {
                 />
               </Provider>
             )}
+
           {controls &&
             !hide &&
             !editing && <VideoControls video={this.video} />}

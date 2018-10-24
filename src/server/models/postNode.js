@@ -9,19 +9,9 @@ import './tip';
 import './video';
 import './webPage';
 import orderedSet from './utils/orderedSet';
+import { FILTER_TYPE_ENUM, POST_TYPE_ENUM } from '../../common/types';
 
 const ENUM_DOESNT_MATCH = new Error('This is not a Kind that is allowed');
-const kinds = [
-  'Answer',
-  'Photo',
-  'Question',
-  'Review',
-  'Story',
-  'Thought',
-  'Tip',
-  'Video',
-  'WebPage'
-];
 
 const UNAUTHORIZED_USER = new Error('Unauthorized User');
 const { Schema } = mongoose;
@@ -29,21 +19,7 @@ const Flag = new Schema(
   {
     flag: {
       type: String,
-      enum: [
-        'Sex',
-        'Nudity',
-        'Violence',
-        'Weapons',
-        'Frightening',
-        'Gross',
-        'Smoking',
-        'Drugs',
-        'Alcohol',
-        'Language',
-        'Privacy',
-        'Scam',
-        'Copyright'
-      ]
+      enum: FILTER_TYPE_ENUM
     },
     startTimeCode: {
       type: Number
@@ -94,7 +70,7 @@ const PostNode = new Schema(
     },
     kind: {
       type: String,
-      enum: kinds,
+      enum: POST_TYPE_ENUM,
       required: true
     },
     published: {
@@ -118,7 +94,7 @@ const PostNode = new Schema(
 
 PostNode.statics.delete = function() {};
 PostNode.statics.createPostNode = async function(args, context, obj = {}) {
-  if (!kinds.includes(obj.kind)) throw ENUM_DOESNT_MATCH;
+  if (!POST_TYPE_ENUM.includes(obj.kind)) throw ENUM_DOESNT_MATCH;
   return mongoose.models.PostNode.create({
     user: context.req.user.id,
     node: obj.id,

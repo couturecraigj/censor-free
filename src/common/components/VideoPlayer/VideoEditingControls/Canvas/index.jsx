@@ -1,27 +1,28 @@
 import React from 'react';
+import shortid from 'shortid';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Stage, Layer } from 'react-konva';
 import ErrorBoundary from '../../../ErrorBoundary';
 import Transformer from './Transformer';
+
 import Rect from './Rect';
 /**
  * TODO: Make sure that when sending down props they are merged into state
  */
 const Div = styled.div`
   position: absolute;
-  z-index: 4;
+  z-index: ${props => props.zIndex};
   top: 0;
-  bottom: 0;
   left: 0;
-  right: 0;
   /* pointer-events: none; */
 `;
 
 class Canvas extends React.Component {
   stage = React.createRef();
   state = {
-    selectedShapeName: ''
+    selectedShapeName: '',
+    zIndex: 0
   };
 
   static getDerivedStateFromProps = (props, state) => {
@@ -34,6 +35,15 @@ class Canvas extends React.Component {
     };
     // return null;
   };
+
+  componentDidMount() {
+    this.stage.current._stage.container().style.cursor = 'crosshair';
+    setTimeout(() => {
+      this.setState({
+        zIndex: 4
+      });
+    }, 100);
+  }
 
   onMouseDown = e => {
     const { currentTime } = this.props;
@@ -63,14 +73,13 @@ class Canvas extends React.Component {
     if (clickedOnTransformer) {
       return;
     }
-    const { currentTime } = this.props;
+    const { currentTime, value: originalValue } = this.props;
     const { mouseDown } = this.state;
     if (!mouseDown) return;
     this.setState({
       mouseDown: false
     });
 
-    const { onChange } = this.props;
     const { startPosition } = this.state;
     const startTimeCode = Math.floor(currentTime);
     const marker = {
@@ -80,6 +89,8 @@ class Canvas extends React.Component {
     };
     if (startPosition.y !== marker.y && startPosition.x !== marker.x) {
       const value = {
+        ...originalValue,
+        endTimeCode: originalValue.startTimeCode,
         ...marker,
         y: (() => {
           if (marker.y > startPosition.y) return startPosition.y;
@@ -97,14 +108,18 @@ class Canvas extends React.Component {
           if (marker.y === startPosition.y) return 0;
           return Math.abs(marker.y - startPosition.y);
         })(),
-        name: 'boundary'
+        name: shortid.generate()
       };
-      onChange(value);
+      this.onChange(value);
       this.setState({
         value,
         startPosition: undefined
       });
     }
+  };
+  onChange = value => {
+    const { name, onChange } = this.props;
+    onChange({ target: { name, value } });
   };
   handleStageMouseDown = e => {
     const { value } = this.state;
@@ -136,7 +151,6 @@ class Canvas extends React.Component {
     }
   };
   handleRectChange = newProps => {
-    const { onChange } = this.props;
     const { value: oldPosition } = this.state;
     const value = {
       ...oldPosition,
@@ -144,14 +158,14 @@ class Canvas extends React.Component {
     };
 
     this.setState({ value });
-    onChange(value);
+    this.onChange(value);
   };
   render() {
     const { width, height } = this.props;
-    const { selectedShapeName, value } = this.state;
+    const { selectedShapeName, zIndex, value } = this.state;
     const valueExists = value?.height && value?.width && value?.y && value?.x;
     return (
-      <Div>
+      <Div zIndex={zIndex}>
         <ErrorBoundary width={width} height={height}>
           <Stage
             width={width}

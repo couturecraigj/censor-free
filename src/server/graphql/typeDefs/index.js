@@ -1,4 +1,5 @@
-const { gql } = require('apollo-server');
+import { gql } from 'apollo-server';
+import { FILTER_TYPE_ENUM, POST_TYPE_ENUM } from '../../../common/types';
 
 const typeDefs = gql`
   # INTERFACES
@@ -35,16 +36,11 @@ const typeDefs = gql`
   }
 
   # ENUMS
+  enum FILTER_ENUM {
+    ${FILTER_TYPE_ENUM.join('\n')}
+  }
   enum POSTNODE_ENUM {
-    Answer
-    Photo
-    Question
-    Review
-    Story
-    Thought
-    Tip
-    Video
-    WebPage
+    ${POST_TYPE_ENUM.join('\n')}
   }
   # UNIONS
   union SavedRecord =
@@ -233,15 +229,20 @@ const typeDefs = gql`
   }
 
   input CoordinatesInput {
-    fromTop: Int
-    fromLeft: Int
-    height: Int
-    width: Int
+    fromTop: Int!
+    fromLeft: Int!
+    height: Int!
+    width: Int!
+    startTimeCode: Int
+    endTimeCode: Int
   }
 
   input VideoFilterInput {
-    startTimeCode: Int
-    endTimeCode: Int
+    type: FILTER_ENUM
+    startTimeCode: Int!
+    endTimeCode: Int!
+    width: Int
+    height: Int
     coordinates: CoordinatesInput
   }
 
