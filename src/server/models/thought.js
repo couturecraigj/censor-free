@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 const Thought = new Schema(
   {
     title: { type: String },
+    postNode: { type: Schema.Types.ObjectId },
     description: { type: String },
     kind: { type: String, default: 'Thought' }
   },

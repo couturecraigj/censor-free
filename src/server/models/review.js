@@ -6,6 +6,7 @@ const Review = new Schema(
   {
     title: { type: String },
     description: { type: String },
+    postNode: { type: Schema.Types.ObjectId },
     score: { type: Number },
     products: [Schema.Types.ObjectId],
     kind: { type: String, default: 'Review' }

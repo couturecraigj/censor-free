@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 const Story = new Schema(
   {
     title: { type: String },
+    postNode: { type: Schema.Types.ObjectId },
     description: { type: String },
     kind: { type: String, default: 'Story' },
     excerpt: { type: String }

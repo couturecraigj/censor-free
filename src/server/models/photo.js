@@ -3,6 +3,7 @@ import fs from 'fs';
 import sharp from 'sharp';
 import uuid from 'uuid/v4';
 import path from 'path';
+import File from './file';
 import PostNode from './postNode';
 import { makeDirectory } from '../utils/fileSystem';
 
@@ -14,16 +15,27 @@ const { Schema } = mongoose;
 const Photo = new Schema(
   {
     title: { type: String },
+    postNode: { type: Schema.Types.ObjectId },
     description: { type: String },
     height: { type: Number },
     width: { type: Number },
     kind: { type: String, default: 'Photo' },
-    imgUri: { type: String }
+    imgUri: { type: String },
+    thumbnailUri: { type: String },
+    products: [Schema.Types.ObjectId]
   },
   {
     timestamps: true
   }
 );
+
+Photo.virtual('objects').set(function(objects) {
+  this._objects = objects;
+});
+
+Photo.pre('save', async function() {
+  if (this._objects) PostNode.addObjects(this._id, this._objects);
+});
 
 const getThumbnailDimensions = ({ width, height }, size) => {
   let multiplier = 0;
@@ -38,47 +50,51 @@ const getThumbnailDimensions = ({ width, height }, size) => {
   };
 };
 
-Photo.statics.createPhoto = async function(args, context) {
-  const uploadsPath = path.join(
-    cwd,
-    'uploads',
-    context.req.user.id,
-    args.imgUri
-  );
-  const publicFullsizePath = path.join(context.req.user.id);
-  const publicThumbnailPath = path.join(context.req.user.id, 'thumbnail');
+Photo.statics.createPhoto = function(args, context) {
+  return new Promise(async (resolve, reject) => {
+    const file = await File.findOne({ uploadToken: args.imgUri });
 
-  if (!fs.existsSync(uploadsPath)) throw PHOTO_DOES_NOT_EXIST;
-  const extension = args.imgUri.match(/(?:\.([^.]+))?$/gm)[0];
-  const readStream = fs.createReadStream(uploadsPath);
-  const fileName = uuid() + extension;
-  await makeDirectory(publicFullsizePath);
-  await makeDirectory(publicThumbnailPath);
-  const writeStream = fs.createWriteStream(
-    path.join(cwd, 'public', publicFullsizePath, fileName)
-  );
-  const thumbnailWriteStream = fs.createWriteStream(
-    path.join(cwd, 'public', publicThumbnailPath, fileName)
-  );
-  writeStream.on('close', () => {
-    fs.unlinkSync(uploadsPath);
+    const publicFullsizePath = path.join(context.req.user.id);
+    const publicThumbnailPath = path.join(context.req.user.id, 'thumbnail');
+
+    if (!fs.existsSync(file.finishedFileName)) throw PHOTO_DOES_NOT_EXIST;
+    const extension = file.finishedFileName.match(/(?:\.([^.]+))?$/gm)[0];
+    const readStream = fs.createReadStream(file.finishedFileName);
+    const fileName = uuid() + extension;
+    await makeDirectory(publicFullsizePath);
+    await makeDirectory(publicThumbnailPath);
+    const writeStream = fs.createWriteStream(
+      path.join(cwd, 'public', publicFullsizePath, fileName)
+    );
+    const thumbnailWriteStream = fs.createWriteStream(
+      path.join(cwd, 'public', publicThumbnailPath, fileName)
+    );
+    writeStream.on('finish', async () => {
+      fs.unlinkSync(file.finishedFileName);
+      const photo = await mongoose.models.Photo.create({
+        ...args,
+        imgUri: '/' + context.req.user.id + '/' + fileName,
+        thumbnailUri: '/' + context.req.user.id + '/thumbnail/' + fileName
+      });
+      const postNode = await PostNode.createPostNode(args, context, photo);
+      photo.postNode = postNode.id;
+      await photo.save();
+      resolve(photo);
+    });
+    writeStream.on('error', e => {
+      reject(e);
+    });
+    const {
+      width: thumbnailWidth,
+      height: thumbnailHeight
+    } = getThumbnailDimensions(file, 75);
+    const thumbnailTransformingStream = sharp().resize(
+      thumbnailWidth,
+      thumbnailHeight
+    );
+    readStream.pipe(writeStream);
+    readStream.pipe(thumbnailTransformingStream).pipe(thumbnailWriteStream);
   });
-  const {
-    width: thumbnailWidth,
-    height: thumbnailHeight
-  } = getThumbnailDimensions(args, 75);
-  const thumbnailTransformingStream = sharp().resize(
-    thumbnailWidth,
-    thumbnailHeight
-  );
-  readStream.pipe(writeStream);
-  readStream.pipe(thumbnailTransformingStream).pipe(thumbnailWriteStream);
-  const photo = await mongoose.models.Photo.create({
-    ...args,
-    imgUri: '/' + context.req.user.id + '/' + fileName
-  });
-  await PostNode.createPostNode(args, context, photo);
-  return photo;
 };
 
 Photo.statics.getImageOfCertainSize = function(

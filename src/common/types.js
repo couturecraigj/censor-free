@@ -1,3 +1,8 @@
+export const OBJECT_TYPE_MAP = {
+  Product: 'Product',
+  Company: 'Company'
+};
+
 export const POST_TYPE_MAP = {
   Answer: 'Answer',
   Photo: 'Photo',
@@ -30,5 +35,7 @@ export const FILTER_TYPE_MAP = {
   Copyright: 'Copyright Violation'
 };
 export const FILTER_TYPE_ENUM = Object.keys(FILTER_TYPE_MAP);
+
+export const OBJECT_TYPE_ENUM = Object.keys(OBJECT_TYPE_MAP);
 
 export const POST_TYPE_ENUM = Object.keys(POST_TYPE_MAP);

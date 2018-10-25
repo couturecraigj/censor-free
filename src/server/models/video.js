@@ -36,6 +36,7 @@ const { Schema } = mongoose;
 const Video = new Schema(
   {
     title: { type: String },
+    postNode: { type: Schema.Types.ObjectId },
     description: { type: String },
     imgs: [Schema.Types.ObjectId],
     img: Schema.Types.ObjectId,

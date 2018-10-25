@@ -204,6 +204,7 @@ const mocks = {
   }),
   Review: (obj = {}) => ({
     __typename: 'Review',
+    kind: 'Review',
     id: 'Review' + (obj.objectId || casual.uuid),
     name: casual.title,
     description: casual.description,
@@ -211,24 +212,28 @@ const mocks = {
   }),
   Question: (obj = {}) => ({
     __typename: 'Question',
+    kind: 'Question',
     id: 'Question' + (obj.objectId || casual.uuid),
     name: casual.title,
     description: casual.description
   }),
   Tip: (obj = {}) => ({
     __typename: 'Tip',
+    kind: 'Tip',
     id: 'Tip' + (obj.objectId || casual.uuid),
     name: casual.title,
     description: casual.description
   }),
   Answer: (obj = {}) => ({
     __typename: 'Answer',
+    kind: 'Answer',
     id: 'Answer' + (obj.objectId || casual.uuid),
     name: casual.title,
     description: casual.description
   }),
   Product: (obj = {}) => ({
     __typename: 'Product',
+    kind: 'Product',
     id: 'Product' + (obj.objectId || casual.uuid),
     imgUri: `https://picsum.photos/${casual.integer(30, 500)}/${casual.integer(
       30,
@@ -239,6 +244,7 @@ const mocks = {
   }),
   User: (obj = {}) => ({
     __typename: 'User',
+    kind: 'User',
     id: 'User' + (obj.objectId || casual.uuid),
     name: casual.full_name,
     description: casual.description
@@ -246,6 +252,7 @@ const mocks = {
   Company: (obj = {}) => {
     return {
       __typename: 'Company',
+      kind: 'Company',
       id: 'Company' + (obj.objectId || casual.uuid),
       name: casual.title,
       description: casual.description
@@ -253,6 +260,7 @@ const mocks = {
   },
   WebPage: (obj = {}) => ({
     __typename: 'WebPage',
+    kind: 'WebPage',
     id: 'WebPage' + (obj.objectId || casual.uuid),
     title: casual.title,
     description: casual.description
@@ -262,6 +270,7 @@ const mocks = {
     const width = casual.integer(30, 500);
     return {
       __typename: 'Photo',
+      kind: 'Photo',
       id: 'Photo' + (obj.objectId || casual.uuid),
       imgUri: `https://picsum.photos/${height}/${width}/?random`,
       title: casual.title,
@@ -272,6 +281,7 @@ const mocks = {
   },
   Video: (obj = {}) => ({
     __typename: 'Video',
+    kind: 'Video',
     id: 'Video' + (obj.objectId || casual.uuid),
     title: casual.title,
     description: casual.description

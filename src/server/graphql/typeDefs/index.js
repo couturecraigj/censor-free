@@ -1,5 +1,9 @@
 import { gql } from 'apollo-server';
-import { FILTER_TYPE_ENUM, POST_TYPE_ENUM } from '../../../common/types';
+import {
+  FILTER_TYPE_ENUM,
+  POST_TYPE_ENUM,
+  OBJECT_TYPE_ENUM
+} from '../../../common/types';
 
 const typeDefs = gql`
   # INTERFACES
@@ -36,6 +40,9 @@ const typeDefs = gql`
   }
 
   # ENUMS
+  enum OBJECT_ENUM {
+    ${OBJECT_TYPE_ENUM.join('\n')}
+  }
   enum FILTER_ENUM {
     ${FILTER_TYPE_ENUM.join('\n')}
   }
@@ -255,7 +262,7 @@ const typeDefs = gql`
       userName: String!
     ): Authentication!
     logOut: String!
-    addProduct(name:String!, description:String): Product
+    addProduct(name:String!, imgUri:String!, description:String): Product
     like(id: ID!, type: POSTNODE_ENUM): PostNode
     dislike(id: ID!, type: POSTNODE_ENUM): PostNode
     forgotPassword(email: String!): String!
@@ -300,6 +307,7 @@ const typeDefs = gql`
   }
   type Query {
     feed: [PostNode]!
+    objFeed(id: ID!): [PostNode]!
     saved: [Save]!
     company(id: ID!): Company
     companies: [Company]!

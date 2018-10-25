@@ -5,7 +5,11 @@ const Company = new Schema(
   {
     name: { type: String },
     description: { type: String },
-    kind: { type: String, default: 'Company' }
+    object: { type: Schema.Types.ObjectId },
+    kind: { type: String, default: 'Company' },
+    img: { type: Schema.Types.ObjectId },
+    createdUser: { type: Schema.Types.ObjectId },
+    modifiedUser: { type: Schema.Types.ObjectId }
   },
   {
     timestamps: true

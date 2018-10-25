@@ -1,18 +1,39 @@
 import mongoose from 'mongoose';
+import Photo from './photo';
+import ObjectNode from './object';
 
 const { Schema } = mongoose;
 const Product = new Schema(
   {
     name: { type: String },
+    slug: { type: String, unique: true },
+    object: { type: Schema.Types.ObjectId },
     description: { type: String },
-    kind: { type: String, default: 'Product' }
+    kind: { type: String, default: 'Product' },
+    img: { type: Schema.Types.ObjectId },
+    createdUser: { type: Schema.Types.ObjectId },
+    modifiedUser: { type: Schema.Types.ObjectId }
   },
   {
     timestamps: true
   }
 );
 
-Product.statics.createProduct = function() {};
+Product.statics.createProduct = async function(args, context) {
+  if (!args.imgUri) throw new Error('Product image was not provided');
+  if (!args.name) throw new Error('Products must have names');
+  const photo = await Photo.createPhoto({ imgUri: args.imgUri }, context);
+  const product = await mongoose.models.Product.create({
+    ...args,
+    img: photo.id
+  });
+  const object = await ObjectNode.createObject(args, product, context);
+  photo.products.push(product.id);
+  photo.objects = [object.id];
+  // TODO: Create a way to add Objects to a Photo using a virtual
+  await photo.save();
+  return product;
+};
 Product.statics.edit = function() {};
 Product.statics.delete = function() {};
 Product.statics.addRetailer = function() {};

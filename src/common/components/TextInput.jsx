@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Field } from 'formik';
+import { Field, ErrorMessage } from 'formik';
 
 const Input = styled.input`
   width: 100%;
@@ -33,6 +33,17 @@ TextInput.propTypes = {
 
 export default TextInput;
 
-export const FormikTextInput = props => (
-  <Field {...props}>{({ field }) => <TextInput {...props} {...field} />}</Field>
+export const FormikTextInput = ({ name, ...props }) => (
+  <React.Fragment>
+    <Field name={name} {...props}>
+      {({ field }) => (
+        <TextInput {...props} {...field} value={field.value || ''} />
+      )}
+    </Field>
+    <ErrorMessage name={name} />
+  </React.Fragment>
 );
+
+FormikTextInput.propTypes = {
+  name: PropTypes.string.isRequired
+};

@@ -60,6 +60,7 @@ const PostNode = new Schema(
     changeableType: {
       type: Boolean
     },
+    objects: [Schema.Types.ObjectId],
     node: {
       type: Schema.Types.ObjectId,
       required: true
@@ -104,8 +105,16 @@ PostNode.statics.createPostNode = async function(args, context, obj = {}) {
   });
 };
 
-PostNode.statics.findPostNodes = async function(...args) {
-  return orderedSet(await mongoose.models.PostNode.find(...args));
+PostNode.statics.findPostNodes = async function(args) {
+  const nodes = await mongoose.models.PostNode.find(args);
+  return orderedSet(nodes);
+};
+
+PostNode.statics.addObjects = async function(id, objects) {
+  const node = await mongoose.models.PostNode.findOne({ node: id });
+  node.objects = objects;
+  await node.save();
+  return node;
 };
 
 PostNode.statics.publish = async function(args, context) {

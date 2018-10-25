@@ -2,15 +2,20 @@ import React from 'react';
 // import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
+import * as Yup from 'yup';
 import { Mutation } from 'react-apollo';
 import { Helmet } from 'react-helmet';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form } from 'formik';
+import { FormikFileUpload } from '../../../components/FileUpload';
+import { FormikTextInput } from '../../../components/TextInput';
+import { FormikTextArea } from '../../../components/TextArea';
+import DebugField from '../../../components/FormDebug';
 /**
  * TODO: Make it so that users can create Products
  */
 const ADD_PRODUCT = gql`
-  mutation AddProduct($id: ID!) {
-    addProduct(id: $id) {
+  mutation AddProduct($name: String!, $description: String, $imgUri: String!) {
+    addProduct(name: $name, description: $description, imgUri: $imgUri) {
       id
       name
       description
@@ -37,6 +42,14 @@ const Container = styled.div`
   padding: 0 400px;
 `;
 
+const validationSchema = Yup.object().shape({
+  name: Yup.string().required('You must give it a name'),
+  description: Yup.string(),
+  imgUri: Yup.string().required(
+    'You need to have an image uploaded before continuing'
+  )
+});
+
 const ProductNew = () => (
   <div>
     <Helmet>
@@ -47,29 +60,34 @@ const ProductNew = () => (
         return (
           <Container>
             <Product>
-              <Formik onSubmit={variables => addProduct({ variables })}>
+              <Formik
+                validationSchema={validationSchema}
+                onSubmit={variables =>
+                  addProduct({ variables }).then(
+                    ({ data }) =>
+                      (location.href = `/product/${data.addProduct.id}/${
+                        data.addProduct.name
+                      }`)
+                  )
+                }
+                initialValues={{ description: '' }}
+              >
                 {() => (
                   <Form>
-                    <Field name="title">
-                      {({ field }) => (
-                        <div>
-                          <div>
-                            <label htmlFor="title">Title</label>
-                          </div>
-                          <input id="title" {...field} />
-                        </div>
-                      )}
-                    </Field>
-                    <Field name="description">
-                      {({ field }) => (
-                        <div>
-                          <div>
-                            <label htmlFor="description">Description</label>
-                          </div>
-                          <input id="description" {...field} />
-                        </div>
-                      )}
-                    </Field>
+                    <FormikFileUpload
+                      name="imgUri"
+                      label="Product Image Upload"
+                      accept="image/*"
+                      id="imgUri"
+                    />
+                    <FormikTextInput name="name" id="name" label="Name" />
+                    <FormikTextArea
+                      name="description"
+                      id="description"
+                      label="Description"
+                    />
+                    <button type="submit">Submit</button>
+                    <DebugField />
                   </Form>
                 )}
               </Formik>

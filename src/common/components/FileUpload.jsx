@@ -1,7 +1,7 @@
 /* env browser */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Field } from 'formik';
+import { Field, ErrorMessage } from 'formik';
 import styled, { css } from 'styled-components';
 import Progress from './Progress';
 
@@ -10,10 +10,7 @@ const Button = styled.label`
   width: 100%;
   height: auto;
 `;
-const Input = styled.input`
-  width: 100%;
-  height: auto;
-`;
+
 const Div = styled.div`
   display: flex;
   align-items: center;
@@ -186,6 +183,20 @@ class FileUpload extends React.Component {
       this.setState({ value });
     }
   };
+  onBlur = e => {
+    const { uploadToken: value } = this.state;
+    e.persist();
+
+    const { onBlur } = this.props;
+    if (onBlur) {
+      onBlur({
+        type: 'blur',
+        target: e.target.control
+      });
+    } else {
+      this.setState({ value });
+    }
+  };
   onChange = async e => {
     e.preventDefault();
     if (!e.target.files[0]) return;
@@ -210,16 +221,17 @@ class FileUpload extends React.Component {
     const { progress, value } = this.state;
     return (
       <Div loading={progress > 0 && progress < 100}>
-        <Button htmlFor={id}>
+        <Button htmlFor={id} onBlur={this.onBlur} tabIndex="-1">
           {label}
-          <Input
-            name={name}
+          <input
             accept={accept}
             value={value}
             type="file"
             id={id}
             hidden
-            readOnly
+            name={name}
+            // readOnly
+            onBlur={this.onBlur}
             onChange={this.onChange}
           />
           {progress ? <Progress progress={progress} /> : null}
@@ -234,13 +246,22 @@ FileUpload.propTypes = {
   name: PropTypes.string.isRequired,
   accept: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
+  // onFocus: PropTypes.func.isRequired,
+  onBlur: PropTypes.func.isRequired,
   id: PropTypes.string.isRequired
 };
 
 export default FileUpload;
 
-export const FormikFileUpload = props => (
-  <Field {...props}>
-    {({ field }) => <FileUpload {...props} {...field} />}
-  </Field>
+export const FormikFileUpload = ({ name, ...props }) => (
+  <React.Fragment>
+    <Field name={name}>
+      {({ field }) => <FileUpload {...props} {...field} />}
+    </Field>
+    <ErrorMessage name={name} />
+  </React.Fragment>
 );
+
+FormikFileUpload.propTypes = {
+  name: PropTypes.string.isRequired
+};

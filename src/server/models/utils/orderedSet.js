@@ -16,7 +16,7 @@ export default async (results, nodeField = 'node') => {
   const final = results
     .map(result => {
       const obj = postNodeMap[result.kind].find(
-        v => v?.id === result[nodeField]
+        v => v?.id === result[nodeField].toString()
       );
       if (obj) obj.kind = result.kind;
       return obj;

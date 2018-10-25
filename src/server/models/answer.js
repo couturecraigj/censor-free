@@ -9,6 +9,7 @@ const Answer = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'PostNode'
     },
+    postNode: { type: Schema.Types.ObjectId },
     title: {
       type: String
     },

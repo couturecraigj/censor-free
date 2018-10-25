@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 const WebPage = new Schema(
   {
     title: { type: String },
+    postNode: { type: Schema.Types.ObjectId },
     description: { type: String },
     imgs: [Schema.Types.ObjectId],
     img: Schema.Types.ObjectId,

@@ -15,6 +15,13 @@ const GET_PRODUCT = gql`
         imgUri
       }
     }
+    objFeed(id: $id) {
+      id
+      ... on Photo {
+        title
+        imgUri
+      }
+    }
   }
 `;
 
@@ -30,6 +37,11 @@ const Product = styled.div`
   }
 `;
 
+const Image = styled.img`
+  width: 100%;
+  height: auto;
+`;
+
 const Container = styled.div`
   padding: 0 400px;
 `;
@@ -43,7 +55,7 @@ const SingleProduct = ({ match }) => (
       {({ loading, error, data }) => {
         if (loading) return 'Loading...';
         if (error) return `Error! ${error.message}`;
-        const { product } = data;
+        const { product, objFeed } = data;
 
         return (
           <Container name="dog">
@@ -58,6 +70,13 @@ const SingleProduct = ({ match }) => (
                 )}
               <div>{product.description}</div>
             </Product>
+            <div>
+              {objFeed.map(feed => (
+                <div>
+                  <Image src={feed.imgUri} />
+                </div>
+              ))}
+            </div>
           </Container>
         );
       }}

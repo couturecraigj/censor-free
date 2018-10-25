@@ -10,7 +10,9 @@ import User from '../../models/user';
 import Video from '../../models/video';
 import WebPage from '../../models/webPage';
 import Product from '../../models/product';
+// import Company from '../../models/company';
 import PostNode from '../../models/postNode';
+import ObjectNode from '../../models/object';
 import Searchable from '../../models/searchable';
 import * as Types from '../types';
 
@@ -33,6 +35,9 @@ const resolvers = {
     feed: (root, args, context) => PostNode.findPostNodes(args, context),
     search: (root, args, context) => Searchable.findSearchable(args, context),
     products: () => Product.find(),
+    product: (root, args) => Product.findById(args.id),
+    objFeed: (root, args, context) =>
+      ObjectNode.getFeed({ node: args.id }, context),
     me: (root, args, context) => {
       try {
         return User.findMe(args, context);
@@ -67,6 +72,8 @@ const resolvers = {
       res.cookie('reset-token', token, { httpOnly: true, maxAge: 3000 });
       return token;
     },
+    addProduct: async (parent, args, context) =>
+      Product.createProduct(args, context),
     addVideoFilters: async (parent, args, context) =>
       Video.addFilters(args, context),
     like: async (parents, args) => PostNode.like(args),
@@ -101,6 +108,9 @@ const resolvers = {
     },
     addWebPage: async (parent, args, context) =>
       WebPage.createWebPage(args, context)
+  },
+  Product: {
+    img: async product => Photo.findById(product.img)
   },
   Authentication: {
     token: (me, args, { res, req }) => {
