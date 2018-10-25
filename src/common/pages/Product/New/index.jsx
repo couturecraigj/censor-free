@@ -44,7 +44,9 @@ const Container = styled.div`
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('You must give it a name'),
-  description: Yup.string(),
+  description: Yup.string().required(
+    'You need to provide at least a little description'
+  ),
   imgUri: Yup.string().required(
     'You need to have an image uploaded before continuing'
   )
@@ -70,7 +72,6 @@ const ProductNew = () => (
                       }`)
                   )
                 }
-                initialValues={{ description: '' }}
               >
                 {() => (
                   <Form>

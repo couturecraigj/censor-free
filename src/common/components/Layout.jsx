@@ -5,6 +5,7 @@ import styled, { ThemeProvider, injectGlobal } from 'styled-components';
 import { Provider } from 'react-redux';
 import Post from './Post';
 import Header from './Header';
+import CookieBanner from './CookiesBanner';
 import ErrorBoundary from './ErrorBoundary';
 import Footer from './Footer';
 
@@ -77,6 +78,7 @@ class Layout extends React.Component {
               </ErrorBoundary>
               <Footer />
               {post && <Post close={this.togglePost} />}
+              <CookieBanner />
             </React.Fragment>
           </ErrorBoundary>
         </Provider>

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Field } from 'formik';
+import { Field, ErrorMessage } from 'formik';
 
 const Area = styled.textarea`
   width: 100%;
@@ -28,6 +28,13 @@ TextArea.propTypes = {
 
 export default TextArea;
 
-export const FormikTextArea = props => (
-  <Field {...props}>{({ field }) => <TextArea {...props} {...field} />}</Field>
+export const FormikTextArea = ({ name, ...props }) => (
+  <div>
+    <Field name={name}>
+      {({ field }) => (
+        <TextArea {...props} {...field} value={field.value || ''} />
+      )}
+    </Field>
+    <ErrorMessage name={name} />
+  </div>
 );

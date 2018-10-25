@@ -35,8 +35,7 @@ class FileUpload extends React.Component {
     super(props);
     this.state = {
       chunkNumber: 0,
-      progress: 0,
-      value: ''
+      progress: 0
     };
   }
   componentDidMount() {
@@ -179,12 +178,9 @@ class FileUpload extends React.Component {
     const { onChange, name } = this.props;
     if (onChange) {
       onChange({ target: { name, value } });
-    } else {
-      this.setState({ value });
     }
   };
   onBlur = e => {
-    const { uploadToken: value } = this.state;
     e.persist();
 
     const { onBlur } = this.props;
@@ -193,13 +189,17 @@ class FileUpload extends React.Component {
         type: 'blur',
         target: e.target.control
       });
-    } else {
-      this.setState({ value });
     }
   };
   onChange = async e => {
     e.preventDefault();
-    if (!e.target.files[0]) return;
+    if (!e.target.files[0]) {
+      const { onChange, name } = this.props;
+      if (onChange) {
+        onChange({ target: { name, value: '' } });
+      }
+      return;
+    }
     const [file] = [...e.target.files];
     this.sendValue('');
     if (file.type.startsWith('image')) await this.getDimensionsOfImage(file);
@@ -217,21 +217,20 @@ class FileUpload extends React.Component {
     // console.log(file);
   };
   render() {
-    const { label, id, name, accept } = this.props;
-    const { progress, value } = this.state;
+    const { label, id, name, accept, onBlur } = this.props;
+    const { progress } = this.state;
     return (
       <Div loading={progress > 0 && progress < 100}>
-        <Button htmlFor={id} onBlur={this.onBlur} tabIndex="-1">
+        <Button htmlFor={id} onBlur={this.onBlur} tabIndex="0">
           {label}
           <input
             accept={accept}
-            value={value}
             type="file"
             id={id}
             hidden
             name={name}
+            onBlur={onBlur}
             // readOnly
-            onBlur={this.onBlur}
             onChange={this.onChange}
           />
           {progress ? <Progress progress={progress} /> : null}
@@ -254,12 +253,12 @@ FileUpload.propTypes = {
 export default FileUpload;
 
 export const FormikFileUpload = ({ name, ...props }) => (
-  <React.Fragment>
+  <div>
     <Field name={name}>
       {({ field }) => <FileUpload {...props} {...field} />}
     </Field>
     <ErrorMessage name={name} />
-  </React.Fragment>
+  </div>
 );
 
 FormikFileUpload.propTypes = {

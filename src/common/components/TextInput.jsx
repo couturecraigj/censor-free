@@ -34,14 +34,14 @@ TextInput.propTypes = {
 export default TextInput;
 
 export const FormikTextInput = ({ name, ...props }) => (
-  <React.Fragment>
+  <div>
     <Field name={name} {...props}>
       {({ field }) => (
         <TextInput {...props} {...field} value={field.value || ''} />
       )}
     </Field>
     <ErrorMessage name={name} />
-  </React.Fragment>
+  </div>
 );
 
 FormikTextInput.propTypes = {
