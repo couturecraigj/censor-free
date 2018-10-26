@@ -6,6 +6,7 @@ import path from 'path';
 import File from './file';
 import PostNode from './postNode';
 import { makeDirectory } from '../utils/fileSystem';
+import Searchable from './searchable';
 
 const PHOTO_DOES_NOT_EXIST = new Error('Photo has not been uploaded');
 
@@ -14,9 +15,10 @@ const cwd = process.cwd();
 const { Schema } = mongoose;
 const Photo = new Schema(
   {
-    title: { type: String },
+    title: { type: String, index: true },
     postNode: { type: Schema.Types.ObjectId },
-    description: { type: String },
+    searchable: { type: Schema.Types.ObjectId },
+    description: { type: String, index: true },
     height: { type: Number },
     width: { type: Number },
     kind: { type: String, default: 'Photo' },
@@ -76,9 +78,16 @@ Photo.statics.createPhoto = function(args, context) {
         imgUri: '/' + context.req.user.id + '/' + fileName,
         thumbnailUri: '/' + context.req.user.id + '/thumbnail/' + fileName
       });
-      const postNode = await PostNode.createPostNode(args, context, photo);
+      const postNode = await PostNode.createPostNode(args, photo, context);
+      const searchable = await Searchable.createSearchable(
+        args,
+        photo,
+        context
+      );
       photo.postNode = postNode.id;
+      photo.searchable = searchable.id;
       await photo.save();
+
       resolve(photo);
     });
     writeStream.on('error', e => {

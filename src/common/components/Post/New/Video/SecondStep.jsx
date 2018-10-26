@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { Mutation } from 'react-apollo';
 import { Field, Form, Formik, FieldArray } from 'formik';
 import gql from 'graphql-tag';
-import VideoPlayer from '../../VideoPlayer';
-import FormDebug from '../../FormDebug';
-import { secondsToHours } from '../../../utilities/convertNumberIntoTime';
+import VideoPlayer from '../../../VideoPlayer';
+import FormDebug from '../../../FormDebug';
+import { secondsToHours } from '../../../../utilities/convertNumberIntoTime';
 
 /**
  * TODO: get the second step finished

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Subscription } from 'react-apollo';
 import gql from 'graphql-tag';
-import Progress from '../../Progress';
+import Progress from '../../../Progress';
 
 const FILE_CONVERSION_PROGRESS = gql`
   subscription FileConversionProgress($uploadToken: String!) {

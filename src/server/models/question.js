@@ -1,12 +1,14 @@
 import mongoose from 'mongoose';
 import PostNode from './postNode';
+import Searchable from './searchable';
 
 const { Schema } = mongoose;
 const Question = new Schema(
   {
-    title: { type: String },
+    title: { type: String, index: true },
     postNode: { type: Schema.Types.ObjectId },
-    description: { type: String },
+    searchable: { type: Schema.Types.ObjectId },
+    description: { type: String, index: true },
     products: [Schema.Types.ObjectId],
     kind: { type: String, default: 'Question' }
   },
@@ -16,8 +18,13 @@ const Question = new Schema(
 );
 
 Question.statics.createQuestion = async function(args, context) {
-  const postNode = await PostNode.createPostNode(args, context);
-  return mongoose.models.Question.create(args, postNode);
+  const question = await mongoose.models.Question.create(args);
+  const postNode = await PostNode.createPostNode(args, question, context);
+  const searchable = await Searchable.createSearchable(args, question, context);
+  question.postNode = postNode.id;
+  question.searchable = searchable.id;
+  await question.save();
+  return question;
 };
 Question.statics.edit = function() {};
 Question.statics.addAnswer = function() {};

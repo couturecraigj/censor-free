@@ -1,12 +1,14 @@
 import mongoose from 'mongoose';
 import PostNode from './postNode';
+import Searchable from './searchable';
 
 const { Schema } = mongoose;
 const Review = new Schema(
   {
-    title: { type: String },
-    description: { type: String },
+    title: { type: String, index: true },
+    description: { type: String, index: true },
     postNode: { type: Schema.Types.ObjectId },
+    searchable: { type: Schema.Types.ObjectId },
     score: { type: Number },
     products: [Schema.Types.ObjectId],
     kind: { type: String, default: 'Review' }
@@ -17,8 +19,13 @@ const Review = new Schema(
 );
 
 Review.statics.createReview = async function(args, context) {
-  const postNode = await PostNode.createPostNode(args, context);
-  return mongoose.models.Review.create(args, postNode);
+  const review = await mongoose.models.Review.create(args);
+  const searchable = await Searchable.createSearchable(args, review, context);
+  const postNode = await PostNode.createPostNode(args, review, context);
+  review.postNode = postNode.id;
+  review.searchable = searchable.id;
+  await review.save();
+  return review;
 };
 Review.statics.edit = function() {};
 Review.statics.addComment = function() {};

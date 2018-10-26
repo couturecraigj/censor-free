@@ -1,7 +1,7 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
-import TextArea from '../TextArea';
-import TextInput from '../TextInput';
+import TextArea from '../../TextArea';
+import TextInput from '../../TextInput';
 
 const Tip = () => (
   <Formik>

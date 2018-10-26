@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
 import Person from './person';
+import Searchable from './searchable';
+import { COOKIE_TYPE_MAP } from '../../common/types';
 
 const EMAIL_ALREADY_EXISTS = new Error('Email already exists');
 const USERNAME_ALREADY_EXISTS = new Error('Username already exists');
@@ -12,6 +14,8 @@ const NO_USER_WITH_THAT_TOKEN = new Error('No user with that token');
 const { Schema } = mongoose;
 const User = new Schema(
   {
+    // REFERENCES
+    searchable: { type: Schema.Types.ObjectId },
     // UNIQUE
     userName: { type: String, unique: true },
     email: { type: String, unique: true, lowercase: true },
@@ -147,7 +151,7 @@ User.virtual('confirmEmail').set(function(value) {
 User.statics.getUserIdFromToken = async function(token, { res }) {
   const maxAge = 3999999999;
   const date = Date.now() + maxAge;
-  res.cookie('token', token, {
+  res.cookie(COOKIE_TYPE_MAP.token, token, {
     httpOnly: true,
     expires: new Date(date),
     maxAge
@@ -159,7 +163,7 @@ User.statics.getUserFromToken = async function(token, { res } = {}) {
   if (res) {
     const maxAge = 3999999999;
     const date = Date.now() + maxAge;
-    res.cookie('token', token, {
+    res.cookie(COOKIE_TYPE_MAP.token, token, {
       httpOnly: true,
       expires: new Date(date),
       maxAge
@@ -172,7 +176,7 @@ User.statics.getUserFromToken = async function(token, { res } = {}) {
 User.statics.getTokenFromUser = function(user, { res }) {
   const maxAge = 3999999999;
   const date = Date.now() + maxAge;
-  res.cookie('token', user.id, {
+  res.cookie(COOKIE_TYPE_MAP.token, user.id, {
     httpOnly: true,
     expires: new Date(date),
     maxAge
@@ -203,6 +207,8 @@ User.pre('save', async function() {
     const person = await Person.createFromUser(this.personObject);
     this.person = person.id;
   }
+  const searchable = await Searchable.createSearchable({}, this);
+  this.searchable = searchable.id;
 });
 
 User.methods.passwordsMatch = async function(password) {

@@ -94,7 +94,7 @@ const PostNode = new Schema(
 );
 
 PostNode.statics.delete = function() {};
-PostNode.statics.createPostNode = async function(args, context, obj = {}) {
+PostNode.statics.createPostNode = async function(args, obj = {}, context) {
   if (!POST_TYPE_ENUM.includes(obj.kind)) throw ENUM_DOESNT_MATCH;
   return mongoose.models.PostNode.create({
     user: context.req.user.id,

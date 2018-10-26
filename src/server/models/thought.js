@@ -1,12 +1,14 @@
 import mongoose from 'mongoose';
 import PostNode from './postNode';
+import Searchable from './searchable';
 
 const { Schema } = mongoose;
 const Thought = new Schema(
   {
-    title: { type: String },
+    title: { type: String, index: true },
     postNode: { type: Schema.Types.ObjectId },
-    description: { type: String },
+    searchable: { type: Schema.Types.ObjectId },
+    description: { type: String, index: true },
     kind: { type: String, default: 'Thought' }
   },
   {
@@ -15,8 +17,13 @@ const Thought = new Schema(
 );
 
 Thought.statics.createThought = async function(args, context) {
-  const postNode = await PostNode.createPostNode(args, context);
-  return mongoose.models.Thought.create(args, postNode);
+  const thought = await mongoose.models.Thought.create(args);
+  const postNode = await PostNode.createPostNode(args, thought, context);
+  const searchable = await Searchable.createSearchable(args, thought, context);
+  thought.postNode = postNode.id;
+  thought.searchable = searchable.id;
+  await thought.save();
+  return thought;
 };
 Thought.statics.edit = function() {};
 Thought.statics.addComment = function() {};

@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import DataLoader from 'dataloader';
 import PostNode from './postNode';
+import Searchable from './searchable';
 
 const { Schema } = mongoose;
 const Answer = new Schema(
@@ -10,11 +11,14 @@ const Answer = new Schema(
       ref: 'PostNode'
     },
     postNode: { type: Schema.Types.ObjectId },
+    searchable: { type: Schema.Types.ObjectId },
     title: {
-      type: String
+      type: String,
+      index: true
     },
     description: {
-      type: String
+      type: String,
+      index: true
     },
     kind: { type: String, default: 'Answer' }
   },
@@ -24,8 +28,13 @@ const Answer = new Schema(
 );
 
 Answer.statics.createAnswer = async function(args, context) {
-  const postNode = await PostNode.createPostNode(args, context);
-  return mongoose.models.Answer.create(args, postNode);
+  const answer = await mongoose.models.Answer.create(args);
+  const postNode = await PostNode.createPostNode(args, answer, context);
+  const searchable = await Searchable.createSearchable(args, answer, context);
+  answer.postNode = postNode.id;
+  answer.searchable = searchable.id;
+  await answer.save();
+  return answer;
 };
 
 Answer.statics.createLoader = () => {

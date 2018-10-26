@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { Mutation } from 'react-apollo';
 import { Formik, Form } from 'formik';
 import gql from 'graphql-tag';
-import { FormikFileUpload } from '../../FileUpload';
-import { FormikTextInput } from '../../TextInput';
-import { FormikTextArea } from '../../TextArea';
-import FormDebug from '../../FormDebug';
+import { FormikFileUpload } from '../../../FileUpload';
+import { FormikTextInput } from '../../../TextInput';
+import { FormikTextArea } from '../../../TextArea';
+import FormDebug from '../../../FormDebug';
 
 const SUBMIT_VIDEO = gql`
   mutation AddVideo(

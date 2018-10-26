@@ -72,7 +72,7 @@ const SingleProduct = ({ match }) => (
             </Product>
             <div>
               {objFeed.map(feed => (
-                <div>
+                <div key={feed.imgUri}>
                   <Image src={feed.imgUri} />
                 </div>
               ))}

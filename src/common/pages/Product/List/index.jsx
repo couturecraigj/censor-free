@@ -11,6 +11,7 @@ const GET_PRODUCT_LIST = gql`
     products {
       id
       name
+      slug
       description
       img {
         imgUri
@@ -51,7 +52,7 @@ export default () => (
               {data.products.map(product => (
                 <Link
                   key={product.id}
-                  to={`/product/${product.id}/${product.name}`}
+                  to={`/product/${product.id}/${product.slug}`}
                   onMouseOver={ProductRoute.load}
                   onFocus={ProductRoute.load}
                 >

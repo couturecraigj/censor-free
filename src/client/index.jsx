@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
 import { ApolloProvider } from 'react-apollo';
 import { loadComponents } from 'loadable-components';
 import { BrowserRouter } from 'react-router-dom';
 // import ErrorBoundary from '../common/components/ErrorBoundary';
+import { COOKIE_TYPE_MAP } from '../common/types';
 import App from '../common/App';
 import apollo from '../common/apollo';
 import initiateStore from '../common/redux';
@@ -21,7 +21,7 @@ async function render(ele) {
   await loadComponents();
   import(/* webpackChunkName: 'register-sw' */ './registerServiceWorker');
   const store = initiateStore(window.__STORE_STATE);
-  localStorage.setItem('csurf-token', window.__CSURF__);
+  localStorage.setItem(COOKIE_TYPE_MAP.csurfToken, window.__CSURF__);
   const client = apollo(fetch, {
     uri: window.QUERY_URL,
     subscriptionUrl: window.SUBSCRIPTION_URL,

@@ -1,12 +1,14 @@
 import mongoose from 'mongoose';
 import PostNode from './postNode';
+import Searchable from './searchable';
 
 const { Schema } = mongoose;
 const Story = new Schema(
   {
-    title: { type: String },
+    title: { type: String, index: true },
     postNode: { type: Schema.Types.ObjectId },
-    description: { type: String },
+    searchable: { type: Schema.Types.ObjectId },
+    description: { type: String, index: true },
     kind: { type: String, default: 'Story' },
     excerpt: { type: String }
   },
@@ -16,8 +18,13 @@ const Story = new Schema(
 );
 
 Story.statics.createStory = async function(args, context) {
-  const postNode = await PostNode.createPostNode(args, context);
-  return mongoose.models.Story.create(args, postNode);
+  const story = await mongoose.models.Story.create(args);
+  const searchable = await Searchable.createSearchable(args, story, context);
+  const postNode = await PostNode.createPostNode(args, story, context);
+  story.postNode = postNode.id;
+  story.searchable = searchable.id;
+  await story.save();
+  return story;
 };
 
 Story.statics.edit = function() {};

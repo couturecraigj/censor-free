@@ -1,6 +1,7 @@
 /* eslint-disable no-console*/
 import fetch from 'node-fetch';
 import fs from 'fs';
+import { COOKIE_TYPE_MAP } from '../../common/types';
 
 const __INTROSPECTION__ = process.env.INTROSPECT_GRAPHQL_SCHEMA;
 export default async app => {
@@ -23,7 +24,7 @@ export default async app => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-xsrf-token': csurf,
+      [COOKIE_TYPE_MAP.csurfToken]: csurf,
       cookie
     },
     body: JSON.stringify({

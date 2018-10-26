@@ -1,16 +1,26 @@
 import mongoose from 'mongoose';
+import Searchable from './searchable';
 
 const { Schema } = mongoose;
 const Group = new Schema(
   {
-    name: { type: String },
-    description: { type: String },
+    name: { type: String, index: true },
+    searchable: { type: Schema.Types.ObjectId },
+    description: { type: String, index: true },
     kind: { type: String, default: 'Group' }
   },
   {
     timestamps: true
   }
 );
+
+Group.statics.createGroup = async function(args, context) {
+  const group = await mongoose.models.Group.create(args);
+  const searchable = await Searchable.createSearchable(args, group, context);
+  group.searchable = searchable.id;
+  await group.save();
+  return group;
+};
 
 Group.statics.delete = function() {};
 Group.statics.create = function() {};

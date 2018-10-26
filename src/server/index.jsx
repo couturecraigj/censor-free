@@ -7,6 +7,7 @@ import { getLoadableState } from 'loadable-components/server';
 import { Helmet } from 'react-helmet';
 import { ServerStyleSheet } from 'styled-components';
 import { StaticRouter } from 'react-router-dom';
+// import { COOKIE_TYPE_MAP } from '../common/types';
 import apollo from '../common/apollo';
 import initiateStore from '../common/redux';
 import App from '../common/App';
@@ -65,7 +66,7 @@ app.get('*', async (req, res) => {
     const sheet = new ServerStyleSheet();
     const headers = {
       cookie: req.headers.cookie
-      // 'x-xsurf-token': csurf
+      // [COOKIE_TYPE_MAP.csurfToken]: csurf
     };
 
     const client = apollo(fetch, {

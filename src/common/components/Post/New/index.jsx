@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import loadable from 'loadable-components';
 import styled from 'styled-components';
 import TogglePostTypes from './TogglePostTypes';
-import Modal from '../Modal';
+import Modal from '../../Modal';
 
 const list = [
   {
@@ -84,22 +84,30 @@ const Tabs = styled.div`
 
 class Post extends React.Component {
   max = 3;
-  constructor(props) {
-    super(props);
-    this.outsideDiv = React.createRef();
-    this.modalDiv = React.createRef();
-    this.state = {
-      Component: () => <div>Loading...</div>,
-      tabsVisible: true
-    };
-  }
-
+  state = {
+    Component: () => <div>Loading...</div>,
+    finalList: list,
+    tabsVisible: true
+  };
+  outsideDiv = React.createRef();
+  modalDiv = React.createRef();
   componentDidMount() {
     document.addEventListener('mousedown', this.handleClose, false);
   }
 
   componentWillUnmount() {
     document.removeEventListener('mousedown', this.handleClose, false);
+  }
+  static getDerivedStateFromProps({ only }) {
+    if (only) {
+      const finalList = list.filter(({ name }) => only.includes(name));
+      const state = { finalList };
+      if (finalList <= 1 || only.length <= 1) {
+        state.tabsVisible = false;
+      }
+      return state;
+    }
+    return null;
   }
   handleSubmit = values => {
     // console.log(values, actions);
@@ -124,9 +132,8 @@ class Post extends React.Component {
     this.setState({ Component: component });
   };
   render() {
+    const { Component, tabsVisible, finalList } = this.state;
     const { close } = this.props;
-    const { Component, tabsVisible } = this.state;
-    // const { postType, post } = this.state;
     return (
       <Modal close={close} ref={this.modalDiv}>
         <div
@@ -141,7 +148,7 @@ class Post extends React.Component {
               {tabsVisible && (
                 <Tabs>
                   <TogglePostTypes
-                    list={list}
+                    list={finalList}
                     selectedPost={this.selectedPost}
                   />
                 </Tabs>
@@ -156,7 +163,13 @@ class Post extends React.Component {
 }
 
 Post.propTypes = {
+  // eslint-disable-next-line react/no-unused-prop-types
+  only: PropTypes.arrayOf(PropTypes.string),
   close: PropTypes.func.isRequired
+};
+
+Post.defaultProps = {
+  only: undefined
 };
 
 export default Post;

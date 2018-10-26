@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import orderedSet from './utils/orderedSet';
+import orderedSearch from './utils/orderedSearch';
 import './thought';
 import './story';
 import './review';
@@ -56,17 +56,17 @@ const Searchable = new Schema(
 );
 
 Searchable.statics.delete = function() {};
-Searchable.statics.createSearchable = function(obj, context, kind) {
-  if (!kinds.includes(kind)) throw ENUM_DOESNT_MATCH;
+Searchable.statics.createSearchable = function(args, obj, context) {
+  if (!kinds.includes(obj.kind)) throw ENUM_DOESNT_MATCH;
   return mongoose.models.Searchable.create({
     node: obj.id,
-    kind,
+    kind: obj.kind,
     user: context.req.user.id
   });
 };
-Searchable.statics.findSearchable = async function(args) {
-  const list = await Searchable.find(args);
-  return orderedSet(list);
+Searchable.statics.findSearchable = async function(args = {}) {
+  const list = await mongoose.models.Searchable.find();
+  return orderedSearch(list, undefined, args.text || '');
 };
 
 if (mongoose.models && mongoose.models.Searchable)

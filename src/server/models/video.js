@@ -7,6 +7,7 @@ import uuid from 'uuid/v4';
 import { makeDirectory } from '../utils/fileSystem';
 import File from './file';
 import PostNode from './postNode';
+import Searchable from './searchable';
 
 function scale(width, height) {
   return (
@@ -35,9 +36,10 @@ const publicPath = path.join(cwd, 'public');
 const { Schema } = mongoose;
 const Video = new Schema(
   {
-    title: { type: String },
+    title: { type: String, index: true },
     postNode: { type: Schema.Types.ObjectId },
-    description: { type: String },
+    searchable: { type: Schema.Types.ObjectId },
+    description: { type: String, index: true },
     imgs: [Schema.Types.ObjectId],
     img: Schema.Types.ObjectId,
     kind: { type: String, default: 'Video' },
@@ -81,8 +83,12 @@ Video.statics.createVideo = async function(args, context, extras) {
       uri: filePath.replace(publicPath, ''),
       ...args
     });
-    await PostNode.createPostNode(args, context, video);
   }
+  const postNode = await PostNode.createPostNode(args, video, context);
+  const searchable = await Searchable.createSearchable(args, video, context);
+  video.postNode = postNode.id;
+  video.searchable = searchable.id;
+  await video.save();
   // if (file) console.log(file);
 
   return { ...video.toJSON(), ...file.toJSON() };

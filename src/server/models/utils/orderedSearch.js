@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-export default async (results, nodeField = 'node') => {
+export default async (results, nodeField = 'node', search) => {
   if (!results) return [];
   const postNodeMap = await Promise.all(
     Object.entries(
@@ -13,9 +13,17 @@ export default async (results, nodeField = 'node') => {
     ).map(([key, value]) => {
       return Promise.all([
         key,
-        mongoose.models[key].find({ _id: { $in: value } }).then(v => {
-          return v;
-        })
+        mongoose.models[key]
+          .find(
+            {
+              _id: { $in: value },
+              $text: { $search: search }
+            },
+            {
+              textMatchScore: { $meta: 'textScore' }
+            }
+          )
+          .sort({ textMatchScore: { $meta: 'textScore' } })
       ]);
     })
   ).then(result => {
@@ -30,5 +38,6 @@ export default async (results, nodeField = 'node') => {
       return obj;
     })
     .filter(v => v);
+  final.sort((a, b) => b.textMatchScore - a.textMatchScore);
   return final;
 };

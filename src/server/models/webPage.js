@@ -1,12 +1,14 @@
 import mongoose from 'mongoose';
 import PostNode from './postNode';
+import Searchable from './searchable';
 
 const { Schema } = mongoose;
 const WebPage = new Schema(
   {
-    title: { type: String },
+    title: { type: String, index: true },
     postNode: { type: Schema.Types.ObjectId },
-    description: { type: String },
+    searchable: { type: Schema.Types.ObjectId },
+    description: { type: String, index: true },
     imgs: [Schema.Types.ObjectId],
     img: Schema.Types.ObjectId,
     uri: { type: String },
@@ -18,8 +20,13 @@ const WebPage = new Schema(
 );
 
 WebPage.statics.createWebPage = async function(args, context) {
-  const postNode = await PostNode.createPostNode(args, context);
-  return mongoose.models.WebPage.create(args, postNode);
+  const thought = await mongoose.models.WebPage.create(args);
+  const postNode = await PostNode.createPostNode(args, thought, context);
+  const searchable = await Searchable.createSearchable(args, thought, context);
+  thought.postNode = postNode.id;
+  thought.searchable = searchable.id;
+  await thought.save();
+  return thought;
 };
 WebPage.statics.edit = function() {};
 WebPage.statics.addComment = function() {};

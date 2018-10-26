@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import { connect } from 'react-redux';
+import { COOKIE_TYPE_MAP } from '../types';
 import * as Routes from '../pages/Routes';
 
 const ME = gql`
@@ -72,7 +73,33 @@ const Account = styled.div`
   border-radius: 2rem;
 `;
 
-const Layout = ({ togglePost, dispatch }) => (
+const LogoutButton = connect()(({ dispatch, client }) => (
+  <Logout
+    onClick={e => {
+      e.preventDefault();
+      localStorage.removeItem(COOKIE_TYPE_MAP.token);
+
+      return (
+        client
+          .mutate({ mutation: LOG_OUT })
+          // eslint-disable-next-line no-console
+          .then(result => console.log(result))
+          .then(client.resetStore)
+          .then(
+            dispatch({
+              type: '@LOGOUT'
+            })
+          )
+          // eslint-disable-next-line no-console
+          .catch(err => console.error(err))
+      );
+    }}
+  >
+    Logout
+  </Logout>
+));
+
+const Layout = ({ togglePost }) => (
   <Nav>
     <LinksDiv>
       <Link
@@ -151,31 +178,7 @@ const Layout = ({ togglePost, dispatch }) => (
       <Query query={ME}>
         {({ data: { me }, client }) => (
           <React.Fragment>
-            {me && (
-              <Logout
-                onClick={e => {
-                  e.preventDefault();
-                  localStorage.removeItem('token');
-
-                  return (
-                    client
-                      .mutate({ mutation: LOG_OUT })
-                      // eslint-disable-next-line no-console
-                      .then(result => console.log(result))
-                      .then(client.resetStore)
-                      .then(
-                        dispatch({
-                          type: '@LOGOUT'
-                        })
-                      )
-                      // eslint-disable-next-line no-console
-                      .catch(err => console.error(err))
-                  );
-                }}
-              >
-                Logout
-              </Logout>
-            )}
+            {me && <LogoutButton client={client} />}
             {!me && (
               <Link
                 to="/login"
@@ -199,8 +202,7 @@ const Layout = ({ togglePost, dispatch }) => (
 
 Layout.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
-  togglePost: PropTypes.func.isRequired,
-  dispatch: PropTypes.func.isRequired
+  togglePost: PropTypes.func.isRequired
 };
 
-export default connect()(Layout);
+export default Layout;

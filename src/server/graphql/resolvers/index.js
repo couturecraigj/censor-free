@@ -14,6 +14,7 @@ import Product from '../../models/product';
 import PostNode from '../../models/postNode';
 import ObjectNode from '../../models/object';
 import Searchable from '../../models/searchable';
+import { COOKIE_TYPE_MAP } from '../../../common/types';
 import * as Types from '../types';
 
 const pubsub = new PubSub();
@@ -69,7 +70,10 @@ const resolvers = {
     },
     forgotPassword: async (parent, args, { res }) => {
       const token = await User.getResetToken(args);
-      res.cookie('reset-token', token, { httpOnly: true, maxAge: 3000 });
+      res.cookie(COOKIE_TYPE_MAP.resetToken, token, {
+        httpOnly: true,
+        maxAge: 3000
+      });
       return token;
     },
     addProduct: async (parent, args, context) =>

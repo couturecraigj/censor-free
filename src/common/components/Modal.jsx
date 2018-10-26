@@ -22,30 +22,48 @@ class Modal extends React.Component {
     // eslint-disable-next-line react/forbid-prop-types
     children: PropTypes.any.isRequired
   };
-  constructor(props) {
-    super(props);
-    this.state = {
-      server: typeof document === 'undefined',
-      opacity: 0
-    };
-    // eslint-disable-next-line react/destructuring-assignment
-    if (!this.state.server) {
-      this.state.modalRoot = document.getElementById('modal');
-      this.el = document.createElement('div');
+  state = {
+    server: true,
+    opacity: 0,
+    el: undefined
+  };
+  static getDerivedStateFromProps() {
+    if (typeof document !== 'undefined') {
+      return {
+        server: false
+      };
     }
+    return null;
   }
 
   componentDidMount() {
-    // eslint-disable-next-line react/destructuring-assignment
-    this.state.modalRoot.appendChild(this.el);
-    this.fadeIn();
+    this.getModalRoot();
   }
 
   componentWillUnmount() {
     this.fadeOut();
     // eslint-disable-next-line react/destructuring-assignment
-    this.state.modalRoot.removeChild(this.el);
+    this.state.modalRoot.removeChild(this.state.el);
   }
+  getModalRoot = () => {
+    this.setState(
+      {
+        modalRoot: document.getElementById('modal')
+      },
+      () => {
+        this.setState(
+          {
+            el: document.createElement('div')
+          },
+          () => {
+            // eslint-disable-next-line react/destructuring-assignment
+            this.state.modalRoot.appendChild(this.state.el);
+            this.fadeIn();
+          }
+        );
+      }
+    );
+  };
   fadeIn = () => {
     this.setState({
       opacity: 0
@@ -54,16 +72,16 @@ class Modal extends React.Component {
       this.setState({
         opacity: 0.5
       });
-    }, 0);
+    }, 10);
   };
   fadeOut = () => {
     this.setState({
       opacity: 0
     });
   };
-  render() {
+  renderModal = () => {
     const { children } = this.props;
-    const { server, opacity } = this.state;
+    const { el, opacity } = this.state;
     const Result = (
       <Div opacity={opacity} ref={this.handleNodeAssign}>
         <div
@@ -73,7 +91,11 @@ class Modal extends React.Component {
         </div>
       </Div>
     );
-    return server ? null : ReactDOM.createPortal(Result, this.el);
+    return ReactDOM.createPortal(Result, el);
+  };
+  render() {
+    const { server, el } = this.state;
+    return server || !el ? null : this.renderModal();
   }
 }
 

@@ -10,6 +10,7 @@ import { HttpLink } from 'apollo-link-http';
 import { onError } from 'apollo-link-error';
 // import { withClientState } from "apollo-link-state";
 import { ApolloLink, split } from 'apollo-link';
+import { COOKIE_TYPE_MAP } from './types';
 
 export default (
   fetch,
@@ -42,8 +43,8 @@ export default (
       }),
       !ssrMode &&
         setContext((_, { headers }) => {
-          const token = localStorage.getItem('token');
-          const csurfToken = localStorage.getItem('csurf-token');
+          const token = localStorage.getItem(COOKIE_TYPE_MAP.token);
+          const csurfToken = localStorage.getItem(COOKIE_TYPE_MAP.csurfToken);
           return {
             headers: {
               ...headers,
@@ -83,7 +84,7 @@ export default (
             options: {
               reconnect: true,
               connectionParams: () => ({
-                authToken: localStorage.getItem('token')
+                authToken: localStorage.getItem(COOKIE_TYPE_MAP.token)
               })
             }
           }),

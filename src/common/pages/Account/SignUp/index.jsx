@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
+import { COOKIE_TYPE_MAP } from '../../../types';
 import { FormikTextInput } from '../../../components/TextInput';
 import * as Routes from '../../Routes';
 
@@ -52,7 +53,10 @@ const SignUp = ({ loggedIn }) => {
               onSubmit={(variables, actions) =>
                 signUp({ variables })
                   .then(result => {
-                    localStorage.setItem('token', result.data.logIn.token);
+                    localStorage.setItem(
+                      COOKIE_TYPE_MAP.token,
+                      result.data.logIn.token
+                    );
                     actions.resetForm();
                     client.resetStore();
 

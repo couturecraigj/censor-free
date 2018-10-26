@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import styled, { ThemeProvider, injectGlobal } from 'styled-components';
 import { Provider } from 'react-redux';
-import Post from './Post';
+import Post from './Post/New';
 import Header from './Header';
 import CookieBanner from './CookiesBanner';
 import ErrorBoundary from './ErrorBoundary';

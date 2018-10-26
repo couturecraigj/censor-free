@@ -1,8 +1,8 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
-import TextArea from '../TextArea';
-import TextInput from '../TextInput';
-import ScoreInput from '../ScoreInput';
+import TextArea from '../../TextArea';
+import TextInput from '../../TextInput';
+import ScoreInput from '../../ScoreInput';
 
 const Review = () => (
   <Formik>

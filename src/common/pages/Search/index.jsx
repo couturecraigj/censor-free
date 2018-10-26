@@ -1,15 +1,18 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
+import queryString from 'query-string';
 import { Query } from 'react-apollo';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-
+import { Formik, Form } from 'formik';
+import { FormikTextInput } from '../../components/TextInput';
 // TODO: Make it so this actually searches
 
 const SEARCH_SEARCHABLE = gql`
-  {
-    search {
+  query Search($search: String) {
+    search(text: $search) {
       id
       ... on User {
         userName
@@ -78,9 +81,6 @@ const SEARCH_SEARCHABLE = gql`
         title
         description
       }
-      ... on Comment {
-        description
-      }
     }
   }
 `;
@@ -101,35 +101,95 @@ const SearchableList = styled.div`
   padding: 0 400px;
 `;
 
-export default () => (
-  <div>
-    <Helmet>
-      <title>Searchable List</title>
-    </Helmet>
-    <Query query={SEARCH_SEARCHABLE}>
-      {({ loading, error, data }) => {
-        if (loading) return 'Loading...';
-        if (error) return `Error! ${error.message}`;
-
-        return (
-          <SearchableList name="dog">
-            {data.search.map(search => (
-              <Link key={search.id} to={`/search/${search.id}/${search.name}`}>
-                <Searchable key={search.id} value={search.name}>
-                  <div>{search.name || search.userName}</div>
-                  {(search.imgUri || search.img?.imgUri) && (
-                    <img
-                      src={search.imgUri || search.img.imgUri}
-                      alt={search.name}
-                    />
-                  )}
-                  <div>{search.description}</div>
+export default class extends React.Component {
+  static propTypes = {
+    history: PropTypes.shape({
+      push: PropTypes.func
+    }).isRequired,
+    location: PropTypes.shape({
+      search: PropTypes.string,
+      pathname: PropTypes.string
+    }).isRequired
+  };
+  static getDerivedStateFromProps(props, state) {
+    if (props.location.search) {
+      const { s: search } = queryString.parse(props.location.search);
+      if (search === state.search) return;
+      return { search };
+    }
+    return null;
+  }
+  state = {};
+  onSubmit = values => {
+    const { history, location } = this.props;
+    if (!values.search) return history.push(location.pathname);
+    const search = `?s=${values.search}`.trim();
+    if (search === location.search.trim()) return;
+    history.push(`${location.pathname}${search}`);
+    this.setState(values);
+  };
+  onChange = e => {
+    if (!e.target.value) {
+      this.onSubmit({});
+    }
+  };
+  render() {
+    return (
+      <div>
+        <Helmet>
+          <title>Searchable List</title>
+        </Helmet>
+        <Formik onSubmit={this.onSubmit}>
+          {() => (
+            <Form>
+              <SearchableList>
+                <Searchable>
+                  <FormikTextInput
+                    id="search"
+                    name="search"
+                    label="Search..."
+                    onChange={this.onChange}
+                  />
                 </Searchable>
-              </Link>
-            ))}
-          </SearchableList>
-        );
-      }}
-    </Query>
-  </div>
-);
+              </SearchableList>
+
+              <Query query={SEARCH_SEARCHABLE} variables={this.state}>
+                {({ loading, error, data }) => {
+                  if (loading)
+                    return (
+                      <SearchableList>
+                        <Searchable>Loading...</Searchable>
+                      </SearchableList>
+                    );
+                  if (error) return `Error! ${error.message}`;
+
+                  return (
+                    <SearchableList name="dog">
+                      {data.search.map(search => (
+                        <Link
+                          key={search.id}
+                          to={`/search/${search.id}/${search.name}`}
+                        >
+                          <Searchable key={search.id} value={search.name}>
+                            <div>{search.name || search.userName}</div>
+                            {(search.imgUri || search.img?.imgUri) && (
+                              <img
+                                src={search.imgUri || search.img.imgUri}
+                                alt={search.name}
+                              />
+                            )}
+                            <div>{search.description}</div>
+                          </Searchable>
+                        </Link>
+                      ))}
+                    </SearchableList>
+                  );
+                }}
+              </Query>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    );
+  }
+}

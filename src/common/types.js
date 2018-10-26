@@ -3,6 +3,13 @@ export const OBJECT_TYPE_MAP = {
   Company: 'Company'
 };
 
+export const COOKIE_TYPE_MAP = {
+  token: 'token',
+  cookieNotice: 'cookie-notice',
+  resetToken: 'reset-token',
+  csurfToken: 'csurf-token'
+};
+
 export const POST_TYPE_MAP = {
   Answer: 'Answer',
   Photo: 'Photo',

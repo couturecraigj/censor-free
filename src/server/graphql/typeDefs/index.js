@@ -34,6 +34,7 @@ const typeDefs = gql`
   interface Object {
     id: ID!
     name: String!
+    slug: String!
     description: String!
     created: AlterationStamp!
     modified: AlterationStamp
@@ -134,7 +135,7 @@ const typeDefs = gql`
     created: AlterationStamp!
     modified: AlterationStamp
   }
-  type Comment implements Node & CommentNode & Searchable {
+  type Comment implements Node & CommentNode {
     id: ID!
     highlights: [Highlight]!
     parent: PostNode!
@@ -196,6 +197,7 @@ const typeDefs = gql`
     id: ID!
     highlights: [Highlight]!
     name: String!
+    slug: String!
     description: String!
     img: Photo
     imgs: [Photo]
@@ -205,6 +207,7 @@ const typeDefs = gql`
   type Company implements Node & Object & Searchable {
     id: ID!
     highlights: [Highlight]!
+    slug: String!
     name: String!
     img: Photo
     imgs: [Photo]
@@ -320,7 +323,7 @@ const typeDefs = gql`
     me: Me
     video(id: ID!): Video
     videos: [Video]!
-    search: [Searchable]!
+    search(text: String): [Searchable]!
   }
 `;
 

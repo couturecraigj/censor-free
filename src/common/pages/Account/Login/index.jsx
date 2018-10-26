@@ -7,6 +7,7 @@ import { Mutation } from 'react-apollo';
 import { Formik, Form } from 'formik';
 import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
+import { COOKIE_TYPE_MAP } from '../../../types';
 import { FormikTextInput } from '../../../components/TextInput';
 import * as Routes from '../../Routes';
 
@@ -50,7 +51,10 @@ const Login = ({ loggedIn }) => {
                 .then(result => {
                   // actions.resetForm();
                   // console.log(data);
-                  localStorage.setItem('token', result.data.logIn.token);
+                  localStorage.setItem(
+                    COOKIE_TYPE_MAP.token,
+                    result.data.logIn.token
+                  );
                   client.resetStore();
 
                   // document.cookie = 'token=' + result.data.logIn.token;

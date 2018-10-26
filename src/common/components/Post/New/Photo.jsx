@@ -3,10 +3,10 @@ import { Mutation } from 'react-apollo';
 import { Formik, Form } from 'formik';
 // import { Form } from 'formik';
 import gql from 'graphql-tag';
-import { FormikFileUpload } from '../FileUpload';
-import { FormikTextArea } from '../TextArea';
-import { FormikTextInput } from '../TextInput';
-import FormDebugger from '../FormDebug';
+import { FormikFileUpload } from '../../FileUpload';
+import { FormikTextArea } from '../../TextArea';
+import { FormikTextInput } from '../../TextInput';
+import FormDebugger from '../../FormDebug';
 
 const initialValues = {
   title: '',

@@ -37,7 +37,19 @@ export const FormikTextInput = ({ name, ...props }) => (
   <div>
     <Field name={name} {...props}>
       {({ field }) => (
-        <TextInput {...props} {...field} value={field.value || ''} />
+        <TextInput
+          {...props}
+          {...field}
+          value={field.value || ''}
+          onChange={
+            props.onChange
+              ? e => {
+                  field.onChange(e);
+                  props.onChange(e);
+                }
+              : field.onChange
+          }
+        />
       )}
     </Field>
     <ErrorMessage name={name} />
