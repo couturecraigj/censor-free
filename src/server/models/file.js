@@ -3,6 +3,11 @@ import uuid from 'uuid/v4';
 import path from 'path';
 import fs from 'fs';
 import rimraf from 'rimraf';
+/**
+ * TODO: Integrate with AWS S3
+ * TODO: Use Localstack in development to be confident with s3
+ * ALT: Send data using Bucketeer in Heroku
+ */
 
 const sendFileFields = file => ({
   finished: file.finished,

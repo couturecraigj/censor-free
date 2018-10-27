@@ -7,6 +7,13 @@ import './postNode';
 const ENUM_DOESNT_MATCH = new Error('This is not a Kind that is allowed');
 const kinds = ['Product', 'Company'];
 
+/**
+ * TODO: Create a way to follow
+ * TODO: Create a way to own
+ * TODO: Create a way to want
+ * TODO: Create a way to sold
+ */
+
 const { Schema } = mongoose;
 
 const ObjectNode = new Schema(

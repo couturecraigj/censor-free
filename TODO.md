@@ -6,6 +6,16 @@
 | src/common/components/VideoPlayer/index.jsx | 6 | Add a Broken Video Image when a video does not load
 | src/common/components/VideoPlayer/index.jsx | 7 | Make it so editing is a different bundle using React-Loadable
 | src/common/pages/Home/index.jsx | 10 | Make it so main pages gives a good overview
+| src/server/models/file.js | 7 | Integrate with AWS S3
+| src/server/models/file.js | 8 | Use Localstack in development to be confident with s3
+| src/server/models/object.js | 11 | Create a way to follow
+| src/server/models/object.js | 12 | Create a way to own
+| src/server/models/object.js | 13 | Create a way to want
+| src/server/models/object.js | 14 | Create a way to sold
+| src/server/models/photo.js | 12 | Make sure that on every update modified User is adjusted
+| src/server/models/photo.js | 13 | Make sure that user is required when updating or creating each photo/postnode
+| src/server/models/postNode.js | 15 | Create a way to like
+| src/server/models/postNode.js | 16 | Create a way to dislike
 | src/server/models/user.js | 14 | Make it so that Users can be listed as Invites
 | src/server/models/user.js | 15 | Make it so users can unsubscribe from updates
 | src/server/models/user.js | 17 | Setup Google Authentication Method

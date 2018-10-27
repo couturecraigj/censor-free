@@ -147,7 +147,7 @@ const resolvers = {
   },
   UserNode: {
     __resolveType: (obj, args, context) => {
-      if (context?.user?.id && obj.id === context.user.id) return 'Me';
+      if (context?.user?.id && obj.id === context.req.user.id) return 'Me';
       return 'User';
     }
   },

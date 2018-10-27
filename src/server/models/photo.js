@@ -8,6 +8,11 @@ import PostNode from './postNode';
 import { makeDirectory } from '../utils/fileSystem';
 import Searchable from './searchable';
 
+/**
+ * TODO: Make sure that on every update modified User is adjusted
+ * TODO: Make sure that user is required when updating or creating each photo/postnode
+ */
+
 const PHOTO_DOES_NOT_EXIST = new Error('Photo has not been uploaded');
 
 const cwd = process.cwd();
@@ -34,9 +39,12 @@ const Photo = new Schema(
 Photo.virtual('objects').set(function(objects) {
   this._objects = objects;
 });
+Photo.virtual('user').set(function(user) {
+  this._user = user;
+});
 
 Photo.pre('save', async function() {
-  if (this._objects) PostNode.addObjects(this._id, this._objects);
+  if (this._objects) PostNode.addObjects(this._id, this._objects, this._user);
 });
 
 const getThumbnailDimensions = ({ width, height }, size) => {

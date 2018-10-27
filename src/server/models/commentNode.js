@@ -4,6 +4,11 @@ import './comment';
 
 const kinds = ['Answer', 'Comment'];
 
+/**
+ * TODO: Create a way to like
+ * TODO: Create a way to dislike
+ */
+
 const ENUM_DOESNT_MATCH = new Error('This is not a Kind that is allowed');
 
 const { Schema } = mongoose;

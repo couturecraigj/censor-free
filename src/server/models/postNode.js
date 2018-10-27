@@ -11,6 +11,11 @@ import './webPage';
 import orderedSet from './utils/orderedSet';
 import { FILTER_TYPE_ENUM, POST_TYPE_ENUM } from '../../common/types';
 
+/**
+ * TODO: Create a way to like
+ * TODO: Create a way to dislike
+ */
+
 const ENUM_DOESNT_MATCH = new Error('This is not a Kind that is allowed');
 
 const UNAUTHORIZED_USER = new Error('Unauthorized User');
@@ -86,6 +91,8 @@ const PostNode = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User'
     },
+    createdUser: { type: Schema.Types.ObjectId },
+    modifiedUser: { type: Schema.Types.ObjectId },
     flags: [Flag]
   },
   {
@@ -98,6 +105,8 @@ PostNode.statics.createPostNode = async function(args, obj = {}, context) {
   if (!POST_TYPE_ENUM.includes(obj.kind)) throw ENUM_DOESNT_MATCH;
   return mongoose.models.PostNode.create({
     user: context.req.user.id,
+    createdUser: context.req.user.id,
+    modifiedUser: context.req.user.id,
     node: obj.id,
     kind: obj.kind,
     published: args.published,
@@ -110,8 +119,11 @@ PostNode.statics.findPostNodes = async function(args) {
   return orderedSet(nodes);
 };
 
-PostNode.statics.addObjects = async function(id, objects) {
-  const node = await mongoose.models.PostNode.findOne({ node: id });
+PostNode.statics.addObjects = async function(id, objects, user) {
+  const node = await mongoose.models.PostNode.findOne({
+    node: id,
+    modifiedUser: user.id
+  });
   node.objects = objects;
   await node.save();
   return node;
@@ -121,6 +133,7 @@ PostNode.statics.publish = async function(args, context) {
   const postNode = mongoose.models.PostNode.findOne(args);
   if (postNode.user !== context.cookie.token) throw UNAUTHORIZED_USER;
   return mongoose.models.PostNode.findOneAndUpdate(args, {
+    modifiedUser: context.req.user.id,
     published: true,
     publishedDate: Date.now()
   });

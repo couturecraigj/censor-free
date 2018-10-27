@@ -29,8 +29,8 @@ Company.statics.createCompany = async function(args, context) {
     ...args,
     slug: slug(args.name),
     img: photo.id,
-    createdUser: context.user.id,
-    modifiedUser: context.user.id
+    createdUser: context.req.user.id,
+    modifiedUser: context.req.user.id
   });
   const searchable = await Searchable.createSearchable(args, company, context);
   const object = await ObjectNode.createObject(args, company, context);
