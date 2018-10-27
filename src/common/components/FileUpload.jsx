@@ -29,7 +29,9 @@ const Div = styled.div`
   width: 100%;
   /* height: auto; */
 `;
-
+/**
+ * TODO: Make it so that a user can give a URL where an image is located instead of loading the file manually
+ */
 class FileUpload extends React.Component {
   constructor(props) {
     super(props);

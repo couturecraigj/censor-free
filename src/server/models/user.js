@@ -10,7 +10,31 @@ const PASSWORDS_DO_NOT_MATCH = new Error('Passwords must match');
 const EMAILS_DO_NOT_MATCH = new Error('Emails must match');
 const NO_USER_BY_THAT_EMAIL = new Error('No user by that email');
 const NO_USER_WITH_THAT_TOKEN = new Error('No user with that token');
-
+/**
+ * TODO: Make it so that Users can be listed as Invites
+ * TODO: Make it so users can unsubscribe from updates
+ *
+ * TODO: Setup Google Authentication Method
+ * TODO: Setup Facebook Authentication Method
+ * TODO: Setup Twitter Authentication Method
+ * TODO: Setup Auth0 Authentication Method
+ * TODO: Setup GitHub Authentication Method
+ * TODO: Setup TOTP Authentication Method
+ * TODO: Setup LinkedIn Authentication Method
+ * TODO: Setup WeChat Authentication Method
+ * TODO: Setup Instagram Authentication Method
+ * TODO: Setup Slack Authentication Method
+ * TODO: Setup Reddit Authentication Method
+ * TODO: Setup Tumblr Authentication Method
+ * TODO: Setup WordPress Authentication Method
+ *
+ * TODO: Setup Pinterest Link
+ * TODO: Setup DeviantArt Link
+ * TODO: Setup YouTube Link
+ * TODO: Setup Etsy Link
+ * TODO: Setup Flickr Link
+ * TODO: Setup Picasa Link
+ */
 const { Schema } = mongoose;
 const User = new Schema(
   {
@@ -18,7 +42,7 @@ const User = new Schema(
     searchable: { type: Schema.Types.ObjectId },
     // UNIQUE
     userName: { type: String, unique: true },
-    email: { type: String, unique: true, lowercase: true },
+    email: { type: String, unique: true, lowercase: true, required: true },
 
     // SECURE
     hash: { type: String },
