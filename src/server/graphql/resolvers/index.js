@@ -6,11 +6,12 @@ import Review from '../../models/review';
 import Story from '../../models/story';
 import Thought from '../../models/thought';
 import Tip from '../../models/tip';
-import User from '../../models/user';
 import Video from '../../models/video';
 import WebPage from '../../models/webPage';
 import Product from '../../models/product';
-// import Company from '../../models/company';
+import Company from '../../models/company';
+import Group from '../../models/group';
+import User from '../../models/user';
 import PostNode from '../../models/postNode';
 import ObjectNode from '../../models/object';
 import Searchable from '../../models/searchable';
@@ -36,7 +37,13 @@ const resolvers = {
     feed: (root, args, context) => PostNode.findPostNodes(args, context),
     search: (root, args, context) => Searchable.findSearchable(args, context),
     products: () => Product.find(),
+    companies: () => Company.find(),
+    groups: () => Group.find(),
+    company: (root, args) => Company.findById(args.id),
+    users: () => User.find({ userType: { $ne: 'Viewer' } }),
+    user: (root, args) => User.findById(args.id),
     product: (root, args) => Product.findById(args.id),
+    group: (root, args) => Group.findById(args.id),
     objFeed: (root, args, context) =>
       ObjectNode.getFeed({ node: args.id }, context),
     me: (root, args, context) => {
@@ -78,6 +85,9 @@ const resolvers = {
     },
     addProduct: async (parent, args, context) =>
       Product.createProduct(args, context),
+    addCompany: async (parent, args, context) =>
+      Company.createCompany(args, context),
+    addGroup: async (parent, args, context) => Group.createGroup(args, context),
     addVideoFilters: async (parent, args, context) =>
       Video.addFilters(args, context),
     like: async (parents, args) => PostNode.like(args),
@@ -115,6 +125,12 @@ const resolvers = {
   },
   Product: {
     img: async product => Photo.findById(product.img)
+  },
+  Company: {
+    img: async company => Photo.findById(company.img)
+  },
+  Group: {
+    img: async company => Photo.findById(company.img)
   },
   Authentication: {
     token: (me, args, { res, req }) => {

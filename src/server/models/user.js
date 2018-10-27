@@ -128,6 +128,9 @@ const User = new Schema(
   }
 );
 
+User.index({ email: 'text' });
+User.index({ userName: 'text' });
+
 User.pre('validate', async function() {
   const that = this.toJSON();
   if (!that.emails.some(({ email }) => email === this.email)) {
@@ -264,7 +267,9 @@ User.statics.resetPassword = async function({
   return user;
 };
 
-User.statics.invite = function() {};
+User.statics.invite = function(args) {
+  return args;
+};
 User.statics.addComment = function() {};
 User.statics.addPhoto = function() {};
 User.statics.addQuestion = function() {};

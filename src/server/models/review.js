@@ -5,8 +5,8 @@ import Searchable from './searchable';
 const { Schema } = mongoose;
 const Review = new Schema(
   {
-    title: { type: String, index: true },
-    description: { type: String, index: true },
+    title: { type: String, index: 'text' },
+    description: { type: String, index: 'text' },
     postNode: { type: Schema.Types.ObjectId },
     searchable: { type: Schema.Types.ObjectId },
     score: { type: Number },

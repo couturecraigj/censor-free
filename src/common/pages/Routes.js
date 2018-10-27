@@ -79,6 +79,12 @@ export const GroupList = loadable(
     LoadingComponent
   }
 );
+export const GroupNew = loadable(
+  () => import(/* webpackChunkName: 'group-new' */ './Group/New'),
+  {
+    LoadingComponent
+  }
+);
 
 export const Home = loadable(
   () => import(/* webpackChunkName: 'home' */ './Home'),

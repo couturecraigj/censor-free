@@ -5,10 +5,10 @@ import Searchable from './searchable';
 const { Schema } = mongoose;
 const Question = new Schema(
   {
-    title: { type: String, index: true },
+    title: { type: String, index: 'text' },
     postNode: { type: Schema.Types.ObjectId },
     searchable: { type: Schema.Types.ObjectId },
-    description: { type: String, index: true },
+    description: { type: String, index: 'text' },
     products: [Schema.Types.ObjectId],
     kind: { type: String, default: 'Question' }
   },

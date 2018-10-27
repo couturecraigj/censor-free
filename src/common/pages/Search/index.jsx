@@ -8,7 +8,6 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Formik, Form } from 'formik';
 import { FormikTextInput } from '../../components/TextInput';
-// TODO: Make it so this actually searches
 
 const SEARCH_SEARCHABLE = gql`
   query Search($search: String) {

@@ -15,10 +15,10 @@ const cwd = process.cwd();
 const { Schema } = mongoose;
 const Photo = new Schema(
   {
-    title: { type: String, index: true },
+    title: { type: String, index: 'text' },
     postNode: { type: Schema.Types.ObjectId },
     searchable: { type: Schema.Types.ObjectId },
-    description: { type: String, index: true },
+    description: { type: String, index: 'text' },
     height: { type: Number },
     width: { type: Number },
     kind: { type: String, default: 'Photo' },

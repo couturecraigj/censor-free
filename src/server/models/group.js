@@ -1,13 +1,18 @@
 import mongoose from 'mongoose';
+import slug from 'slug';
+import Photo from './photo';
 import Searchable from './searchable';
 
 const { Schema } = mongoose;
 const Group = new Schema(
   {
-    name: { type: String, index: true },
+    title: { type: String, index: 'text' },
     searchable: { type: Schema.Types.ObjectId },
-    description: { type: String, index: true },
-    kind: { type: String, default: 'Group' }
+    description: { type: String, index: 'text' },
+    img: { type: Schema.Types.ObjectId },
+    kind: { type: String, default: 'Group' },
+    createdUser: { type: Schema.Types.ObjectId },
+    modifiedUser: { type: Schema.Types.ObjectId }
   },
   {
     timestamps: true
@@ -15,15 +20,23 @@ const Group = new Schema(
 );
 
 Group.statics.createGroup = async function(args, context) {
-  const group = await mongoose.models.Group.create(args);
+  if (!args.imgUri) throw new Error('Group image was not provided');
+  if (!args.title) throw new Error('Groups must have titles');
+  const photo = await Photo.createPhoto({ imgUri: args.imgUri }, context);
+  const group = await mongoose.models.Group.create({
+    ...args,
+    slug: slug(args.title),
+    img: photo.id,
+    createdUser: context.req.user.id,
+    modifiedUser: context.req.user.id
+  });
   const searchable = await Searchable.createSearchable(args, group, context);
   group.searchable = searchable.id;
-  await group.save();
+  await photo.save();
   return group;
 };
 
 Group.statics.delete = function() {};
-Group.statics.create = function() {};
 Group.statics.edit = function() {};
 Group.statics.rejectJoin = function() {};
 Group.statics.acceptJoin = function() {};

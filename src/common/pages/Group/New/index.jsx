@@ -11,11 +11,11 @@ import { FormikTextInput } from '../../../components/TextInput';
 import { FormikTextArea } from '../../../components/TextArea';
 import DebugField from '../../../components/FormDebug';
 
-const ADD_PRODUCT = gql`
-  mutation AddProduct($name: String!, $description: String, $imgUri: String!) {
-    addProduct(name: $name, description: $description, imgUri: $imgUri) {
+const ADD_GROUP = gql`
+  mutation AddGroup($title: String!, $description: String, $imgUri: String!) {
+    addGroup(title: $title, description: $description, imgUri: $imgUri) {
       id
-      name
+      title
       description
       img {
         imgUri
@@ -24,7 +24,7 @@ const ADD_PRODUCT = gql`
   }
 `;
 
-const Product = styled.div`
+const Group = styled.div`
   width: 100%;
   background: white;
   padding: 8px;
@@ -41,7 +41,7 @@ const Container = styled.div`
 `;
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required('You must give it a name'),
+  title: Yup.string().required('You must give it a name'),
   description: Yup.string().required(
     'You need to provide at least a little description'
   ),
@@ -50,23 +50,23 @@ const validationSchema = Yup.object().shape({
   )
 });
 
-const ProductNew = () => (
+const GroupNew = () => (
   <div>
     <Helmet>
-      <title>New Product</title>
+      <title>New Group</title>
     </Helmet>
-    <Mutation mutation={ADD_PRODUCT}>
-      {addProduct => {
+    <Mutation mutation={ADD_GROUP}>
+      {addGroup => {
         return (
           <Container>
-            <Product>
+            <Group>
               <Formik
                 validationSchema={validationSchema}
                 onSubmit={variables =>
-                  addProduct({ variables }).then(
+                  addGroup({ variables }).then(
                     ({ data }) =>
-                      (location.href = `/product/${data.addProduct.id}/${
-                        data.addProduct.name
+                      (location.href = `/group/${data.addGroup.id}/${
+                        data.addGroup.name
                       }`)
                   )
                 }
@@ -75,11 +75,11 @@ const ProductNew = () => (
                   <Form>
                     <FormikFileUpload
                       name="imgUri"
-                      label="Product Image Upload"
+                      label="Group Image Upload"
                       accept="image/*"
                       id="imgUri"
                     />
-                    <FormikTextInput name="name" id="name" label="Name" />
+                    <FormikTextInput name="title" id="title" label="Title" />
                     <FormikTextArea
                       name="description"
                       id="description"
@@ -90,7 +90,7 @@ const ProductNew = () => (
                   </Form>
                 )}
               </Formik>
-            </Product>
+            </Group>
           </Container>
         );
       }}
@@ -98,7 +98,7 @@ const ProductNew = () => (
   </div>
 );
 
-ProductNew.propTypes = {
+GroupNew.propTypes = {
   // match: PropTypes.shape({
   //   params: PropTypes.shape({
   //     id: PropTypes.string.isRequired
@@ -106,4 +106,4 @@ ProductNew.propTypes = {
   // }).isRequired
 };
 
-export default ProductNew;
+export default GroupNew;

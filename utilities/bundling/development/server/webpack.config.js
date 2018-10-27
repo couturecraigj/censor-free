@@ -1,6 +1,8 @@
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 const nodeExternals = require('webpack-node-externals');
 const TodoWebpackPlugin = require('todo-webpack-plugin');
+
 const webpack = require('webpack');
 const { CheckerPlugin } = require('awesome-typescript-loader');
 // const path = require('path');
@@ -83,6 +85,10 @@ module.exports = {
     }),
     new webpack.BannerPlugin({
       banner: "require('source-map-support').install();"
+    }),
+    new Dotenv({
+      path: './.env.development',
+      silent: true
     })
   ],
   target: 'node',

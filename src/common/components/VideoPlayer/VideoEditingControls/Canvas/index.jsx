@@ -5,11 +5,8 @@ import styled from 'styled-components';
 import { Stage, Layer } from 'react-konva';
 import ErrorBoundary from '../../../ErrorBoundary';
 import Transformer from './Transformer';
-
 import Rect from './Rect';
-/**
- * TODO: Make sure that when sending down props they are merged into state
- */
+
 const Div = styled.div`
   position: absolute;
   z-index: ${props => props.zIndex};

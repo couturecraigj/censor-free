@@ -66,3 +66,4 @@ typings/
 /webpack-assets.json
 
 ffmpeg2pass*
+.env*

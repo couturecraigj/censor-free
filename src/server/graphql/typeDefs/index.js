@@ -266,6 +266,8 @@ const typeDefs = gql`
     ): Authentication!
     logOut: String!
     addProduct(name:String!, imgUri:String!, description:String): Product
+    addCompany(name:String!, imgUri:String!, description:String): Company
+    addGroup(title:String!, imgUri:String!, description:String): Group
     like(id: ID!, type: POSTNODE_ENUM): PostNode
     dislike(id: ID!, type: POSTNODE_ENUM): PostNode
     forgotPassword(email: String!): String!

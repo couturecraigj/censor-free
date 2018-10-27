@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import slug from 'slug';
 import Photo from './photo';
 import ObjectNode from './object';
 import Searchable from './searchable';
@@ -6,8 +7,8 @@ import Searchable from './searchable';
 const { Schema } = mongoose;
 const Company = new Schema(
   {
-    name: { type: String, index: true },
-    description: { type: String, index: true },
+    name: { type: String, index: 'text' },
+    description: { type: String, index: 'text' },
     object: { type: Schema.Types.ObjectId },
     searchable: { type: Schema.Types.ObjectId },
     kind: { type: String, default: 'Company' },
@@ -26,13 +27,15 @@ Company.statics.createCompany = async function(args, context) {
   const photo = await Photo.createPhoto({ imgUri: args.imgUri }, context);
   const company = await mongoose.models.Company.create({
     ...args,
-    img: photo.id
+    slug: slug(args.name),
+    img: photo.id,
+    createdUser: context.user.id,
+    modifiedUser: context.user.id
   });
   const searchable = await Searchable.createSearchable(args, company, context);
   const object = await ObjectNode.createObject(args, company, context);
   company.searchable = searchable.id;
   photo.objects = [object.id];
-  // TODO: Create a way to add Objects to a Photo using a virtual
   await photo.save();
   return company;
 };

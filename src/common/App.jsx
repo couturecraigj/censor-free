@@ -52,6 +52,7 @@ const App = ({ store }) => {
           <Route path="/company/:id/:slug?" component={Routes.Company} />
           <Route path="/feed" component={Routes.Feed} />
           <Route path="/group/list" exact component={Routes.GroupList} />
+          <Route path="/group/new" exact component={Routes.GroupNew} />
           <Route path="/group/:id/:slug?" component={Routes.Group} />
           <Route path="/product/list" exact component={Routes.ProductList} />
           <Route path="/product/new" exact component={Routes.ProductNew} />

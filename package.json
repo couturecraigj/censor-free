@@ -62,6 +62,8 @@
         "cookie-parser": "^1.4.3",
         "csurf": "^1.9.0",
         "dataloader": "^1.4.0",
+        "dotenv": "^6.1.0",
+        "dotenv-webpack": "^1.5.7",
         "express": "^4.16.3",
         "express-resumablejs": "^0.3.3",
         "express-video": "^1.0.4",

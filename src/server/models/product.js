@@ -31,14 +31,15 @@ Product.statics.createProduct = async function(args, context) {
   const product = await mongoose.models.Product.create({
     ...args,
     slug: slug(args.name),
-    img: photo.id
+    img: photo.id,
+    createdUser: context.user.id,
+    modifiedUser: context.user.id
   });
   const searchable = await Searchable.createSearchable(args, product, context);
   const object = await ObjectNode.createObject(args, product, context);
   product.searchable = searchable.id;
   photo.products.push(product.id);
   photo.objects = [object.id];
-  // TODO: Create a way to add Objects to a Photo using a virtual
   await photo.save();
   return product;
 };

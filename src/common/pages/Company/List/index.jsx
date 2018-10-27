@@ -69,7 +69,9 @@ export default () => (
           );
         }}
       </Query>
-      <Link to="/company/new">New Company</Link>
+      <Company>
+        <Link to="/company/new">New Company</Link>
+      </Company>
     </CompanyList>
   </div>
 );

@@ -14,11 +14,11 @@ const Answer = new Schema(
     searchable: { type: Schema.Types.ObjectId },
     title: {
       type: String,
-      index: true
+      index: 'text'
     },
     description: {
       type: String,
-      index: true
+      index: 'text'
     },
     kind: { type: String, default: 'Answer' }
   },

@@ -36,10 +36,10 @@ const publicPath = path.join(cwd, 'public');
 const { Schema } = mongoose;
 const Video = new Schema(
   {
-    title: { type: String, index: true },
+    title: { type: String, index: 'text' },
     postNode: { type: Schema.Types.ObjectId },
     searchable: { type: Schema.Types.ObjectId },
-    description: { type: String, index: true },
+    description: { type: String, index: 'text' },
     imgs: [Schema.Types.ObjectId],
     img: Schema.Types.ObjectId,
     kind: { type: String, default: 'Video' },

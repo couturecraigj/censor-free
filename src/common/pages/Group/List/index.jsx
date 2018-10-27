@@ -40,33 +40,38 @@ export default () => (
     <Helmet>
       <title>Group List</title>
     </Helmet>
-    <Query query={GET_GROUP_LIST}>
-      {({ loading, error, data }) => {
-        if (loading) return 'Loading...';
-        if (error) return `Error! ${error.message}`;
+    <GroupList name="dog">
+      <Query query={GET_GROUP_LIST}>
+        {({ loading, error, data }) => {
+          if (loading) return 'Loading...';
+          if (error) return `Error! ${error.message}`;
 
-        return (
-          <GroupList name="dog">
-            {data.groups.map(group => (
-              <Link
-                key={group.id}
-                onMouseOver={GroupRoute.load}
-                onFocus={GroupRoute.load}
-                to={`/group/${group.id}/${group.title}`}
-              >
-                <Group key={group.id} value={group.title}>
-                  <div>{group.title}</div>
-                  {group.img &&
-                    group.img.imgUri && (
-                      <img src={group.img.imgUri} alt={group.title} />
-                    )}
-                  <div>{group.description}</div>
-                </Group>
-              </Link>
-            ))}
-          </GroupList>
-        );
-      }}
-    </Query>
+          return (
+            <React.Fragment>
+              {data.groups.map(group => (
+                <Link
+                  key={group.id}
+                  onMouseOver={GroupRoute.load}
+                  onFocus={GroupRoute.load}
+                  to={`/group/${group.id}/${group.title}`}
+                >
+                  <Group key={group.id} value={group.title}>
+                    <div>{group.title}</div>
+                    {group.img &&
+                      group.img.imgUri && (
+                        <img src={group.img.imgUri} alt={group.title} />
+                      )}
+                    <div>{group.description}</div>
+                  </Group>
+                </Link>
+              ))}
+            </React.Fragment>
+          );
+        }}
+      </Query>
+      <Group>
+        <Link to="/group/new">New Group</Link>
+      </Group>
+    </GroupList>
   </div>
 );

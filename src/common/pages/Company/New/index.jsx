@@ -5,9 +5,7 @@ import styled from 'styled-components';
 import { Mutation } from 'react-apollo';
 import { Helmet } from 'react-helmet';
 import { Formik, Form, Field } from 'formik';
-/**
- * TODO: Make it so that users can create Companies
- */
+
 const ADD_COMPANY = gql`
   mutation AddCompany($id: ID!) {
     addCompany(id: $id) {

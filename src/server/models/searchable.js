@@ -45,6 +45,9 @@ const Searchable = new Schema(
       type: String,
       enum: kinds
     },
+    text: {
+      type: String
+    },
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User'
