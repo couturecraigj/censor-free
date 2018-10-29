@@ -1,28 +1,19 @@
 import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
-const Job = new Schema(
-  {
-    job: { type: String },
-    args: { type: Schema.Types.Mixed },
-    model: { type: String },
-    finished: { type: Boolean, default: false },
-    processing: { type: Boolean, default: false }
-  },
-  {
-    timestamps: true
-  }
-);
 
-if (mongoose.models && mongoose.models.Job) delete mongoose.models.Job;
+/**
+ * TODO: Make it so that these messages can be sent down through GraphQL subscriptions
+ */
 
-mongoose.model('Job', Job);
 const Queue = new Schema(
   {
     job: { type: String },
-    args: { type: Schema.Types.Mixed },
+    args: [Schema.Types.Mixed],
     model: { type: String },
+    result: { type: String },
     finished: { type: Boolean, default: false },
+    error: { type: String },
     processing: { type: Boolean, default: false }
   },
   {

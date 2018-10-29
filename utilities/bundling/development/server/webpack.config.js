@@ -23,6 +23,7 @@ babelOptions.plugins.unshift('dynamic-import-node');
 module.exports = {
   devtool: 'inline-source-map',
   entry: {
+    // serverWorker: './src/server-worker/index.js',
     index: './src/server/dev.js'
   },
   mode: 'development',
@@ -58,7 +59,7 @@ module.exports = {
       },
       {
         test: /\.jsx?$/,
-        exclude: /(node_modules|bower_components)/,
+        exclude: /(node_modules|bower_components|server-worker)/,
         use: {
           loader: 'babel-loader',
           options: babelOptions

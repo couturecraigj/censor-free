@@ -1,7 +1,7 @@
 ### TODOs
 | Filename | line # | TODO
 |:------|:------:|:------
-| src/common/components/FileUpload.jsx | 33 | Make it so that a user can give a URL where an image is located instead of loading the file manually
+| src/common/components/FileUpload.jsx | 34 | Make it so that a user can give a URL where an image is located instead of loading the file manually
 | src/common/components/Post/New/Video/SecondStep.jsx | 11 | get the second step finished
 | src/common/components/VideoPlayer/index.jsx | 6 | Add a Broken Video Image when a video does not load
 | src/common/components/VideoPlayer/index.jsx | 7 | Make it so editing is a different bundle using React-Loadable
@@ -37,4 +37,4 @@
 | src/server/models/user.js | 34 | Setup Etsy Link
 | src/server/models/user.js | 35 | Setup Flickr Link
 | src/server/models/user.js | 36 | Setup Picasa Link
-| src/server/models/video.js | 56 | Make it so that all these jobs are queued
+| src/server/models/video.js | 57 | Make it so that all these jobs are queued

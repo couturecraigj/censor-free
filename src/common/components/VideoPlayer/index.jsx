@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import VideoControls from './VideoControls';
 import VideoEditingControls from './VideoEditingControls';
-import { Provider } from './Context';
+// import { Provider } from './Context';
 // TODO: Add a Broken Video Image when a video does not load
 // TODO: Make it so editing is a different bundle using React-Loadable
 
@@ -288,20 +288,20 @@ class VideoPlayer extends React.Component {
           </video>
           {editing &&
             !hide && (
-              <Provider value={props}>
-                <VideoEditingControls
-                  {...props}
-                  duration={duration}
-                  canvas={this.canvas}
-                  value={value}
-                  onChange={onEdit}
-                  changeTime={this.handleTimeChange}
-                  currentTime={currentTime}
-                  onSubmit={onSubmit}
-                  width={width}
-                  height={height}
-                />
-              </Provider>
+              // <Provider value={props}> */}
+              <VideoEditingControls
+                {...props}
+                duration={duration}
+                canvas={this.canvas}
+                value={value}
+                onChange={onEdit}
+                changeTime={this.handleTimeChange}
+                currentTime={currentTime}
+                onSubmit={onSubmit}
+                width={width}
+                height={height}
+              />
+              // </Provider> */}
             )}
 
           {controls &&
