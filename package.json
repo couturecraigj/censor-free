@@ -20,7 +20,7 @@
         "server:dev": "node-hot --config utilities/bundling/development/server/webpack.config.js",
         "server:test": "NODE_ENV=production node-hot --config utilities/bundling/development/server/webpack.config.js",
         "server:prod": "NODE_ENV=production webpack --config utilities/bundling/production/server/webpack.config.js",
-        "clean:install": "npm run clean && npm install",
+        "clean:install": "npm run clean && npm install && npm run lint:fix",
         "clean": "rm -rf package-lock.json node_modules dist",
         "sw:prod": "NODE_ENV=production gulp",
         "sw:dev": "gulp watch --silent",
