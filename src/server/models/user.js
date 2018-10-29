@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import mongoose from 'mongoose';
 import Person from './person';
 import Searchable from './searchable';
@@ -318,6 +319,24 @@ User.statics.resetPassword = async function({
   );
 
   return user;
+};
+
+User.statics.getGravatarPhoto = async function(user, size = 1200) {
+  const hash = crypto
+    .createHash('md5')
+    .update(user.email)
+    .digest('hex');
+
+  // TODO: Create a Default Image to be loaded
+  return {
+    id: hash,
+    height: size,
+    width: size,
+    imgUri: `https://www.gravatar.com/avatar/${hash}?s=${size}`,
+    title: 'Auto-Generated Image',
+    description: 'We take images from gravatar to have images in most cases'
+  };
+  // console.log(hash);
 };
 
 User.statics.invite = function(args) {

@@ -132,6 +132,15 @@ const resolvers = {
   Product: {
     img: async product => Photo.findById(product.img)
   },
+  User: {
+    img: async user => {
+      const photo = await Photo.findById(user.img);
+
+      if (photo) return photo;
+
+      return User.getGravatarPhoto(user);
+    }
+  },
   Company: {
     img: async company => Photo.findById(company.img)
   },

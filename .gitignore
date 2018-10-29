@@ -64,6 +64,8 @@ typings/
 /server/
 /dist/
 /webpack-assets.json
+/desktop-app
+/src/desktop-app
 
 ffmpeg2pass*
 .env*
