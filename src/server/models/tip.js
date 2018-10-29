@@ -21,9 +21,11 @@ Tip.statics.createTip = async function(args, context) {
   const tip = await mongoose.models.Tip.create(args);
   const postNode = await PostNode.createPostNode(args, tip, context);
   const searchable = await Searchable.createSearchable(args, tip, context);
+
   tip.postNode = postNode.id;
   tip.searchable = searchable.id;
   await tip.save();
+
   return tip;
 };
 Tip.statics.edit = function() {};

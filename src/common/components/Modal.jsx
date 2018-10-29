@@ -33,6 +33,7 @@ class Modal extends React.Component {
         server: false
       };
     }
+
     return null;
   }
 
@@ -91,10 +92,12 @@ class Modal extends React.Component {
         </div>
       </Div>
     );
+
     return ReactDOM.createPortal(Result, el);
   };
   render() {
     const { server, el } = this.state;
+
     return server || !el ? null : this.renderModal();
   }
 }

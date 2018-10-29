@@ -15,12 +15,14 @@ const execute = query => {
     //   log: console.log
     // }
   });
+
   return graphql(schema, query, undefined, {
     res: {
       cookie: jest.fn()
     }
   }).then(result => {
     if (result.errors) throw result.errors;
+
     return result;
   });
 };

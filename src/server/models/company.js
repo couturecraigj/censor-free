@@ -23,7 +23,9 @@ const Company = new Schema(
 
 Company.statics.createCompany = async function(args, context) {
   if (!args.imgUri) throw new Error('Company image was not provided');
+
   if (!args.name) throw new Error('Companies must have names');
+
   const photo = await Photo.createPhoto({ imgUri: args.imgUri }, context);
   const company = await mongoose.models.Company.create({
     ...args,
@@ -34,9 +36,11 @@ Company.statics.createCompany = async function(args, context) {
   });
   const searchable = await Searchable.createSearchable(args, company, context);
   const object = await ObjectNode.createObject(args, company, context);
+
   company.searchable = searchable.id;
   photo.objects = [object.id];
   await photo.save();
+
   return company;
 };
 Company.statics.edit = function() {};

@@ -21,9 +21,11 @@ Story.statics.createStory = async function(args, context) {
   const story = await mongoose.models.Story.create(args);
   const searchable = await Searchable.createSearchable(args, story, context);
   const postNode = await PostNode.createPostNode(args, story, context);
+
   story.postNode = postNode.id;
   story.searchable = searchable.id;
   await story.save();
+
   return story;
 };
 

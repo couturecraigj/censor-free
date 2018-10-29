@@ -29,6 +29,7 @@ const Div = styled.div`
   width: 100%;
   /* height: auto; */
 `;
+
 /**
  * TODO: Make it so that a user can give a URL where an image is located instead of loading the file manually
  */
@@ -45,6 +46,7 @@ class FileUpload extends React.Component {
   }
   processError = async res => {
     if (res.status > 299) throw new Error((await res.json()).message);
+
     return res.json();
   };
 
@@ -57,6 +59,7 @@ class FileUpload extends React.Component {
       chunkSize,
       size
     } = this.state;
+
     return new Promise(async (resolve, reject) => {
       try {
         const response = await fetch(
@@ -71,6 +74,7 @@ class FileUpload extends React.Component {
             })
           )}`
         ).then(this.processError);
+
         // console.log(response);
         this.setState(
           {
@@ -97,6 +101,7 @@ class FileUpload extends React.Component {
   sendFile = async blob => {
     const { uploadToken, chunkNumber } = this.state;
     const chunk = await this.provideBase64(blob);
+
     try {
       const response = await fetch(`/api/upload`, {
         method: 'POST',
@@ -120,6 +125,7 @@ class FileUpload extends React.Component {
     new Promise((resolve, reject) => {
       try {
         const img = new Image();
+
         img.onload = () => {
           this.setState(
             {
@@ -144,40 +150,51 @@ class FileUpload extends React.Component {
     });
   processFile = async file => {
     const { chunkSize } = this.state;
+
     try {
       await this.getToken();
       const { finished } = this.state;
+
       if (finished) {
         return this.sendValue();
       }
+
       for (let i = 0, limit = chunkSize; file.size > i; ) {
         const { chunkNumber, size } = this.state;
         const blob = file.slice(i, limit);
         const progress = (((chunkNumber + 1) * chunkSize) / size) * 100;
+
         await this.asyncSetState({
           chunkNumber: chunkNumber + 1,
           progress: progress > 100 ? 100 : progress
         });
+
         try {
           await this.sendFile(blob);
         } catch (error) {
           if (error.message.toLowerCase().includes('finished')) break;
         }
+
         i = i + chunkSize;
         limit = limit + chunkSize;
       }
+
       this.sendValue();
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error);
     }
+
     await this.cleanUpUpload();
   };
   // eslint-disable-next-line react/destructuring-assignment
   sendValue = value => {
     const { uploadToken } = this.state;
+
     if (typeof value === 'undefined') value = uploadToken;
+
     const { onChange, name } = this.props;
+
     if (onChange) {
       onChange({ target: { name, value } });
     }
@@ -186,6 +203,7 @@ class FileUpload extends React.Component {
     e.persist();
 
     const { onBlur } = this.props;
+
     if (onBlur) {
       onBlur({
         type: 'blur',
@@ -195,17 +213,25 @@ class FileUpload extends React.Component {
   };
   onChange = async e => {
     e.preventDefault();
+
     if (!e.target.files[0]) {
       const { onChange, name } = this.props;
+
       if (onChange) {
         onChange({ target: { name, value: '' } });
       }
+
       return;
     }
+
     const [file] = [...e.target.files];
+
     this.sendValue('');
+
     if (file.type.startsWith('image')) await this.getDimensionsOfImage(file);
+
     const chunkSize = 50000;
+
     await this.asyncSetState({
       mimeType: file.type,
       originalFileName: file.name,
@@ -221,6 +247,7 @@ class FileUpload extends React.Component {
   render() {
     const { label, id, name, accept, onBlur } = this.props;
     const { progress } = this.state;
+
     return (
       <Div loading={progress > 0 && progress < 100}>
         <Button htmlFor={id} onBlur={this.onBlur} tabIndex="0">

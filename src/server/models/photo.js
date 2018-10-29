@@ -49,11 +49,13 @@ Photo.pre('save', async function() {
 
 const getThumbnailDimensions = ({ width, height }, size) => {
   let multiplier = 0;
+
   if (width > height) {
     multiplier = size / width;
   } else {
     multiplier = size / height;
   }
+
   return {
     width: Math.floor(width * multiplier),
     height: Math.floor(height * multiplier)
@@ -68,9 +70,11 @@ Photo.statics.createPhoto = function(args, context) {
     const publicThumbnailPath = path.join(context.req.user.id, 'thumbnail');
 
     if (!fs.existsSync(file.finishedFileName)) throw PHOTO_DOES_NOT_EXIST;
+
     const extension = file.finishedFileName.match(/(?:\.([^.]+))?$/gm)[0];
     const readStream = fs.createReadStream(file.finishedFileName);
     const fileName = uuid() + extension;
+
     await makeDirectory(publicFullsizePath);
     await makeDirectory(publicThumbnailPath);
     const writeStream = fs.createWriteStream(
@@ -79,6 +83,7 @@ Photo.statics.createPhoto = function(args, context) {
     const thumbnailWriteStream = fs.createWriteStream(
       path.join(cwd, 'public', publicThumbnailPath, fileName)
     );
+
     writeStream.on('finish', async () => {
       fs.unlinkSync(file.finishedFileName);
       const photo = await mongoose.models.Photo.create({
@@ -92,6 +97,7 @@ Photo.statics.createPhoto = function(args, context) {
         photo,
         context
       );
+
       photo.postNode = postNode.id;
       photo.searchable = searchable.id;
       await photo.save();
@@ -109,6 +115,7 @@ Photo.statics.createPhoto = function(args, context) {
       thumbnailWidth,
       thumbnailHeight
     );
+
     readStream.pipe(writeStream);
     readStream.pipe(thumbnailTransformingStream).pipe(thumbnailWriteStream);
   });
@@ -123,19 +130,23 @@ Photo.statics.getImageOfCertainSize = function(
     const photoPath = path.join(cwd, 'public', photoFilePath);
 
     if (!fs.existsSync(photoPath)) throw new Error('No Photo at that Path');
+
     const transformer = sharp().resize(+width, +height);
 
     writableStream.once('error', reject);
     writableStream.on('close', resolve);
     const readStream = fs.createReadStream(photoPath);
+
     readStream.once('error', reject);
     readStream.on('close', () => {
       const publicPath = path.join(cwd, 'public', req.url);
       const file = photoFilePath.match(/.[^/]*/g)[1];
+
       makeDirectory(req.url.replace(file, ''));
       const publicReadStream = fs.createReadStream(photoPath);
       const publicStream = fs.createWriteStream(publicPath);
       const publicTransformer = sharp().resize(+width, +height);
+
       publicReadStream.once('error', reject);
       publicReadStream.on('close', resolve);
       publicReadStream.pipe(publicTransformer).pipe(publicStream);

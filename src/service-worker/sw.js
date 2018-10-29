@@ -6,6 +6,7 @@ const swPrefix = __SW_PREFIX__ || '';
 // const dynamicGetCacheName = 'dynamic-get-' + __webpack_hash__;
 // const dynamicPostCacheName = 'dynamic-post-' + __webpack_hash__;
 const cachedFiles = __ASSETS__ || [];
+
 // const graphqlPostDB = new DataBase('graphql', 'post');
 self.addEventListener('install', function(event) {
   // eslint-disable-next-line no-console
@@ -20,6 +21,7 @@ self.addEventListener('install', function(event) {
         });
       });
       const cache = await caches.open(staticCacheName);
+
       await cache.addAll(cachedFiles);
     })()
   );
@@ -29,6 +31,7 @@ self.addEventListener('install', function(event) {
 self.addEventListener('activated', async function(event) {
   // eslint-disable-next-line no-console
   console.log(swPrefix + 'Installing');
+
   try {
     await event.waitUntil(clients.claim());
   } catch (error) {
@@ -40,18 +43,22 @@ self.addEventListener('activated', async function(event) {
 self.addEventListener('fetch', function(event) {
   // eslint-disable-next-line no-console
   console.log(swPrefix + 'Fetching');
+
   if (
     event.request.url.includes('sockjs-node/info') ||
     ['POST', 'PUT', 'PATCH'].includes(event.request.method)
   ) {
     // eslint-disable-next-line no-console
     console.log('Skipping Checks');
+
     return;
   }
+
   event.respondWith(
     (async () => {
       try {
         const response = await caches.match(event.request.clone());
+
         caches.open(staticCacheName).then(async cache => {
           const finalResponse = await fetch(event.request.clone());
           const contentType = finalResponse.headers.get('Content-Type') || '';
@@ -64,9 +71,11 @@ self.addEventListener('fetch', function(event) {
           const json =
             event.request.url.endsWith('.json') ||
             contentType.match(/(json)/gi);
+
           if (html || json || js)
             return cache.put(event.request.clone(), finalResponse);
         });
+
         return response || fetch(event.request.clone());
       } catch (e) {
         // eslint-disable-next-line no-console

@@ -21,9 +21,11 @@ Question.statics.createQuestion = async function(args, context) {
   const question = await mongoose.models.Question.create(args);
   const postNode = await PostNode.createPostNode(args, question, context);
   const searchable = await Searchable.createSearchable(args, question, context);
+
   question.postNode = postNode.id;
   question.searchable = searchable.id;
   await question.save();
+
   return question;
 };
 Question.statics.edit = function() {};

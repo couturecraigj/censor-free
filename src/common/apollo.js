@@ -37,6 +37,7 @@ export default (
               `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
             )
           );
+
         if (networkError)
           // eslint-disable-next-line no-console
           console.log(`[Network error]: ${networkError.stack}`);
@@ -45,6 +46,7 @@ export default (
         setContext((_, { headers }) => {
           const token = localStorage.getItem(COOKIE_TYPE_MAP.token);
           const csurfToken = localStorage.getItem(COOKIE_TYPE_MAP.csurfToken);
+
           return {
             headers: {
               ...headers,
@@ -75,6 +77,7 @@ export default (
       : split(
           ({ query }) => {
             const { kind, operation } = getMainDefinition(query);
+
             return (
               kind === 'OperationDefinition' && operation === 'subscription'
             );
@@ -95,5 +98,6 @@ export default (
     cache: ssrMode ? cache : cache.restore(state),
     ssrForceFetchDelay: ssrMode ? 100 : undefined
   });
+
   return client;
 };

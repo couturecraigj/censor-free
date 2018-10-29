@@ -42,6 +42,7 @@ export default () => (
     <Query query={GET_USER_LIST}>
       {({ loading, error, data }) => {
         if (loading) return 'Loading...';
+
         if (error) return `Error! ${error.message}`;
 
         return (

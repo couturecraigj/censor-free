@@ -8,6 +8,7 @@ import mocks from './mocks';
 import resolvers from './resolvers';
 
 const __DEV__ = process.env.NODE_ENV === 'development';
+
 export default app => {
   const context = async ({ req, res, connection }) => {
     // authScope: getScope(req.headers.authorization)
@@ -15,6 +16,7 @@ export default app => {
       // check connection for metadata
       return {};
     }
+
     return {
       db: req.db,
       res,
@@ -22,6 +24,7 @@ export default app => {
     };
   };
   let schema;
+
   if (__DEV__) {
     schema = makeExecutableSchema({
       typeDefs,
@@ -47,6 +50,7 @@ export default app => {
     });
     addMockFunctionsToSchema({ mocks, schema, preserveResolvers: true });
   }
+
   const server = new ApolloServer({
     schema: __DEV__ ? schema : undefined,
     typeDefs: __DEV__ ? undefined : typeDefs,
@@ -99,8 +103,10 @@ export default app => {
 
     debug: true
   });
+
   server.applyMiddleware({ app });
 
   app.set('apollo', server);
+
   return server;
 };

@@ -64,23 +64,28 @@ const resolvers = {
       if (!me) {
         throw AUTHENTICATION_ERROR;
       }
+
       if (!(await me.passwordsMatch(args.password))) {
         throw AUTHENTICATION_ERROR;
       }
+
       return me;
     },
     signUp: async (parent, args) => {
       const me = new User(args);
+
       await me.save();
 
       return me;
     },
     forgotPassword: async (parent, args, { res }) => {
       const token = await User.getResetToken(args);
+
       res.cookie(COOKIE_TYPE_MAP.resetToken, token, {
         httpOnly: true,
         maxAge: 3000
       });
+
       return token;
     },
     addProduct: async (parent, args, context) =>
@@ -94,6 +99,7 @@ const resolvers = {
     dislike: async (parents, args) => PostNode.dislike(args),
     resetPassword: async (parent, args) => {
       const me = await User.resetPassword(args);
+
       return me;
     },
     addAnswer: async (parent, args, context) =>
@@ -136,6 +142,7 @@ const resolvers = {
     token: (me, args, { res, req }) => {
       // console.log(me);
       const token = User.getTokenFromUser(me, { req, res });
+
       return token;
     },
     me: me => me
@@ -148,6 +155,7 @@ const resolvers = {
   UserNode: {
     __resolveType: (obj, args, context) => {
       if (context?.user?.id && obj.id === context.req.user.id) return 'Me';
+
       return 'User';
     }
   },

@@ -45,6 +45,7 @@ class CookiesBanner extends React.Component {
   }
   getCookieStatus = () => {
     const notice = cookie('cookies-notice');
+
     if (!notice)
       this.setState({
         notify: true
@@ -58,7 +59,9 @@ class CookiesBanner extends React.Component {
   };
   render() {
     const { notify } = this.state;
+
     if (!notify) return null;
+
     return (
       <CookieNotice>
         <CookieText>

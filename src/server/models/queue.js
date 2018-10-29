@@ -13,6 +13,7 @@ const Job = new Schema(
     timestamps: true
   }
 );
+
 if (mongoose.models && mongoose.models.Job) delete mongoose.models.Job;
 
 mongoose.model('Job', Job);
@@ -31,14 +32,19 @@ const Queue = new Schema(
 
 Queue.statics.newJob = async function(args) {
   const { Queue } = mongoose.models;
+
   await Queue.create(args);
   Queue.processJobs();
 };
 Queue.statics.processJobs = async function() {
   const { Queue } = mongoose.models;
+
   if (await Queue.findOne({ processing: true })) return;
+
   const job = await Queue.findOne({ finished: false, processing: false });
+
   if (!job) return;
+
   job.processing = true;
   await Promise.all([
     job.save(),

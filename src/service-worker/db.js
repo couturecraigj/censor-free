@@ -19,21 +19,27 @@ class DataBase {
   set(key, val) {
     return this.dbPromise.then(db => {
       const tx = db.transaction(this.table, 'readwrite');
+
       tx.objectStore(this.table).put(val, key);
+
       return tx.complete;
     });
   }
   delete(key) {
     return this.dbPromise.then(db => {
       const tx = db.transaction(this.table, 'readwrite');
+
       tx.objectStore(this.table).delete(key);
+
       return tx.complete;
     });
   }
   clear() {
     return this.dbPromise.then(db => {
       const tx = db.transaction(this.table, 'readwrite');
+
       tx.objectStore(this.table).clear();
+
       return tx.complete;
     });
   }
@@ -47,6 +53,7 @@ class DataBase {
       // openKeyCursor isn't supported by Safari, so we fall back
       (store.iterateKeyCursor || store.iterateCursor).call(store, cursor => {
         if (!cursor) return;
+
         keys.push(cursor.key);
         cursor.continue();
       });

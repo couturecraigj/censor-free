@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 export default async (results, nodeField = 'node', search) => {
   if (!results) return [];
+
   // console.log(results);
   const postNodeMap = await Promise.all(
     Object.entries(
@@ -39,6 +40,7 @@ export default async (results, nodeField = 'node', search) => {
             console.error(e);
             // eslint-disable-next-line no-console
             console.log({ type: 'Model', [key]: value });
+
             return;
           })
       ]);
@@ -55,10 +57,14 @@ export default async (results, nodeField = 'node', search) => {
       const obj = postNodeMap[result.kind].find(
         v => v?.id === result[nodeField].toString()
       );
+
       if (obj) obj.kind = result.kind;
+
       return obj;
     })
     .filter(v => v);
+
   final.sort((a, b) => b.textMatchScore - a.textMatchScore);
+
   return final;
 };

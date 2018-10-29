@@ -4,12 +4,16 @@ import fs from 'fs';
 import { COOKIE_TYPE_MAP } from '../../common/types';
 
 const __INTROSPECTION__ = process.env.INTROSPECT_GRAPHQL_SCHEMA;
+
 export default async app => {
   if (__INTROSPECTION__) {
     const data = require('../../../fragmentTypes.json');
+
     app.set('fragments', data);
+
     return;
   }
+
   const [csurf, cookie] = await fetch(
     `http://localhost:${app.get('port')}/csurf`
   )
@@ -20,6 +24,7 @@ export default async app => {
     .catch(() => {
       return ['sdas', '_csurf=asdfdasf'];
     });
+
   await fetch(`http://localhost:${app.get('port')}/graphql`, {
     method: 'POST',
     headers: {
@@ -49,6 +54,7 @@ export default async app => {
     .then(result => {
       // here we're filtering out any type information unrelated to unions or interfaces
       if (!result.data) throw result;
+
       try {
         const filteredData = result.data.__schema.types.filter(
           type => type.possibleTypes !== null
@@ -56,10 +62,12 @@ export default async app => {
 
         result.data.__schema.types = filteredData;
         app.set('fragments', result.data);
+
         if (!fs.existsSync('./public')) {
           // Do something
           fs.mkdirSync('./public');
         }
+
         fs.writeFile(
           './public/fragmentTypes.json',
           JSON.stringify(result.data),

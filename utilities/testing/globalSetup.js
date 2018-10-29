@@ -4,6 +4,7 @@ const { execSync } = require('child_process');
 const compiler = require('./compilerAsync');
 
 const env = process.env.NODE_ENV;
+
 process.env.NODE_ENV = 'development';
 
 const config = require('../bundling/testing/webpack.config');

@@ -102,11 +102,14 @@ class Post extends React.Component {
     if (only) {
       const finalList = list.filter(({ name }) => only.includes(name));
       const state = { finalList };
+
       if (finalList <= 1 || only.length <= 1) {
         state.tabsVisible = false;
       }
+
       return state;
     }
+
     return null;
   }
   handleSubmit = values => {
@@ -123,9 +126,11 @@ class Post extends React.Component {
   };
   handleClose = e => {
     const { close } = this.props;
+
     if (this.outsideDiv.current.contains(e.target)) {
       return;
     }
+
     close(true);
   };
   selectedPost = component => {
@@ -134,6 +139,7 @@ class Post extends React.Component {
   render() {
     const { Component, tabsVisible, finalList } = this.state;
     const { close } = this.props;
+
     return (
       <Modal close={close} ref={this.modalDiv}>
         <div

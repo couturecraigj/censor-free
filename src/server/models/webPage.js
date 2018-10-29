@@ -23,9 +23,11 @@ WebPage.statics.createWebPage = async function(args, context) {
   const thought = await mongoose.models.WebPage.create(args);
   const postNode = await PostNode.createPostNode(args, thought, context);
   const searchable = await Searchable.createSearchable(args, thought, context);
+
   thought.postNode = postNode.id;
   thought.searchable = searchable.id;
   await thought.save();
+
   return thought;
 };
 WebPage.statics.edit = function() {};

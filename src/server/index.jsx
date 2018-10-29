@@ -28,12 +28,15 @@ app.use(function errorHandler(err, req, res, next) {
   if (res.headersSent) {
     return next(err);
   }
+
   res.status(500);
+
   if (__PROD__) {
     res.locals.errorMessage = 'Internal Server Error';
   } else {
     res.locals.errorMessage = `${err.message}\n${err.stack}`;
   }
+
   next();
 });
 app.get('*', async (req, res) => {
@@ -85,14 +88,17 @@ app.get('*', async (req, res) => {
     );
 
     const preloadedState = store.getState();
+
     return Promise.all([
       getLoadableState(spaApp),
       getDataFromTree(spaApp)
     ]).then(async ([loadableState]) => {
       const body = ReactDOMServer.renderToString(spaApp);
       const reactHelmet = Helmet.renderStatic();
+
       if (context.url) {
         if (context.status) return res.redirect(context.status, context.url);
+
         return res.redirect(context.url);
       }
 
@@ -126,6 +132,7 @@ app.get('*', async (req, res) => {
 
 if (module === require.main) {
   const httpServer = require('http').createServer(app);
+
   app.get('apollo').installSubscriptionHandlers(httpServer);
   httpServer.listen(app.get('port'), () => {
     // eslint-disable-next-line no-console

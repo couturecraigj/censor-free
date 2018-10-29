@@ -21,7 +21,9 @@ const Group = new Schema(
 
 Group.statics.createGroup = async function(args, context) {
   if (!args.imgUri) throw new Error('Group image was not provided');
+
   if (!args.title) throw new Error('Groups must have titles');
+
   const photo = await Photo.createPhoto({ imgUri: args.imgUri }, context);
   const group = await mongoose.models.Group.create({
     ...args,
@@ -31,8 +33,10 @@ Group.statics.createGroup = async function(args, context) {
     modifiedUser: context.req.user.id
   });
   const searchable = await Searchable.createSearchable(args, group, context);
+
   group.searchable = searchable.id;
   await photo.save();
+
   return group;
 };
 

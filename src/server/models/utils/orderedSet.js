@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 export default async (results, nodeField = 'node') => {
   if (!results) return [];
+
   const postNodeMap = await Promise.all(
     Object.entries(
       results.reduce((p, c) => {
@@ -26,9 +27,12 @@ export default async (results, nodeField = 'node') => {
       const obj = postNodeMap[result.kind].find(
         v => v?.id === result[nodeField].toString()
       );
+
       if (obj) obj.kind = result.kind;
+
       return obj;
     })
     .filter(v => v);
+
   return final;
 };

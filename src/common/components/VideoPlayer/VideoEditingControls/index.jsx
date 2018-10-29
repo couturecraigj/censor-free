@@ -54,6 +54,7 @@ class VideoEditingControls extends React.Component {
   };
   replacePoster = () => {
     const { changeTime } = this.props;
+
     setTimeout(() => {
       changeTime(0.1);
       setTimeout(() => {
@@ -78,15 +79,19 @@ class VideoEditingControls extends React.Component {
           field.onChange({
             target: { name: 'position.endTimeCode', value: e.target.value }
           });
+
         field.onChange(e);
       }
     };
+
     if (typeof field.onChange === 'function') return innerChange;
+
     return innerChange(field);
   };
 
   render() {
     const { currentTime, duration, width, height } = this.props;
+
     return (
       <Formik
         initialValues={initialValues}

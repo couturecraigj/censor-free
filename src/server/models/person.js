@@ -48,8 +48,10 @@ Person.statics.createFromUser = async function(data) {
       .filter(({ public: boo }) => boo)
       .map(({ email }) => email)
   };
+
   delete personObj._id;
   let person;
+
   if (data.person) {
     person = await mongoose.models.Person.findByIdAndUpdate(
       data.person,
@@ -59,6 +61,7 @@ Person.statics.createFromUser = async function(data) {
   } else {
     person = await mongoose.models.Person.create(personObj);
   }
+
   return person;
 };
 

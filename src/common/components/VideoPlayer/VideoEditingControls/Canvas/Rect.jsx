@@ -26,16 +26,20 @@ class Rect extends React.Component {
   onMouseEnter = e => {
     const { selected } = this.props;
     const stage = e.target.getStage();
+
     if (selected) return (stage.container().style.cursor = 'grab');
+
     stage.container().style.cursor = 'pointer';
   };
 
   onMouseLeave = e => {
     const stage = e.target.getStage();
+
     stage.container().style.cursor = 'crosshair';
   };
   render() {
     const { x, y, width, height, stroke, name } = this.props;
+
     return (
       <Rectangle
         x={x}

@@ -157,9 +157,11 @@ User.index({ userName: 'text' });
 
 User.pre('validate', async function() {
   const that = this.toJSON();
+
   if (!that.emails.some(({ email }) => email === this.email)) {
     this.emails.push({ email: this.email });
   }
+
   this.personObject = this.toJSON();
 });
 
@@ -178,36 +180,45 @@ User.virtual('confirmEmail').set(function(value) {
 User.statics.getUserIdFromToken = async function(token, { res }) {
   const maxAge = 3999999999;
   const date = Date.now() + maxAge;
+
   res.cookie(COOKIE_TYPE_MAP.token, token, {
     httpOnly: true,
     expires: new Date(date),
     maxAge
   });
+
   return token;
 };
 User.statics.getUserFromToken = async function(token, { res } = {}) {
   if (!token) return;
+
   if (res) {
     const maxAge = 3999999999;
     const date = Date.now() + maxAge;
+
     res.cookie(COOKIE_TYPE_MAP.token, token, {
       httpOnly: true,
       expires: new Date(date),
       maxAge
     });
   }
+
   const user = await mongoose.models.User.findById(token);
+
   if (!user) return;
+
   return user;
 };
 User.statics.getTokenFromUser = function(user, { res }) {
   const maxAge = 3999999999;
   const date = Date.now() + maxAge;
+
   res.cookie(COOKIE_TYPE_MAP.token, user.id, {
     httpOnly: true,
     expires: new Date(date),
     maxAge
   });
+
   return user.id;
 };
 
@@ -215,14 +226,18 @@ User.pre('save', async function() {
   if (this._password) {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(this._password, salt);
+
     this.set('hash', hash);
   }
 
   if (this.isNew) {
     if (this._password !== this._confirmPassword) throw PASSWORDS_DO_NOT_MATCH;
+
     if (this.email !== this._confirmEmail) throw EMAILS_DO_NOT_MATCH;
+
     if (await mongoose.models.User.findOne({ email: this.email }))
       throw EMAIL_ALREADY_EXISTS;
+
     if (
       await mongoose.models.User.findOne({
         userName: this.userName
@@ -230,11 +245,15 @@ User.pre('save', async function() {
     )
       throw USERNAME_ALREADY_EXISTS;
   }
+
   if (this.userType === 'Person') {
     const person = await Person.createFromUser(this.personObject);
+
     this.person = person.id;
   }
+
   const searchable = await Searchable.createSearchable({}, this);
+
   this.searchable = searchable.id;
 });
 
@@ -244,13 +263,17 @@ User.methods.passwordsMatch = async function(password) {
 
 User.statics.findMe = async function(args, context) {
   if (!context?.req?.user.id) return null;
+
   const user = await mongoose.models.User.findById(context.req.user.id);
+
   return user;
 };
 User.statics.getResetToken = async function({ email }) {
   const timeOut = Date.now() + 360000;
   const user = await mongoose.models.User.findOne({ email });
+
   if (!user) throw NO_USER_BY_THAT_EMAIL;
+
   const salt = await bcrypt.genSalt(15);
   const token = await bcrypt
     .hash(`${email}${timeOut}`, salt)
@@ -259,6 +282,7 @@ User.statics.getResetToken = async function({ email }) {
   user.reset.token = token;
   user.reset.timeOut = timeOut;
   await user.save();
+
   return token;
 };
 
@@ -268,13 +292,17 @@ User.statics.resetPassword = async function({
   confirmPassword
 }) {
   if (password !== confirmPassword) throw PASSWORDS_DO_NOT_MATCH;
+
   const timeOut = Date.now();
   const userTokenMatch = await mongoose.models.User.findOne({
     'reset.token': token,
     'reset.timeOut': { $gte: timeOut }
   });
+
   if (!userTokenMatch) throw NO_USER_WITH_THAT_TOKEN;
+
   const previousHash = userTokenMatch.hash;
+
   userTokenMatch.password = password;
   userTokenMatch.confirmPassword = confirmPassword;
   await userTokenMatch.save();
@@ -288,6 +316,7 @@ User.statics.resetPassword = async function({
       new: true
     }
   );
+
   return user;
 };
 

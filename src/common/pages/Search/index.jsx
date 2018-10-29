@@ -113,17 +113,24 @@ export default class extends React.Component {
   static getDerivedStateFromProps(props, state) {
     if (props.location.search) {
       const { s: search } = queryString.parse(props.location.search);
+
       if (search === state.search) return;
+
       return { search };
     }
+
     return null;
   }
   state = {};
   onSubmit = values => {
     const { history, location } = this.props;
+
     if (!values.search) return history.push(location.pathname);
+
     const search = `?s=${values.search}`.trim();
+
     if (search === location.search.trim()) return;
+
     history.push(`${location.pathname}${search}`);
     this.setState(values);
   };
@@ -160,6 +167,7 @@ export default class extends React.Component {
                         <Searchable>Loading...</Searchable>
                       </SearchableList>
                     );
+
                   if (error) return `Error! ${error.message}`;
 
                   return (

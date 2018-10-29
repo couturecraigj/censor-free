@@ -19,6 +19,7 @@ const loggedIn = (state = false, action) => {
 const initiateStore = (initialState = {}) => {
   const rootReducer = combineReducers({ errorMessage, loggedIn });
   const store = createStore(rootReducer, initialState);
+
   return store;
 };
 

@@ -18,6 +18,7 @@ class TransformerComponent extends React.Component {
     const { selectedShapeName } = this.props;
 
     const selectedNode = stage.findOne('.' + selectedShapeName);
+
     // do nothing if selected node is already attached
     if (selectedNode === this.transformer.node()) {
       return;
@@ -30,6 +31,7 @@ class TransformerComponent extends React.Component {
       // remove transformer
       this.transformer.detach();
     }
+
     this.transformer.getLayer().batchDraw();
   }
   render() {

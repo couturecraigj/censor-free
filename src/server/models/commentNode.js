@@ -35,6 +35,7 @@ const CommentNode = new Schema(
 CommentNode.statics.delete = function() {};
 CommentNode.statics.createCommentNode = async function(args, context, kind) {
   if (!kinds.includes(kind)) throw ENUM_DOESNT_MATCH;
+
   return mongoose.models.CommentNode.create({
     user: context.req.user.id,
     kind,
@@ -44,4 +45,5 @@ CommentNode.statics.createCommentNode = async function(args, context, kind) {
 
 if (mongoose.models && mongoose.models.CommentNode)
   delete mongoose.models.CommentNode;
+
 export default mongoose.model('CommentNode', CommentNode);

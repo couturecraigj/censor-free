@@ -49,6 +49,7 @@ export default app => {
             req.headers.host
           }`
         );
+
       req.user = {
         id: await (async () => {
           if (req.cookies.token) {
@@ -56,15 +57,19 @@ export default app => {
               req,
               res
             });
+
             return userId;
           }
+
           if (req.headers.authorization) {
             const userId = await User.getUserIdFromToken(
               req.headers.authorization.replace('Bearer ', ''),
               { req, res }
             );
+
             return userId;
           }
+
           return;
         })()
       };
@@ -81,10 +86,13 @@ export default app => {
   app.use('/files', (req, res, next) => {
     if (!req.user.id)
       return next(new Error('Cannot upload files when you are not logged in'));
+
     const dir = path.join(cwd, 'uploads', req.user.id);
+
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
     }
+
     return resumable({
       // eslint-disable-next-line no-console
       log: console.log,
@@ -94,6 +102,7 @@ export default app => {
   app.get('/photo/:width/:height*', async (req, res, next) => {
     // console.log(req.url);
     const { width, height } = req.params;
+
     try {
       await Photo.getImageOfCertainSize(
         req.params[0],
@@ -111,5 +120,6 @@ export default app => {
   });
 
   apolloSchemaSetup(app);
+
   return app;
 };

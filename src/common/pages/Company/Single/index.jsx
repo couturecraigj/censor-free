@@ -42,7 +42,9 @@ const SingleCompany = ({ match }) => (
     <Query query={GET_COMPANY} variables={match.params}>
       {({ loading, error, data }) => {
         if (loading) return 'Loading...';
+
         if (error) return `Error! ${error.message}`;
+
         const { company } = data;
 
         return (

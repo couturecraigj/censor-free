@@ -44,6 +44,7 @@ export default () => (
       <Query query={GET_GROUP_LIST}>
         {({ loading, error, data }) => {
           if (loading) return 'Loading...';
+
           if (error) return `Error! ${error.message}`;
 
           return (

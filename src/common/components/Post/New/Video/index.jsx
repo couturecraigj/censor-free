@@ -15,6 +15,7 @@ class Video extends React.Component {
     const { step } = this.state;
     const { toggleTabs } = this.props;
     const { max } = this;
+
     if (step < max + 1) {
       toggleTabs();
       this.setState({
@@ -25,6 +26,7 @@ class Video extends React.Component {
 
   previousStep = () => {
     const { step } = this.state;
+
     if (step > 1)
       this.setState({
         step: step - 1
@@ -33,6 +35,7 @@ class Video extends React.Component {
 
   render() {
     const { step, videoId, videoUri, uploadToken, converted } = this.state;
+
     if (step === 1)
       return (
         <FirstStep
@@ -51,6 +54,7 @@ class Video extends React.Component {
           }}
         />
       );
+
     if (!converted)
       return (
         <Conversion
@@ -62,6 +66,7 @@ class Video extends React.Component {
           }
         />
       );
+
     if (step === 2)
       return (
         <SecondStep
@@ -71,6 +76,7 @@ class Video extends React.Component {
           converted={converted}
           previousStep={() => {
             const { toggleTabs } = this.props;
+
             this.previousStep();
             toggleTabs(true);
           }}
@@ -86,6 +92,7 @@ class Video extends React.Component {
           }}
         />
       );
+
     return null;
   }
 }

@@ -14,6 +14,7 @@ class FileInput extends React.Component {
   constructor(props) {
     super(props);
     const reader = new FileReader();
+
     this.state = {
       ready: false,
       uploading: false,
@@ -31,11 +32,13 @@ class FileInput extends React.Component {
     this.input = React.createRef();
     reader.onload = e => {
       const { setFieldValue } = this.props;
+
       if (!this.isAcceptableFile(e.target.result)) {
         return this.setState({
           error: 'File Type Unaccepted'
         });
       }
+
       if (this.isImage()) {
         const img = new Image();
 
@@ -48,8 +51,10 @@ class FileInput extends React.Component {
         });
         img.src = reader.result;
       }
+
       if (this.isVideo()) {
         const { url } = this.state;
+
         this.video.current.src = url;
         this.video.current.play();
       }
@@ -59,11 +64,13 @@ class FileInput extends React.Component {
     this.resumable.assignBrowse(this.input.current);
     this.resumable.on('fileAdded', file => {
       const { setFieldValue, name } = this.props;
+
       if (!this.isAcceptableFile(file.file.type)) {
         return this.setState({
           error: 'File Type Unaccepted'
         });
       }
+
       // this.resumable.upload();
       setFieldValue(name, file.file.name);
       this.setState({
@@ -95,10 +102,12 @@ class FileInput extends React.Component {
 
   isImage = () => {
     const { accept } = this.props;
+
     return accept.toLowerCase().includes('image');
   };
   isVideo = () => {
     const { accept } = this.props;
+
     return accept.toLowerCase().includes('video');
   };
 
@@ -131,12 +140,15 @@ class FileInput extends React.Component {
             progress: Math.round(this.resumable.progress() * 1000) / 10
           });
         }
+
         const { interval } = this.state;
+
         clearInterval(interval);
         this.setState({
           interval: undefined,
           uploading: false
         });
+
         if (this.resumable.progress() === 1) {
           this.setState({
             progress: 100,
@@ -150,19 +162,23 @@ class FileInput extends React.Component {
   getUploadInner = () => {
     const { label } = this.props;
     const { ready, src, finished } = this.state;
+
     if (finished) return null;
+
     if (ready && src && this.isImage())
       return (
         <div>
           <Img src={src} alt="upload_image" />
         </div>
       );
+
     return `Choose the ${label} you want to upload`;
   };
 
   getDisplay = () => {
     const { id } = this.props;
     const { src, finished } = this.state;
+
     if (finished && this.isImage())
       return (
         <div className="upload-button" id={id}>
@@ -199,6 +215,7 @@ class FileInput extends React.Component {
       uploading
       // file
     } = this.state;
+
     return (
       <React.Fragment>
         <label htmlFor={id}>{label}</label>

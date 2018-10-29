@@ -16,11 +16,13 @@ import initiateStore from '../common/redux';
 // }
 
 const rootElement = document.getElementById('root');
+
 // import component from "../common";
 async function render(ele) {
   await loadComponents();
   import(/* webpackChunkName: 'register-sw' */ './registerServiceWorker');
   const store = initiateStore(window.__STORE_STATE);
+
   localStorage.setItem(COOKIE_TYPE_MAP.csurfToken, window.__CSURF__);
   const client = apollo(fetch, {
     uri: window.QUERY_URL,
@@ -28,6 +30,7 @@ async function render(ele) {
     state: window.__APOLLO_STATE__,
     fragments: window.__FRAGMENTS__
   });
+
   // component();
   ReactDOM.hydrate(
     <BrowserRouter>

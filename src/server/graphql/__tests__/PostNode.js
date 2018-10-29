@@ -21,8 +21,10 @@ const execute = query => {
       // req
     })
   });
+
   return graphql(schema, query).then(result => {
     if (result.errors) throw result.errors;
+
     return result;
   });
 };

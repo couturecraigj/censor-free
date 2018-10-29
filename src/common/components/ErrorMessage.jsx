@@ -31,6 +31,7 @@ const ErrorMessage = ({ errorMessage, height, width }) => (
     </div>
   </div>
 );
+
 ErrorMessage.propTypes = {
   errorMessage: PropTypes.string.isRequired,
   height: PropTypes.number,

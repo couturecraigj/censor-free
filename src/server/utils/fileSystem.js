@@ -10,7 +10,9 @@ const makeDirectory = route =>
 
       directoryArray.reduce((p, c) => {
         const dir = path.join(p, c);
+
         if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+
         return dir;
       }, publicDir);
       resolve(directoryArray);

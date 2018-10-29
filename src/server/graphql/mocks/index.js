@@ -29,6 +29,7 @@ const mocks = {
       .split('. ')
       .filter((v, i) => i < 4)
       .join('. ');
+
     return {
       id: 'Thought' + casual.uuid,
       title: casual.title,
@@ -52,11 +53,13 @@ const mocks = {
   Mutation: () => ({
     signUp: (parent, args, { res }) => {
       const token = casual.uuid;
+
       res.cookie('token', token, {
         httpOnly: true,
         maxAge: 9999999,
         sameSite: true
       });
+
       return {
         user: mocks.User(token),
         token
@@ -80,6 +83,7 @@ const mocks = {
     // },
     logOut: (parent, args, { res }) => {
       res.clearCookie('token');
+
       return 'Successfully Logged Out!';
     },
     resetPassword: (parent, args, { res, req }) => {
@@ -91,12 +95,15 @@ const mocks = {
         console.log('resetTokens match');
         res.clearCookie('reset-token');
       }
+
       const token = casual.uuid;
+
       res.cookie('token', token, {
         httpOnly: true,
         maxAge: 9999999,
         sameSite: true
       });
+
       return {
         user: mocks.User(token),
         token
@@ -104,11 +111,13 @@ const mocks = {
     },
     forgotPassword: (parent, args, { res }) => {
       const token = casual.uuid;
+
       res.cookie('reset-token', token, {
         httpOnly: true,
         maxAge: 9999999,
         sameSite: true
       });
+
       return casual.uuid;
     },
     addVideo: (parent, args) => {
@@ -268,6 +277,7 @@ const mocks = {
   Photo: (obj = {}) => {
     const height = casual.integer(30, 500);
     const width = casual.integer(30, 500);
+
     return {
       __typename: 'Photo',
       kind: 'Photo',

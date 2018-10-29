@@ -61,6 +61,7 @@ const Searchable = new Schema(
 Searchable.statics.delete = function() {};
 Searchable.statics.createSearchable = function(args, obj, context) {
   if (!kinds.includes(obj.kind)) throw ENUM_DOESNT_MATCH;
+
   return mongoose.models.Searchable.create({
     node: obj.id,
     kind: obj.kind,
@@ -69,9 +70,11 @@ Searchable.statics.createSearchable = function(args, obj, context) {
 };
 Searchable.statics.findSearchable = async function(args = {}) {
   const list = await mongoose.models.Searchable.find();
+
   return orderedSearch(list, undefined, args.text || '');
 };
 
 if (mongoose.models && mongoose.models.Searchable)
   delete mongoose.models.Searchable;
+
 export default mongoose.model('Searchable', Searchable);

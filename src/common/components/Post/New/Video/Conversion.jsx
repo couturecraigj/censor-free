@@ -19,6 +19,7 @@ const VideoConversion = ({ uploadToken, nextStep }) => {
     >
       {({ data, loading }) => {
         if (loading) return <div>Loading...</div>;
+
         if (data.fileConversionProgress !== 100)
           return (
             <div>
@@ -26,8 +27,10 @@ const VideoConversion = ({ uploadToken, nextStep }) => {
               <Progress progress={data.fileConversionProgress} />
             </div>
           );
+
         if (data.fileConversionProgress === 100) {
           nextStep();
+
           return (
             <div>
               <h2>File Is Being Converted to Web Formats</h2>
@@ -35,6 +38,7 @@ const VideoConversion = ({ uploadToken, nextStep }) => {
             </div>
           );
         }
+
         return (
           <div>
             <h2>UNMET NEED</h2>

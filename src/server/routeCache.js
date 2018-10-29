@@ -12,6 +12,7 @@ const routeCache = {
     if (__PROD__ && routeCache.cache.has(req.path)) {
       return res.send(routeCache.cache.get(req.path));
     }
+
     next();
   },
   async preCache(string, route) {
@@ -21,10 +22,13 @@ const routeCache = {
         null,
         [process.cwd(), 'public'].concat(directoryArray, 'index.html')
       );
+
       try {
         directoryArray.reduce((p, c) => {
           const dir = path.join(p, c);
+
           if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+
           return dir;
         }, path.join(process.cwd(), 'public'));
         fs.writeFileSync(file, string);
@@ -33,7 +37,9 @@ const routeCache = {
         console.error(err);
       }
     }
+
     return string;
   }
 };
+
 export default routeCache;

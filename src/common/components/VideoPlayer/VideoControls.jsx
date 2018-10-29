@@ -71,6 +71,7 @@ class VideoControls extends React.Component {
   }
   removeListeners = () => {
     const { video } = this.props;
+
     try {
       video.current.removeEventListener('playing', this.playing);
       video.current.removeEventListener('play', this.playing);
@@ -96,6 +97,7 @@ class VideoControls extends React.Component {
   };
   addListeners = () => {
     const { video } = this.props;
+
     try {
       video.current.addEventListener('playing', this.playing);
       video.current.addEventListener('play', this.playing);
@@ -119,25 +121,36 @@ class VideoControls extends React.Component {
   };
   getDurationText = () => {
     const { video } = this.props;
+
     if (!video.current) return '';
+
     const { duration } = video.current;
     const seconds = Math.floor(duration % 60);
+
     if (Number.isNaN(seconds)) return '0:00';
+
     const minutes = Math.floor((duration - seconds) % 360);
+
     return `${minutes}:${('' + seconds).padStart(2, '0')}`;
   };
   getCurrentTimeText = () => {
     const { video } = this.props;
+
     if (!video.current) return '';
+
     const { currentTime } = video.current;
     const seconds = Math.floor(currentTime % 60);
+
     if (Number.isNaN(seconds)) return '0:00';
+
     const minutes = Math.floor((currentTime - seconds) % 360);
+
     return `${minutes}:${('' + seconds).padStart(2, '0')}`;
   };
   getCurrentTime = () => {
     const { video } = this.props;
     const { duration } = this.state;
+
     this.setState({
       currentTime: video.current.currentTime,
       duration: Number.isNaN(video.current.duration)
@@ -150,11 +163,13 @@ class VideoControls extends React.Component {
     const { volume } = this.state;
     const { volume: videoVolume } = e.target;
     let { storedVolume } = this.state;
+
     if (videoVolume === 1 && volume === 0) {
       this.setState({
         volume: videoVolume,
         storedVolume
       });
+
       return (e.target.volume = storedVolume);
     }
 
@@ -192,12 +207,14 @@ class VideoControls extends React.Component {
       document.fullScreen ||
       document.mozFullScreen ||
       document.webkitIsFullScreen;
+
     this.setState({
       fullscreen
     });
   };
   toggleOptions = () => {
     const { optionsVisible } = this.state;
+
     this.setState({
       optionsVisible: !optionsVisible
     });
@@ -208,6 +225,7 @@ class VideoControls extends React.Component {
     } = this.props;
     const { fullscreen: fScreen } = this.state;
     let fullscreen = fScreen;
+
     if (!fScreen) {
       if (video.requestFullscreen) {
         video.requestFullscreen();
@@ -234,6 +252,7 @@ class VideoControls extends React.Component {
         fullscreen = false;
       }
     }
+
     this.setState({ fullscreen });
   };
   paused = () => {
@@ -245,6 +264,7 @@ class VideoControls extends React.Component {
   volumeChange = e => {
     const { video } = this.props;
     const volume = +e.target.value;
+
     video.current.volume = volume;
     this.setState({
       volume
@@ -259,6 +279,7 @@ class VideoControls extends React.Component {
   togglePlay = () => {
     const { playing: isPlaying } = this.state;
     let playing = false;
+
     if (isPlaying) {
       this.pause();
       playing = false;
@@ -266,20 +287,24 @@ class VideoControls extends React.Component {
       this.play();
       playing = true;
     }
+
     this.setState({
       playing
     });
   };
   play = () => {
     const { video } = this.props;
+
     video.current.play();
   };
   pause = () => {
     const { video } = this.props;
+
     video.current.pause();
   };
   seek = e => {
     const { video } = this.props;
+
     video.current.currentTime = e.target.value;
   };
   render() {
@@ -290,6 +315,7 @@ class VideoControls extends React.Component {
       playing,
       optionsVisible
     } = this.state;
+
     return (
       <div
         style={{

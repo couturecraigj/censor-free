@@ -103,6 +103,7 @@ const PostNode = new Schema(
 PostNode.statics.delete = function() {};
 PostNode.statics.createPostNode = async function(args, obj = {}, context) {
   if (!POST_TYPE_ENUM.includes(obj.kind)) throw ENUM_DOESNT_MATCH;
+
   return mongoose.models.PostNode.create({
     user: context.req.user.id,
     createdUser: context.req.user.id,
@@ -116,6 +117,7 @@ PostNode.statics.createPostNode = async function(args, obj = {}, context) {
 
 PostNode.statics.findPostNodes = async function(args) {
   const nodes = await mongoose.models.PostNode.find(args);
+
   return orderedSet(nodes);
 };
 
@@ -124,14 +126,18 @@ PostNode.statics.addObjects = async function(id, objects, user) {
     node: id,
     modifiedUser: user.id
   });
+
   node.objects = objects;
   await node.save();
+
   return node;
 };
 
 PostNode.statics.publish = async function(args, context) {
   const postNode = mongoose.models.PostNode.findOne(args);
+
   if (postNode.user !== context.cookie.token) throw UNAUTHORIZED_USER;
+
   return mongoose.models.PostNode.findOneAndUpdate(args, {
     modifiedUser: context.req.user.id,
     published: true,
@@ -157,4 +163,5 @@ PostNode.statics.flagLanguage = function() {};
 
 if (mongoose.models && mongoose.models.PostNode)
   delete mongoose.models.PostNode;
+
 export default mongoose.model('PostNode', PostNode);

@@ -17,6 +17,7 @@ class ErrorBoundary extends React.PureComponent {
       console.error(error);
       // eslint-disable-next-line no-console
       console.info(info);
+
       // logErrorToMyService(error, info);
       if (__DEV__)
         this.setState({
@@ -32,12 +33,14 @@ class ErrorBoundary extends React.PureComponent {
   render() {
     const { hasError, errorMessage } = this.state;
     const { children, height, width } = this.props;
+
     if (hasError) {
       // You can render any custom fallback UI
       return (
         <ErrorMessage {...{ height, width }} errorMessage={errorMessage} />
       );
     }
+
     return children;
   }
 }

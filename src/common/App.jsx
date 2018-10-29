@@ -15,6 +15,7 @@ const Div = styled.div`
 
 const App = ({ store }) => {
   const { errorMessage, loggedIn: signedIn } = store.getState();
+
   return (
     <Div>
       <Helmet titleTemplate={`${siteName} - %s`}>

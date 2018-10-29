@@ -31,15 +31,18 @@ Answer.statics.createAnswer = async function(args, context) {
   const answer = await mongoose.models.Answer.create(args);
   const postNode = await PostNode.createPostNode(args, answer, context);
   const searchable = await Searchable.createSearchable(args, answer, context);
+
   answer.postNode = postNode.id;
   answer.searchable = searchable.id;
   await answer.save();
+
   return answer;
 };
 
 Answer.statics.createLoader = () => {
   mongoose.models.Answer.loader = new DataLoader(keys => {
     const Model = mongoose.models.Answer;
+
     return Promise.all(keys.map(key => Model.findById(key)));
   });
 };
@@ -50,4 +53,5 @@ Answer.statics.edit = function() {};
 Answer.statics.addComment = function() {};
 
 if (mongoose.models && mongoose.models.Answer) delete mongoose.models.Answer;
+
 export default mongoose.model('Answer', Answer);

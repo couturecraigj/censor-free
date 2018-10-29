@@ -28,8 +28,10 @@ app.post('/upload', bodyParser.json(), async (req, res, next) => {
   } catch (e) {
     if (e.message === File.FILE_ALREADY_FINISHED.message)
       return res.status(400).json({ message: e.message });
+
     if (e.message === File.CHUNK_ALREADY_LOADED.message)
       return res.status(400).json({ message: e.message });
+
     next(e);
   }
 });

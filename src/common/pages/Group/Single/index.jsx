@@ -42,7 +42,9 @@ const SingleGroup = ({ match: { params } }) => (
     <Query query={GET_GROUP} variables={params}>
       {({ loading, error, data }) => {
         if (loading) return 'Loading...';
+
         if (error) return `Error! ${error.message}`;
+
         const { group } = data;
 
         return (

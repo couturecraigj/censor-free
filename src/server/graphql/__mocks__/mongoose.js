@@ -2,6 +2,7 @@ const events = require('events');
 
 const mongoose = {};
 let overriddenMockedResults = {};
+
 module.exports = mongoose;
 
 // Mongoose-mock emits events
@@ -15,6 +16,7 @@ mongoose.__proto__ = events.EventEmitter.prototype; // jshint ignore:line
 const mockResult = (name, defaults) => {
   return function(...args) {
     const filteredArgs = args.filter(v => v);
+
     try {
       return overriddenMockedResults[this._name][name][
         JSON.stringify(filteredArgs.length ? filteredArgs : [{}])
@@ -37,6 +39,7 @@ const Schema = function() {
         self[key] = properties[key];
       });
     }
+
     this.save = jest.fn();
     this.increment = jest.fn();
     this.remove = jest.fn();
@@ -66,6 +69,7 @@ const Schema = function() {
         }
       };
     }
+
     return new SetterGetter();
   };
 
@@ -93,12 +97,14 @@ const Schema = function() {
   Model.where = jest.fn();
 
   mongoose.emit('model', Model);
+
   return Model;
 };
 
 // compiled models are stored in models_
 // and may be retrieved by name.
 const models_ = {};
+
 function createModelFromSchema(name, Type) {
   if (Type) {
     if (Type.statics) {
@@ -106,14 +112,17 @@ function createModelFromSchema(name, Type) {
         Type[key] = Type.statics[key];
       });
     }
+
     if (Type.methods) {
       Object.keys(Type.methods).forEach(function(key) {
         Type.prototype[key] = Type.methods[key];
       });
     }
+
     Type._name = name;
     models_[name] = Type;
   }
+
   return models_[name];
 }
 
@@ -128,6 +137,7 @@ mongoose.mockResult = (modelName, method, result, ...args) => {
       }
     };
   }
+
   if (!overriddenMockedResults[modelName][method]) {
     overriddenMockedResults[modelName][method] = {
       [JSON.stringify(args.length ? args : [{}])]: result

@@ -26,6 +26,7 @@ class Canvas extends React.Component {
     const value = {
       ...props?.value
     };
+
     return {
       ...state,
       value
@@ -44,6 +45,7 @@ class Canvas extends React.Component {
 
   onMouseDown = e => {
     const { currentTime } = this.props;
+
     this.setState({
       mouseDown: true
     });
@@ -53,6 +55,7 @@ class Canvas extends React.Component {
       y: e.layerY,
       x: e.layerX
     };
+
     this.setState({
       startPosition: marker
     });
@@ -65,14 +68,19 @@ class Canvas extends React.Component {
         startPosition: undefined
       });
     }
+
     const clickedOnTransformer =
       e.currentTarget.getParent()?.className === 'Transformer';
+
     if (clickedOnTransformer) {
       return;
     }
+
     const { currentTime, value: originalValue } = this.props;
     const { mouseDown } = this.state;
+
     if (!mouseDown) return;
+
     this.setState({
       mouseDown: false
     });
@@ -84,6 +92,7 @@ class Canvas extends React.Component {
       y: e.evt.layerY,
       x: e.evt.layerX
     };
+
     if (startPosition.y !== marker.y && startPosition.x !== marker.x) {
       const value = {
         ...originalValue,
@@ -91,22 +100,27 @@ class Canvas extends React.Component {
         ...marker,
         y: (() => {
           if (marker.y > startPosition.y) return startPosition.y;
+
           return marker.y;
         })(),
         x: (() => {
           if (marker.x > startPosition.x) return startPosition.x;
+
           return marker.x;
         })(),
         width: (() => {
           if (marker.x === startPosition.x) return 0;
+
           return Math.abs(marker.x - startPosition.x);
         })(),
         height: (() => {
           if (marker.y === startPosition.y) return 0;
+
           return Math.abs(marker.y - startPosition.y);
         })(),
         name: shortid.generate()
       };
+
       this.onChange(value);
       this.setState({
         value,
@@ -116,6 +130,7 @@ class Canvas extends React.Component {
   };
   onChange = value => {
     const { name, onChange } = this.props;
+
     onChange({ target: { name, value } });
   };
   handleStageMouseDown = e => {
@@ -125,12 +140,14 @@ class Canvas extends React.Component {
       this.setState({
         selectedShapeName: ''
       });
+
       return this.onMouseDown(e.evt);
     }
 
     // clicked on transformer - do nothing
     const clickedOnTransformer =
       e.target.getParent().className === 'Transformer';
+
     if (clickedOnTransformer) {
       return;
     }
@@ -138,6 +155,7 @@ class Canvas extends React.Component {
     // find clicked rect by its name
     const name = e.target.name();
     const rect = value.name === name;
+
     if (rect) {
       this.setState({
         selectedShapeName: name
@@ -162,6 +180,7 @@ class Canvas extends React.Component {
     const { width, height } = this.props;
     const { selectedShapeName, zIndex, value } = this.state;
     const valueExists = value?.height && value?.width && value?.y && value?.x;
+
     return (
       <Div zIndex={zIndex}>
         <ErrorBoundary width={width} height={height}>

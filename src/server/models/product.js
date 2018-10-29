@@ -26,7 +26,9 @@ Product.index({ name: 'text', description: 'text' });
 
 Product.statics.createProduct = async function(args, context) {
   if (!args.imgUri) throw new Error('Product image was not provided');
+
   if (!args.name) throw new Error('Products must have names');
+
   const photo = await Photo.createPhoto(
     { imgUri: args.imgUri, title: args.name, description: args.description },
     context
@@ -39,11 +41,13 @@ Product.statics.createProduct = async function(args, context) {
   });
   const searchable = await Searchable.createSearchable(args, product, context);
   const object = await ObjectNode.createObject(args, product, context);
+
   product.searchable = searchable.id;
   photo.products.push(product.id);
   photo.user = context.req.user;
   photo.objects = [object.id];
   await photo.save();
+
   return product;
 };
 Product.statics.edit = function() {};

@@ -22,12 +22,14 @@ class VideoPlayer extends React.Component {
         window.muxjs = muxjs.default;
         this.shaka = result.default;
         this.shaka.polyfill.installAll();
+
         if (this.shaka.Player.isBrowserSupported()) {
           this.initPlayer();
         } else {
           // eslint-disable-next-line no-console
           console.error('Browser not Supported');
         }
+
         return;
       }
     );
@@ -40,11 +42,13 @@ class VideoPlayer extends React.Component {
 
   handleTimeChange = value => {
     const { current: video } = this.video;
+
     video.currentTime = value;
   };
   addListeners = () => {};
   removeListeners = () => {
     const { current: video } = this.video;
+
     video.removeEventListener('timeupdate', this.onTimeUpdate);
   };
   onTimeUpdate = e => {
@@ -55,6 +59,7 @@ class VideoPlayer extends React.Component {
   initPlayer = async (appended = '/playlist.m3u8') => {
     const { src } = this.props;
     const manifestUri = src + appended;
+
     // eslint-disable-next-line no-console
     if (!this.player) {
       const player = new this.shaka.Player(this.video.current);
@@ -75,8 +80,10 @@ class VideoPlayer extends React.Component {
         const tracks = this.player.getVariantTracks();
         const [track] = tracks.sort((a, b) => {
           if (b.width === a.width) return b.bandwidth - a.bandwidth;
+
           return b.width - a.width;
         });
+
         // console.log(track);
         this.player.configure('abr.enabled', false);
         this.player.selectVariantTrack(track);
@@ -92,6 +99,7 @@ class VideoPlayer extends React.Component {
   setDimensions = () => {
     const { offsetHeight: height, offsetWidth: width, duration } =
       this.video.current || {};
+
     if (!duration) {
       setTimeout(this.setDimensions, 200);
       this.setState({
@@ -113,11 +121,14 @@ class VideoPlayer extends React.Component {
   };
   onKeyDown = e => {
     const { editing } = this.props;
+
     if (editing) return;
+
     if (document.activeElement === this.video.current) {
       e.preventDefault();
       e.persist();
       const video = this.video.current;
+
       // console.log(e.keyCode);
       switch (e.keyCode) {
         case 32:
@@ -125,27 +136,36 @@ class VideoPlayer extends React.Component {
         case 39:
           return (() => {
             let currentTime = video.currentTime + 1;
+
             if (currentTime <= video.duration)
               return (video.currentTime = currentTime);
+
             currentTime = video.duration;
+
             return (video.currentTime = currentTime - 0.0001);
           })();
         case 37:
           return (() => {
             const currentTime = video.currentTime - 1;
+
             if (currentTime >= 0) return (video.currentTime = currentTime);
+
             return (video.currentTime = 0);
           })();
         case 38:
           return (() => {
             const volume = video.volume + 0.1;
+
             if (volume <= 1) return (video.volume = volume);
+
             return (video.volume = 1);
           })();
         case 40:
           return (() => {
             const volume = video.volume - 0.1;
+
             if (volume >= 0) return (video.volume = volume);
+
             return (video.volume = 0);
           })();
         case 35:
@@ -170,6 +190,7 @@ class VideoPlayer extends React.Component {
               document.fullScreen ||
               document.mozFullScreen ||
               document.webkitIsFullScreen;
+
             if (!fullscreen) {
               if (video.requestFullscreen) {
                 video.requestFullscreen();
@@ -198,8 +219,10 @@ class VideoPlayer extends React.Component {
   onError = async error => {
     if ([3016].includes(error.code)) {
       await this.player.unload();
+
       return this.initPlayer('.mpd');
     }
+
     // Log the error.
     // eslint-disable-next-line no-console
     console.error('Error code', error.code, 'object', error);

@@ -41,7 +41,9 @@ const SingleUser = ({ match }) => (
     <Query query={GET_USER} variables={match.params}>
       {({ loading, error, data }) => {
         if (loading) return 'Loading...';
+
         if (error) return `Error! ${error.message}`;
+
         const { user } = data;
 
         return (

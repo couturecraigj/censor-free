@@ -82,6 +82,7 @@ const Brick = styled.div`
   width: 100%;
   height: auto;
 `;
+
 export default () => (
   <div>
     <Helmet>
@@ -90,6 +91,7 @@ export default () => (
     <Query query={GET_SAVED}>
       {({ loading, error, data }) => {
         if (loading) return 'Loading...';
+
         if (error) return `Error! ${error.message}`;
 
         return (

@@ -22,9 +22,11 @@ Review.statics.createReview = async function(args, context) {
   const review = await mongoose.models.Review.create(args);
   const searchable = await Searchable.createSearchable(args, review, context);
   const postNode = await PostNode.createPostNode(args, review, context);
+
   review.postNode = postNode.id;
   review.searchable = searchable.id;
   await review.save();
+
   return review;
 };
 Review.statics.edit = function() {};

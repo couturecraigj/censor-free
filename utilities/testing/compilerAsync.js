@@ -7,6 +7,7 @@ const webpack = require('webpack');
 module.exports = (config, memory = true) => {
   const compiler = webpack(config);
   let fs;
+
   if (memory) {
     fs = new MemoryFs();
     compiler.outputFileSystem = fs;

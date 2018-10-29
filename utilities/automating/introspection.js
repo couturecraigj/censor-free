@@ -10,6 +10,7 @@ const server = new ApolloServer({
   typeDefs,
   resolvers
 });
+
 server.listen().then(({ url, server }) => {
   fetch(url, {
     method: 'POST',
@@ -36,6 +37,7 @@ server.listen().then(({ url, server }) => {
     .then(result => {
       // here we're filtering out any type information unrelated to unions or interfaces
       if (!result.data) throw result;
+
       try {
         const filteredData = result.data.__schema.types.filter(
           type => type.possibleTypes !== null
@@ -53,6 +55,7 @@ server.listen().then(({ url, server }) => {
                 // Do something
                 fs.mkdirSync('./public');
               }
+
               fs.writeFile(
                 './public/fragmentTypes.json',
                 JSON.stringify(result.data),

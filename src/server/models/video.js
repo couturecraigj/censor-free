@@ -27,6 +27,7 @@ const parseHoursMinutesSecondsHundredSecondsToSeconds = str => {
   const [hours, minutes, seconds, hundredsSeconds] = str.match(/(\d{2,4})/g);
   const totalSeconds =
     +hundredsSeconds / 100 + +seconds + +minutes * 60 + +hours * 360;
+
   return totalSeconds;
 };
 
@@ -59,11 +60,13 @@ Video.statics.addFilters = async function() {};
 Video.statics.createVideo = async function(args, context, extras) {
   const file = await File.findOne({ uploadToken: args.uploadToken });
   let filePath;
+
   if (file.converted && !fs.existsSync(file.convertedPath)) {
     file.converted = false;
     file.convertedPath = undefined;
     await file.save();
   }
+
   if (!file.converted) {
     filePath = await mongoose.models.Video.createDifferentVideoFormats(
       file,
@@ -75,17 +78,21 @@ Video.statics.createVideo = async function(args, context, extras) {
     filePath = file.convertedPath;
     extras.progress(100);
   }
+
   let video = await mongoose.models.Video.findOne({
     uri: filePath.replace(publicPath, '')
   });
+
   if (!video) {
     video = await mongoose.models.Video.create({
       uri: filePath.replace(publicPath, ''),
       ...args
     });
   }
+
   const postNode = await PostNode.createPostNode(args, video, context);
   const searchable = await Searchable.createSearchable(args, video, context);
+
   video.postNode = postNode.id;
   video.searchable = searchable.id;
   await video.save();
@@ -107,9 +114,11 @@ Video.statics.createDifferentVideoFormats = async function(
   let duration = 0;
   const progress = key => {
     progressMap[key] = 0;
+
     return (totalProgress, totalDuration, currentTime) => {
       // console.log(progressMap, duration);
       duration = totalDuration;
+
       if (currentTime <= duration && 0 <= currentTime) {
         progressMap[key] = currentTime;
         reportProgress(
@@ -128,9 +137,11 @@ Video.statics.createDifferentVideoFormats = async function(
   const dashProgress = progress('dash');
   // const webmProgress = progress('webm');
   const targetDir = path.join(publicPath, context.req.user.id, fileDirectory);
+
   await makeDirectory(targetDir);
 
   const targetName = path.join(targetDir, fileName);
+
   Promise.all([
     Video.createHLSStream(file, targetName, {
       progress: hlsProgress,
@@ -158,10 +169,12 @@ Video.statics.createDifferentVideoFormats = async function(
     reportProgress(100);
     file.converted = true;
     file.convertedPath = targetName;
+
     return file.save();
   });
   // eslint-disable-next-line no-console
   console.log('File Conversion Started');
+
   return targetName;
 };
 
@@ -290,6 +303,7 @@ Video.statics.createDashStream = function(
       reject(error);
     });
     let totalSeconds = 0;
+
     ffm.on('codecData', ({ duration }) => {
       totalSeconds = parseHoursMinutesSecondsHundredSecondsToSeconds(duration);
       progress(0, totalSeconds, 0);
@@ -298,6 +312,7 @@ Video.statics.createDashStream = function(
       const currentTime = parseHoursMinutesSecondsHundredSecondsToSeconds(
         timemark
       );
+
       progress((currentTime / totalSeconds) * 100, totalSeconds, currentTime);
     });
     ffm
@@ -462,6 +477,7 @@ Video.statics.createHLSStream = function(
         '-hls_segment_filename',
         path.join(targetName, '1080p_%03d.ts')
       ]);
+
     // ffm.on('start', function(commandLine) {
     //   console.log(commandLine);
     // });
@@ -474,6 +490,7 @@ Video.statics.createHLSStream = function(
       reject(error);
     });
     let totalSeconds = 0;
+
     ffm.on('codecData', ({ duration }) => {
       totalSeconds = parseHoursMinutesSecondsHundredSecondsToSeconds(duration);
       progress(0, totalSeconds, 0);
@@ -482,6 +499,7 @@ Video.statics.createHLSStream = function(
       const currentTime = parseHoursMinutesSecondsHundredSecondsToSeconds(
         timemark
       );
+
       progress((currentTime / totalSeconds) * 100, totalSeconds, currentTime);
     });
     ffm.run();
@@ -512,18 +530,22 @@ Video.statics.__convertFile = function(
 ) {
   return new Promise((resolve, reject) => {
     const ffm = ffmpeg(originalVideoPath).outputOptions(args);
+
     ffm.on('start', function() {
       // console.log('Spawned Ffmpeg with command: ' + commandLine);
     });
+
     if (width && height) {
       ffm.addOutputOptions('-vf', scale(width, height));
     }
+
     ffm.output(targetFile);
     ffm.on('error', function(error, stdout, stderr) {
       error.stderr = stderr;
       reject(error);
     });
     let totalSeconds = 0;
+
     ffm.on('codecData', ({ duration }) => {
       totalSeconds = parseHoursMinutesSecondsHundredSecondsToSeconds(duration);
       progress(0, totalSeconds, 0);
@@ -532,6 +554,7 @@ Video.statics.__convertFile = function(
       const currentTime = parseHoursMinutesSecondsHundredSecondsToSeconds(
         timemark
       );
+
       progress((currentTime / totalSeconds) * 100, totalSeconds, currentTime);
     });
     ffm.on('end', function() {
@@ -579,6 +602,7 @@ Video.statics.createMP4Format = async function(
 Video.statics.getScreenshots = function(file, targetName) {
   return new Promise((resolve, reject) => {
     let files = [];
+
     ffmpeg(file.finishedFileName)
       .on('filenames', function(filenames) {
         files = filenames;

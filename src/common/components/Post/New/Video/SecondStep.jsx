@@ -24,6 +24,7 @@ const renderForm = ({ deepRef, values, changeTime, ...props }) => {
           <Field name="position.endTimeCode">
             {({ field }) => {
               if (field.value !== undefined) changeTime(+field.value);
+
               return (
                 <input
                   {...field}
@@ -66,6 +67,7 @@ class VideoSecondStep extends React.Component {
   addPositionToList = position => {
     // const { handleSubmit } = this.props;
     const { positions } = this.state;
+
     this.setState({
       positions: [...positions, position]
     });

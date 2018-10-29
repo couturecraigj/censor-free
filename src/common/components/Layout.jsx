@@ -47,6 +47,7 @@ class Layout extends React.Component {
   }
   componentDidUpdate(prevProps) {
     const { location } = this.props;
+
     if (location !== prevProps.location) {
       window.scrollTo(0, 0);
     }
@@ -58,6 +59,7 @@ class Layout extends React.Component {
       });
     } else {
       const { post } = this.state;
+
       this.setState({
         post: !post
       });
