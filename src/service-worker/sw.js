@@ -11,8 +11,6 @@ const cachedFiles = __ASSETS__ || [];
 self.addEventListener('install', function(event) {
   // eslint-disable-next-line no-console
   console.log(swPrefix + 'Installing');
-  // eslint-disable-next-line no-console
-  console.log(swPrefix + 'Installing');
   event.waitUntil(
     (async () => {
       await caches.keys().then(cacheNames => {

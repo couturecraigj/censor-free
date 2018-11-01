@@ -36,4 +36,21 @@ app.post('/upload', bodyParser.json(), async (req, res, next) => {
   }
 });
 
+app.get('/graphql-urls', (req, res) => {
+  // console.log(req.app.get('apollo'));
+  const graphqlPath = req.app.get('apollo').clientOnly
+    ? req.app.get('apollo').graphqlUrl
+    : `${req.headers['x-forwarded-proto'] || req.protocol}://${
+        req.headers.host
+      }${req.app.get('apollo').graphqlPath}`;
+  const subscriptionsPath = req.app.get('apollo').clientOnly
+    ? req.app.get('apollo').graphqlSubscriptionURL
+    : `ws://${req.headers.host}${req.app.get('apollo').subscriptionsPath}`;
+
+  res.json({
+    graphqlPath,
+    subscriptionsPath
+  });
+});
+
 export default app;

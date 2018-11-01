@@ -77,7 +77,7 @@ const LogoutButton = connect()(({ dispatch, client }) => (
   <Logout
     onClick={e => {
       e.preventDefault();
-      localStorage.removeItem(COOKIE_TYPE_MAP.token);
+      window.localForage.removeItem(COOKIE_TYPE_MAP.token);
 
       return (
         client

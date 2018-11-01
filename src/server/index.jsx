@@ -17,6 +17,7 @@ import config from './config';
 import setup from './setup';
 
 const __INTERNAL_QUERY_URI__ = process.env.INTERNAL_QUERY_URI;
+const CLIENT_SERVER = process.env.CLIENT_SERVER;
 
 const __PROD__ = process.env.NODE_ENV === 'production';
 
@@ -29,7 +30,9 @@ app.use(function errorHandler(err, req, res, next) {
     return next(err);
   }
 
-  res.status(500);
+  // eslint-disable-next-line no-console
+  console.error(err);
+  res.locals.status = 500;
 
   if (__PROD__) {
     res.locals.errorMessage = 'Internal Server Error';
@@ -40,14 +43,18 @@ app.use(function errorHandler(err, req, res, next) {
   next();
 });
 app.get('*', async (req, res) => {
+  if (CLIENT_SERVER === 'server') return res.send('NOTHING HERE');
+
   try {
     // const csurfToken = req.csrfToken();
-    const queryUrl = `${req.headers['x-forwarded-proto'] || req.protocol}://${
-      req.headers.host
-    }${app.get('apollo').graphqlPath}`;
-    const subscriptionUrl = `ws://${req.headers.host}${
-      app.get('apollo').subscriptionsPath
-    }`;
+    const queryUrl = app.get('apollo').clientOnly
+      ? app.get('apollo').graphqlUrl
+      : `${req.headers['x-forwarded-proto'] || req.protocol}://${
+          req.headers.host
+        }${app.get('apollo').graphqlPath}`;
+    const subscriptionUrl = app.get('apollo').clientOnly
+      ? app.get('apollo').graphqlSubscriptionURL
+      : `ws://${req.headers.host}${app.get('apollo').subscriptionsPath}`;
     // const loggedIn = req.user.id !== undefined;
     const loggedIn = false;
     const store = initiateStore({

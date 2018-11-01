@@ -53,7 +53,7 @@ const SignUp = ({ loggedIn }) => {
               onSubmit={(variables, actions) =>
                 signUp({ variables })
                   .then(result => {
-                    localStorage.setItem(
+                    window.localForage.setItem(
                       COOKIE_TYPE_MAP.token,
                       result.data.logIn.token
                     );

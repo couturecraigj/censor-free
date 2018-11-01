@@ -37,5 +37,5 @@
 | src/server/models/user.js | 35 | Setup Etsy Link
 | src/server/models/user.js | 36 | Setup Flickr Link
 | src/server/models/user.js | 37 | Setup Picasa Link
-| src/server/models/user.js | 330 | Create a Default Image to be loaded
+| src/server/models/user.js | 336 | Create a Default Image to be loaded
 | src/server/models/video.js | 57 | Make it so that all these jobs are queued

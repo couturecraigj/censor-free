@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import chalk from 'chalk';
 import setup from './setup';
+import ws from './ws';
 import app from '.';
 
 const completedFunction = (port, graphQlPath) => `
@@ -18,12 +19,16 @@ ${chalk.grey.bgBlackBright('****************')} ${chalk.green(
   `Website ==>`
 )} ${chalk.blue.underline.bold(
   `http://localhost:${port}/`
-)}        ${chalk.grey.bgBlackBright('*****************')}
+)}        ${chalk.grey.bgBlackBright('*****************')}${
+  graphQlPath
+    ? `
 ${chalk.grey.bgBlackBright('****************')} ${chalk.green(
-  `GraphQL ==>`
-)} ${chalk.blue.underline.bold(
-  `http://localhost:${port}${graphQlPath}`
-)} ${chalk.grey.bgBlackBright('*****************')}
+        `GraphQL ==>`
+      )} ${chalk.blue.underline.bold(
+        `http://localhost:${port}${graphQlPath}`
+      )} ${chalk.grey.bgBlackBright('*****************')}`
+    : ''
+}
 ${chalk.grey.bgBlackBright(
   '****************************************************************************'
 )}
@@ -33,6 +38,7 @@ function startServer() {
   return new Promise((resolve, reject) => {
     const httpServer = app.listen(app.get('port'));
 
+    ws(httpServer, app);
     httpServer.once('error', err => {
       if (err.code === 'EADDRINUSE') {
         return reject(err);
@@ -43,10 +49,17 @@ function startServer() {
 
     httpServer.once('listening', () => resolve(httpServer));
   }).then(httpServer => {
-    app.get('apollo').installSubscriptionHandlers(httpServer);
+    if (!app.get('apollo').clientOnly)
+      app.get('apollo').installSubscriptionHandlers(httpServer);
+
     const { port } = httpServer.address();
 
-    console.info(completedFunction(port, app.get('apollo').graphqlPath));
+    console.info(
+      completedFunction(
+        port,
+        !app.get('apollo').clientOnly ? app.get('apollo').graphqlPath : ''
+      )
+    );
 
     setup(app, httpServer);
 
@@ -59,15 +72,29 @@ function startServer() {
 
         import('.')
           .then(({ default: nextApp }) => {
-            currentApp.get('apollo').stop();
+            if (!currentApp.get('apollo').clientOnly)
+              currentApp.get('apollo').stop();
+
+            if (currentApp.get('io')) currentApp.get('io').stop();
+
+            ws(httpServer, nextApp);
+
             currentApp = nextApp;
-            nextApp.get('apollo').installSubscriptionHandlers(httpServer);
+
+            if (!app.get('apollo').clientOnly)
+              nextApp.get('apollo').installSubscriptionHandlers(httpServer);
+
             setup(currentApp, httpServer);
             httpServer.on('request', currentApp);
 
             console.log('HttpServer reloaded!');
             console.info(
-              completedFunction(port, app.get('apollo').graphqlPath)
+              completedFunction(
+                port,
+                !app.get('apollo').clientOnly
+                  ? app.get('apollo').graphqlPath
+                  : ''
+              )
             );
           })
           .catch(err => console.error(err));

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { ApolloProvider } from 'react-apollo';
 import { loadComponents } from 'loadable-components';
 import { BrowserRouter } from 'react-router-dom';
+import DB from '../utilities/db';
 // import ErrorBoundary from '../common/components/ErrorBoundary';
 import { COOKIE_TYPE_MAP } from '../common/types';
 import App from '../common/App';
@@ -20,10 +21,11 @@ const rootElement = document.getElementById('root');
 // import component from "../common";
 async function render(ele) {
   await loadComponents();
+  window.localForage = new DB();
   import(/* webpackChunkName: 'register-sw' */ './registerServiceWorker');
   const store = initiateStore(window.__STORE_STATE);
 
-  localStorage.setItem(COOKIE_TYPE_MAP.csurfToken, window.__CSURF__);
+  window.localForage.setItem(COOKIE_TYPE_MAP.csurfToken, window.__CSURF__);
   const client = apollo(fetch, {
     uri: window.QUERY_URL,
     subscriptionUrl: window.SUBSCRIPTION_URL,
@@ -47,7 +49,7 @@ async function render(ele) {
 render(rootElement);
 
 if (module.hot) {
-  module.hot.accept('../common', function() {
-    render(rootElement);
-  });
+  // module.hot.accept('../common', function() {
+  //   render(rootElement);
+  // });
 }

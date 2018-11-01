@@ -46,12 +46,16 @@ const resolvers = {
     group: (root, args) => Group.findById(args.id),
     objFeed: (root, args, context) =>
       ObjectNode.getFeed({ node: args.id }, context),
-    me: (root, args, context) => {
+    me: async (root, args, context) => {
       try {
-        return User.findMe(args, context);
+        const user = await User.findMe(args, context);
+
+        return user;
       } catch (e) {
-        // console.log(e);
-        return e;
+        // eslint-disable-next-line no-console
+        console.error(e);
+
+        return null;
       }
     }
   },

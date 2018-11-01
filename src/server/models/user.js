@@ -120,9 +120,11 @@ const User = new Schema(
         'Decentralized',
         // Or only when they are online (Use allot more data on their computer)
         'Mobile'
-      ]
+      ],
+      default: 'Server'
     },
     sessions: [String],
+    sockets: [String],
     onlyUserList: [Schema.Types.ObjectId],
     exceptUserList: [Schema.Types.ObjectId],
     userType: {
@@ -179,14 +181,18 @@ User.virtual('confirmEmail').set(function(value) {
 });
 
 User.statics.getUserIdFromToken = async function(token, { res }) {
-  const maxAge = 3999999999;
-  const date = Date.now() + maxAge;
+  if (!token) return;
 
-  res.cookie(COOKIE_TYPE_MAP.token, token, {
-    httpOnly: true,
-    expires: new Date(date),
-    maxAge
-  });
+  if (res) {
+    const maxAge = 3999999999;
+    const date = Date.now() + maxAge;
+
+    res.cookie(COOKIE_TYPE_MAP.token, token, {
+      httpOnly: true,
+      expires: new Date(date),
+      maxAge
+    });
+  }
 
   return token;
 };
@@ -204,7 +210,7 @@ User.statics.getUserFromToken = async function(token, { res } = {}) {
     });
   }
 
-  const user = await mongoose.models.User.findById(token);
+  const user = await mongoose.models.User.findById(await token);
 
   if (!user) return;
 

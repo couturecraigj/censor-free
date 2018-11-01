@@ -49,16 +49,11 @@ const Login = ({ loggedIn }) => {
             onSubmit={variables =>
               logIn({ variables })
                 .then(result => {
-                  // actions.resetForm();
-                  // console.log(data);
-                  localStorage.setItem(
+                  window.localForage.setItem(
                     COOKIE_TYPE_MAP.token,
                     result.data.logIn.token
                   );
                   client.resetStore();
-
-                  // document.cookie = 'token=' + result.data.logIn.token;
-                  // location.reload();
                 })
                 // eslint-disable-next-line no-console
                 .catch(console.error)

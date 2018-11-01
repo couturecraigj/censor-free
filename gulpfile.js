@@ -20,9 +20,26 @@ gulp.task('default', function() {
     .pipe(gulp.dest('public/'));
 });
 
-gulp.task('watch', function() {
-  gulp.series(
-    'default',
-    gulp.watch(['src/**/*.js', '**/fragmentTypes.json'], ['default'])
-  );
+gulp.task('watch', ['default'], () => {
+  gulp.watch(['src/**/*.js', '**/fragmentTypes.json'], ['default'])
 });
+// gulp.task('electron', function() {
+//   return gulp
+//     .src('src/desktop-app/main/index.js')
+//     .pipe(webpackStream(config, webpack))
+//     .on('error', function(err) {
+//       // eslint-disable-next-line no-console
+//       console.log(err.toString());
+
+//       this.emit('end');
+//     })
+//     .pipe(gulp.dest('desktop-app/'));
+// });
+
+// gulp.task('electron:watch', function() {
+//   gulp.series(
+//     'electron',
+//     gulp.watch('src/desktop-app/**/*.js', gulp.series('electron')),
+//     gulp.watch('**/fragmentTypes.json', gulp.series('electron'))
+//   );
+// });

@@ -43,9 +43,11 @@ export default (
           console.log(`[Network error]: ${networkError.stack}`);
       }),
       !ssrMode &&
-        setContext((_, { headers }) => {
-          const token = localStorage.getItem(COOKIE_TYPE_MAP.token);
-          const csurfToken = localStorage.getItem(COOKIE_TYPE_MAP.csurfToken);
+        setContext(async (_, { headers }) => {
+          const token = await window.localForage.getItem(COOKIE_TYPE_MAP.token);
+          const csurfToken = await window.localForage.getItem(
+            COOKIE_TYPE_MAP.csurfToken
+          );
 
           return {
             headers: {
@@ -86,8 +88,10 @@ export default (
             uri: subscriptionUrl,
             options: {
               reconnect: true,
-              connectionParams: () => ({
-                authToken: localStorage.getItem(COOKIE_TYPE_MAP.token)
+              connectionParams: async () => ({
+                authToken: await window.localForage.getItem(
+                  COOKIE_TYPE_MAP.token
+                )
               })
             }
           }),
