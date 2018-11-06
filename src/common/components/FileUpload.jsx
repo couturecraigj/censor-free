@@ -193,13 +193,15 @@ class FileUpload extends React.Component {
 
     if (typeof value === 'undefined') value = uploadToken;
 
-    const { onChange, name } = this.props;
+    const { onChange, onBlur, name } = this.props;
 
     if (onChange) {
       onChange({ target: { name, value } });
+      onBlur({ target: { name, value } });
     }
   };
   onBlur = e => {
+    e.preventDefault();
     e.persist();
 
     const { onBlur } = this.props;
@@ -213,6 +215,7 @@ class FileUpload extends React.Component {
   };
   onChange = async e => {
     e.preventDefault();
+    e.persist();
 
     if (!e.target.files[0]) {
       const { onChange, name } = this.props;
