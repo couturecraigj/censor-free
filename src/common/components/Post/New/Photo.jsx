@@ -15,20 +15,8 @@ const initialValues = {
 };
 
 const SUBMIT_PHOTO = gql`
-  mutation AddPhoto(
-    $imgUri: String!
-    $description: String!
-    $title: String!
-    $width: Int!
-    $height: Int!
-  ) {
-    addPhoto(
-      imgUri: $imgUri
-      description: $description
-      title: $title
-      width: $width
-      height: $height
-    ) {
+  mutation AddPhoto($imgUri: String!, $description: String!, $title: String!) {
+    addPhoto(imgUri: $imgUri, description: $description, title: $title) {
       id
       imgUri
     }

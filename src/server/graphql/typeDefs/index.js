@@ -280,8 +280,7 @@ const typeDefs = gql`
     addPhoto(
       title: String!
       description: String!
-      height: Int!
-      width: Int!
+      # id: String
       imgUri: String!
     ): Photo
     addAnswer(title: String!): Answer
