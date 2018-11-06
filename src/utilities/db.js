@@ -17,9 +17,11 @@ class DataBase {
     return this.localForage.setItem(key, val);
   }
   setItem = this.set;
+
   delete(key) {
     return this.localForage.removeItem(key);
   }
+  removeItem = this.delete;
   clear() {
     return this.localForage.clear();
   }
