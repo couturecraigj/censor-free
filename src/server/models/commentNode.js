@@ -36,7 +36,7 @@ CommentNode.statics.delete = function() {};
 CommentNode.statics.createCommentNode = async function(args, context, kind) {
   if (!kinds.includes(kind)) throw ENUM_DOESNT_MATCH;
 
-  return mongoose.models.CommentNode.create({
+  return this.create({
     user: context.req.user.id,
     kind,
     node: args.id

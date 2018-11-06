@@ -41,7 +41,7 @@ ObjectNode.statics.delete = function() {};
 ObjectNode.statics.createObject = async function(args, node, context) {
   if (!kinds.includes(node.kind)) throw ENUM_DOESNT_MATCH;
 
-  const object = await mongoose.models.Object.create({
+  const object = await this.create({
     node: node.id,
     kind: node.kind,
     user: context.req.user.id
@@ -54,7 +54,7 @@ ObjectNode.statics.createObject = async function(args, node, context) {
 };
 
 ObjectNode.statics.getFeed = async function(args) {
-  const obj = await mongoose.models.Object.findOne(args);
+  const obj = await this.findOne(args);
 
   return mongoose.models.PostNode.findPostNodes({
     objects: obj.id

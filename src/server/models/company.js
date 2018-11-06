@@ -27,7 +27,7 @@ Company.statics.createCompany = async function(args, context) {
   if (!args.name) throw new Error('Companies must have names');
 
   const photo = await Photo.createPhoto({ imgUri: args.imgUri }, context);
-  const company = await mongoose.models.Company.create({
+  const company = await this.create({
     ...args,
     slug: slug(args.name),
     img: photo.id,

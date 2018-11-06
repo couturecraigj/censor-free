@@ -22,17 +22,13 @@ const Queue = new Schema(
 );
 
 Queue.statics.newJob = async function(args) {
-  const { Queue } = mongoose.models;
-
-  await Queue.create(args);
-  Queue.processJobs();
+  await this.create(args);
+  this.processJobs();
 };
 Queue.statics.processJobs = async function() {
-  const { Queue } = mongoose.models;
+  if (await this.findOne({ processing: true })) return;
 
-  if (await Queue.findOne({ processing: true })) return;
-
-  const job = await Queue.findOne({ finished: false, processing: false });
+  const job = await this.findOne({ finished: false, processing: false });
 
   if (!job) return;
 
@@ -44,7 +40,7 @@ Queue.statics.processJobs = async function() {
   job.processing = false;
   job.finished = true;
   await job.save();
-  Queue.processJobs();
+  this.processJobs();
 };
 
 if (mongoose.models && mongoose.models.Queue) delete mongoose.models.Queue;

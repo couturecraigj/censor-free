@@ -62,14 +62,14 @@ Searchable.statics.delete = function() {};
 Searchable.statics.createSearchable = function(args, obj, context) {
   if (!kinds.includes(obj.kind)) throw ENUM_DOESNT_MATCH;
 
-  return mongoose.models.Searchable.create({
+  return this.create({
     node: obj.id,
     kind: obj.kind,
     user: context.req.user.id
   });
 };
 Searchable.statics.findSearchable = async function(args = {}) {
-  const list = await mongoose.models.Searchable.find();
+  const list = await this.find();
 
   return orderedSearch(list, undefined, args.text || '');
 };

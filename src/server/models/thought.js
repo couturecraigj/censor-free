@@ -17,7 +17,7 @@ const Thought = new Schema(
 );
 
 Thought.statics.createThought = async function(args, context) {
-  const thought = await mongoose.models.Thought.create(args);
+  const thought = await this.create(args);
   const postNode = await PostNode.createPostNode(args, thought, context);
   const searchable = await Searchable.createSearchable(args, thought, context);
 

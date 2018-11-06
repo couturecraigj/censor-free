@@ -21,7 +21,7 @@ const Comment = new Schema(
 Comment.statics.createComment = async function(args, context) {
   const postNode = await PostNode.createPostNode(args, context);
 
-  return mongoose.models.Comment.create(args, postNode);
+  return this.create(args, postNode);
 };
 Comment.statics.addComment = function() {};
 Comment.statics.edit = function() {};

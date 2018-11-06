@@ -54,11 +54,13 @@ const mocks = {
     signUp: (parent, args, { res }) => {
       const token = casual.uuid;
 
-      res.cookie('token', token, {
-        httpOnly: true,
-        maxAge: 9999999,
-        sameSite: true
-      });
+      if (res && !res.headersSent) {
+        res.cookie('token', token, {
+          httpOnly: true,
+          maxAge: 9999999,
+          sameSite: true
+        });
+      }
 
       return {
         user: mocks.User(token),
@@ -98,11 +100,13 @@ const mocks = {
 
       const token = casual.uuid;
 
-      res.cookie('token', token, {
-        httpOnly: true,
-        maxAge: 9999999,
-        sameSite: true
-      });
+      if (res && !res.headersSent) {
+        res.cookie('token', token, {
+          httpOnly: true,
+          maxAge: 9999999,
+          sameSite: true
+        });
+      }
 
       return {
         user: mocks.User(token),
@@ -112,11 +116,13 @@ const mocks = {
     forgotPassword: (parent, args, { res }) => {
       const token = casual.uuid;
 
-      res.cookie('reset-token', token, {
-        httpOnly: true,
-        maxAge: 9999999,
-        sameSite: true
-      });
+      if (res && !res.headersSent) {
+        res.cookie('reset-token', token, {
+          httpOnly: true,
+          maxAge: 9999999,
+          sameSite: true
+        });
+      }
 
       return casual.uuid;
     },

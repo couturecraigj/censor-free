@@ -19,7 +19,7 @@ const Review = new Schema(
 );
 
 Review.statics.createReview = async function(args, context) {
-  const review = await mongoose.models.Review.create(args);
+  const review = await this.create(args);
   const searchable = await Searchable.createSearchable(args, review, context);
   const postNode = await PostNode.createPostNode(args, review, context);
 

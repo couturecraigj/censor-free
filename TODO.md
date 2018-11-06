@@ -12,30 +12,31 @@
 | src/server/models/object.js | 12 | Create a way to own
 | src/server/models/object.js | 13 | Create a way to want
 | src/server/models/object.js | 14 | Create a way to sold
-| src/server/models/photo.js | 12 | Make sure that on every update modified User is adjusted
-| src/server/models/photo.js | 13 | Make sure that user is required when updating or creating each photo/postnode
+| src/server/models/photo.js | 13 | Make sure that on every update modified User is adjusted
+| src/server/models/photo.js | 14 | Make sure that user is required when updating or creating each photo/postnode
+| src/server/models/photo.js | 80 | Only send this to the desired sockets to bypass the possibility of data getting sent to other clients when working in scale
 | src/server/models/postNode.js | 15 | Create a way to like
 | src/server/models/postNode.js | 16 | Create a way to dislike
-| src/server/models/user.js | 15 | Make it so that Users can be listed as Invites
-| src/server/models/user.js | 16 | Make it so users can unsubscribe from updates
-| src/server/models/user.js | 18 | Setup Google Authentication Method
-| src/server/models/user.js | 19 | Setup Facebook Authentication Method
-| src/server/models/user.js | 20 | Setup Twitter Authentication Method
-| src/server/models/user.js | 21 | Setup Auth0 Authentication Method
-| src/server/models/user.js | 22 | Setup GitHub Authentication Method
-| src/server/models/user.js | 23 | Setup TOTP Authentication Method
-| src/server/models/user.js | 24 | Setup LinkedIn Authentication Method
-| src/server/models/user.js | 25 | Setup WeChat Authentication Method
-| src/server/models/user.js | 26 | Setup Instagram Authentication Method
-| src/server/models/user.js | 27 | Setup Slack Authentication Method
-| src/server/models/user.js | 28 | Setup Reddit Authentication Method
-| src/server/models/user.js | 29 | Setup Tumblr Authentication Method
-| src/server/models/user.js | 30 | Setup WordPress Authentication Method
-| src/server/models/user.js | 32 | Setup Pinterest Link
-| src/server/models/user.js | 33 | Setup DeviantArt Link
-| src/server/models/user.js | 34 | Setup YouTube Link
-| src/server/models/user.js | 35 | Setup Etsy Link
-| src/server/models/user.js | 36 | Setup Flickr Link
-| src/server/models/user.js | 37 | Setup Picasa Link
-| src/server/models/user.js | 336 | Create a Default Image to be loaded
+| src/server/models/user.js | 43 | Make it so that Users can be listed as Invites
+| src/server/models/user.js | 44 | Make it so users can unsubscribe from updates
+| src/server/models/user.js | 46 | Setup Google Authentication Method
+| src/server/models/user.js | 47 | Setup Facebook Authentication Method
+| src/server/models/user.js | 48 | Setup Twitter Authentication Method
+| src/server/models/user.js | 49 | Setup Auth0 Authentication Method
+| src/server/models/user.js | 50 | Setup GitHub Authentication Method
+| src/server/models/user.js | 51 | Setup TOTP Authentication Method
+| src/server/models/user.js | 52 | Setup LinkedIn Authentication Method
+| src/server/models/user.js | 53 | Setup WeChat Authentication Method
+| src/server/models/user.js | 54 | Setup Instagram Authentication Method
+| src/server/models/user.js | 55 | Setup Slack Authentication Method
+| src/server/models/user.js | 56 | Setup Reddit Authentication Method
+| src/server/models/user.js | 57 | Setup Tumblr Authentication Method
+| src/server/models/user.js | 58 | Setup WordPress Authentication Method
+| src/server/models/user.js | 60 | Setup Pinterest Link
+| src/server/models/user.js | 61 | Setup DeviantArt Link
+| src/server/models/user.js | 62 | Setup YouTube Link
+| src/server/models/user.js | 63 | Setup Etsy Link
+| src/server/models/user.js | 64 | Setup Flickr Link
+| src/server/models/user.js | 65 | Setup Picasa Link
+| src/server/models/user.js | 471 | Create a Default Image to be loaded
 | src/server/models/video.js | 57 | Make it so that all these jobs are queued

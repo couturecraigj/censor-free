@@ -104,7 +104,7 @@ PostNode.statics.delete = function() {};
 PostNode.statics.createPostNode = async function(args, obj = {}, context) {
   if (!POST_TYPE_ENUM.includes(obj.kind)) throw ENUM_DOESNT_MATCH;
 
-  return mongoose.models.PostNode.create({
+  return this.create({
     user: context.req.user.id,
     createdUser: context.req.user.id,
     modifiedUser: context.req.user.id,
@@ -116,13 +116,13 @@ PostNode.statics.createPostNode = async function(args, obj = {}, context) {
 };
 
 PostNode.statics.findPostNodes = async function(args) {
-  const nodes = await mongoose.models.PostNode.find(args);
+  const nodes = await this.find(args);
 
   return orderedSet(nodes);
 };
 
 PostNode.statics.addObjects = async function(id, objects, user) {
-  const node = await mongoose.models.PostNode.findOne({
+  const node = await this.findOne({
     node: id,
     modifiedUser: user.id
   });
@@ -134,11 +134,11 @@ PostNode.statics.addObjects = async function(id, objects, user) {
 };
 
 PostNode.statics.publish = async function(args, context) {
-  const postNode = mongoose.models.PostNode.findOne(args);
+  const postNode = this.findOne(args);
 
   if (postNode.user !== context.cookie.token) throw UNAUTHORIZED_USER;
 
-  return mongoose.models.PostNode.findOneAndUpdate(args, {
+  return this.findOneAndUpdate(args, {
     modifiedUser: context.req.user.id,
     published: true,
     publishedDate: Date.now()

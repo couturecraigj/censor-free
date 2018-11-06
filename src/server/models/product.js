@@ -33,7 +33,7 @@ Product.statics.createProduct = async function(args, context) {
     { imgUri: args.imgUri, title: args.name, description: args.description },
     context
   );
-  const product = await mongoose.models.Product.create({
+  const product = await this.create({
     ...args,
     slug: slug(args.name),
     img: photo.id,

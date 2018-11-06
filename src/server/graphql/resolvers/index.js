@@ -85,10 +85,12 @@ const resolvers = {
     forgotPassword: async (parent, args, { res }) => {
       const token = await User.getResetToken(args);
 
-      res.cookie(COOKIE_TYPE_MAP.resetToken, token, {
-        httpOnly: true,
-        maxAge: 3000
-      });
+      if (res && !res.headersSent) {
+        res.cookie(COOKIE_TYPE_MAP.resetToken, token, {
+          httpOnly: true,
+          maxAge: 3000
+        });
+      }
 
       return token;
     },

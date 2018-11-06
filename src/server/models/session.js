@@ -15,7 +15,7 @@ const Session = new Schema(
 
 Session.statics.createSession = async function({ user }) {
   const hash = uuid();
-  const session = await mongoose.models.Session.create({ hash, user });
+  const session = await this.create({ hash, user });
 
   await User.findByIdAndUpdate(user, {
     $addToSet: { sessions: hash }
@@ -25,7 +25,7 @@ Session.statics.createSession = async function({ user }) {
 };
 
 Session.statics.findUser = async function({ session: hash }) {
-  const session = await mongoose.models.Session.findOne({ hash });
+  const session = await this.findOne({ hash });
   const user = await User.findById(session.user);
 
   return user;

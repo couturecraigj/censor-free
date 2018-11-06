@@ -8,10 +8,12 @@ const app = express.Router();
 app.get('/upload', async (req, res) => {
   // This is where we will check to see if the file already exists and also create an upload token and save it to the database
   try {
-    const token = await File.getUploadToken({
-      ...JSON.parse(req.query.json),
-      user: req.user.id
-    });
+    const token = await File.getUploadToken(
+      {
+        ...JSON.parse(req.query.json)
+      },
+      { req, res }
+    );
 
     res.json(token);
   } catch (error) {

@@ -6,14 +6,15 @@ import rimraf from 'rimraf';
 /**
  * TODO: Integrate with AWS S3
  * TODO: Use Localstack in development to be confident with s3
- * ALT: Send data using Bucketeer in Heroku
+ *
  */
 
 const sendFileFields = file => ({
   finished: file.finished,
   uploadToken: file.uploadToken,
   chunkSize: file.chunkSize,
-  chunksLoaded: file.chunksLoaded
+  chunksLoaded: file.chunksLoaded,
+  streaming: file.streaming
 });
 
 const cwd = process.cwd();
@@ -39,6 +40,7 @@ const File = new Schema(
     originalFileName: { type: String, required: true },
     size: { type: Number, required: true },
     finished: { type: Boolean, default: false },
+    streaming: { type: Boolean, default: false },
     convertedPath: { type: String },
     converted: { type: Boolean, default: false }
   },
@@ -56,11 +58,11 @@ File.pre('validate', function() {
   }
 });
 
-File.statics.getUploadToken = async function(args) {
-  if (!args.user)
+File.statics.getUploadToken = async function(args, context) {
+  if (!context.req?.user?.id)
     throw new Error('You need to be logged in to be able to upload anything');
 
-  const file = await mongoose.models.File.findOne(args);
+  const file = await this.findOne(args);
 
   if (file) {
     if (!file.finishedFileName) return sendFileFields(file);
@@ -70,8 +72,8 @@ File.statics.getUploadToken = async function(args) {
     await file.remove();
   }
 
-  return mongoose.models.File.create(args).then(file => {
-    fs.mkdirSync(file.path);
+  return this.create({ ...args, user: context.req.user.id }).then(file => {
+    if (!context.stream) fs.mkdirSync(file.path);
 
     return sendFileFields(file);
   });
@@ -84,19 +86,19 @@ File.statics.saveChunk = function({ uploadToken, chunk, chunkNumber }) {
 
   return new Promise(async (resolve, reject) => {
     try {
-      const file = await mongoose.models.File.findOne({ uploadToken });
+      const file = await this.findOne({ uploadToken });
 
-      if (!file) return reject(mongoose.models.File.NO_FILE_FOUND());
+      if (!file) return reject(this.NO_FILE_FOUND);
 
       if (file.chunksLoaded.find(file => file === chunkName))
-        return reject(mongoose.models.File.CHUNK_ALREADY_LOADED);
+        return reject(this.CHUNK_ALREADY_LOADED);
 
       const buffer = Buffer.from(chunk, 'base64');
       const chunkPath = path.join(file.path, chunkName);
       const writeStream = fs.createWriteStream(chunkPath);
 
       writeStream.on('finish', async () => {
-        await mongoose.models.File.findByIdAndUpdate(file.id, {
+        await this.findByIdAndUpdate(file.id, {
           $addToSet: {
             chunksLoaded: chunkName
           }
@@ -104,7 +106,7 @@ File.statics.saveChunk = function({ uploadToken, chunk, chunkNumber }) {
 
         try {
           if (file.size <= (file.chunksLoaded.length + 1) * file.chunkSize)
-            await mongoose.models.File.combineChunks({ uploadToken });
+            await this.combineChunks({ uploadToken });
 
           resolve();
         } catch (e) {
@@ -129,7 +131,7 @@ File.statics.FILE_ALREADY_FINISHED = new Error(
 );
 File.statics.combineChunks = function({ uploadToken }) {
   return new Promise(async (resolve, reject) => {
-    const file = await mongoose.models.File.findOne({ uploadToken });
+    const file = await this.findOne({ uploadToken });
     const finishedFileName = file.path + '.' + file.extension;
 
     fs.readdir(file.path, async (err, files) => {
@@ -151,7 +153,7 @@ File.statics.combineChunks = function({ uploadToken }) {
         if (err) return reject(err);
 
         writeStream.end();
-        await mongoose.models.File.findByIdAndUpdate(file.id, {
+        await this.findByIdAndUpdate(file.id, {
           finished: true,
           chunksLoaded: [],
           finishedFileName

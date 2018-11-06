@@ -68,7 +68,7 @@ Video.statics.createVideo = async function(args, context, extras) {
   }
 
   if (!file.converted) {
-    filePath = await mongoose.models.Video.createDifferentVideoFormats(
+    filePath = await this.createDifferentVideoFormats(
       file,
       // args,
       context,
@@ -79,12 +79,12 @@ Video.statics.createVideo = async function(args, context, extras) {
     extras.progress(100);
   }
 
-  let video = await mongoose.models.Video.findOne({
+  let video = await this.findOne({
     uri: filePath.replace(publicPath, '')
   });
 
   if (!video) {
-    video = await mongoose.models.Video.create({
+    video = await this.create({
       uri: filePath.replace(publicPath, ''),
       ...args
     });
@@ -185,7 +185,7 @@ Video.statics.createOGVFormat = async function(
   targetName,
   { height, width, progress } = {}
 ) {
-  await mongoose.models.Video.__convertFile(
+  await this.__convertFile(
     file.finishedFileName,
     {
       height,
@@ -214,7 +214,7 @@ Video.statics.createWEBMFormat = async function(
   targetName,
   { height, width, progress } = {}
 ) {
-  await mongoose.models.Video.__convertFile(
+  await this.__convertFile(
     file.finishedFileName,
     {
       height,
@@ -572,7 +572,7 @@ Video.statics.createMP4Format = async function(
   targetName,
   { height, width, progress } = {}
 ) {
-  await mongoose.models.Video.__convertFile(
+  await this.__convertFile(
     file.finishedFileName,
     {
       height,

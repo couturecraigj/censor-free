@@ -53,13 +53,11 @@ Person.statics.createFromUser = async function(data) {
   let person;
 
   if (data.person) {
-    person = await mongoose.models.Person.findByIdAndUpdate(
-      data.person,
-      personObj,
-      { new: true }
-    );
+    person = await this.findByIdAndUpdate(data.person, personObj, {
+      new: true
+    });
   } else {
-    person = await mongoose.models.Person.create(personObj);
+    person = await this.create(personObj);
   }
 
   return person;

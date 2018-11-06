@@ -11,6 +11,34 @@ const PASSWORDS_DO_NOT_MATCH = new Error('Passwords must match');
 const EMAILS_DO_NOT_MATCH = new Error('Emails must match');
 const NO_USER_BY_THAT_EMAIL = new Error('No user by that email');
 const NO_USER_WITH_THAT_TOKEN = new Error('No user with that token');
+
+const filterOtherUserFields = user => {
+  const { id, email, userName, userType } = user.toJSON();
+
+  user.userObj = {
+    id,
+    email,
+    userName,
+    userType
+  };
+
+  return user;
+};
+const filterMeFields = user => {
+  const {
+    hash,
+    previousHashes,
+    reset,
+    kind,
+    sessions,
+    sockets,
+    ...others
+  } = user.toJSON();
+
+  user.userObj = others;
+
+  return user;
+};
 /**
  * TODO: Make it so that Users can be listed as Invites
  * TODO: Make it so users can unsubscribe from updates
@@ -180,10 +208,116 @@ User.virtual('confirmEmail').set(function(value) {
   this._confirmEmail = value;
 });
 
+User.methods.addSocket = async function(socket) {
+  await this.model('User').findOneAndUpdate(this.id, {
+    $addToSet: { sockets: socket.id }
+  });
+  this.sockets = [...this.sockets, socket.id];
+
+  return this;
+};
+User.methods.removeSocket = async function(socket) {
+  await this.model('User').findOneAndUpdate(
+    { _id: this.id, sockets: socket.id },
+    {
+      $set: { 'sockets.$': null }
+    }
+  );
+  await this.model('User').findOneAndUpdate(
+    { _id: this.id },
+    {
+      $pull: { sockets: null }
+    }
+  );
+  this.sockets = this.sockets.filter(sock => sock !== socket.id);
+
+  return this;
+};
+
+User.statics.removeAllOldSocketsAcrossAllNameSpaces = function(socket, io) {
+  const findAllSockets = nameSpace =>
+    new Promise(resolve => {
+      io.of(nameSpace).clients(async (err, clients) => {
+        resolve(clients);
+      });
+    });
+
+  return new Promise(async (resolve, reject) => {
+    let sockets = [];
+
+    for (const nsp of Object.keys(io.nsps)) {
+      sockets.push(await findAllSockets(nsp));
+    }
+
+    sockets = sockets.filter((v, i, arr) => arr.indexOf(v) === i);
+
+    // console.log(socket);
+    try {
+      const users = await this.find({ sockets: { $nin: sockets } });
+
+      for (const user of users) {
+        await this.findByIdAndUpdate(user.id, {
+          $set: {
+            sockets: user.sockets.filter(socket => sockets.includes(socket))
+          }
+        });
+      }
+
+      // console.log(socket);
+
+      return resolve();
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+User.statics.removeAllOldSockets = function(socket, io) {
+  return new Promise((resolve, reject) => {
+    io.clients(async (err, clients) => {
+      try {
+        const users = await this.find({ sockets: { $nin: clients } });
+
+        for (const user of users) {
+          await this.findByIdAndUpdate(user.id, {
+            $set: {
+              sockets: user.sockets.filter(socket => clients.includes(socket))
+            }
+          });
+        }
+
+        // console.log(socket);
+
+        return resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
+};
+
+User.statics.setupUserFromSocket = async function(socket, nameSpace) {
+  await this.removeAllOldSocketsAcrossAllNameSpaces(socket, nameSpace);
+  let user;
+  const token =
+    socket.handshake.headers['x-token'] || socket.handshake.query.token;
+
+  // socket.use((packet, next) => {
+  if (token) {
+    user = await this.getUserFromToken(token);
+  }
+
+  if (user) {
+    // eslint-disable-next-line no-console
+    user.addSocket(socket);
+  }
+
+  return user;
+};
+
 User.statics.getUserIdFromToken = async function(token, { res }) {
   if (!token) return;
 
-  if (res) {
+  if (res && !res.headersSent) {
     const maxAge = 3999999999;
     const date = Date.now() + maxAge;
 
@@ -199,7 +333,7 @@ User.statics.getUserIdFromToken = async function(token, { res }) {
 User.statics.getUserFromToken = async function(token, { res } = {}) {
   if (!token) return;
 
-  if (res) {
+  if (res && !res.headersSent) {
     const maxAge = 3999999999;
     const date = Date.now() + maxAge;
 
@@ -210,21 +344,23 @@ User.statics.getUserFromToken = async function(token, { res } = {}) {
     });
   }
 
-  const user = await mongoose.models.User.findById(await token);
+  const user = await this.findById(await token);
 
   if (!user) return;
 
-  return user;
+  return filterOtherUserFields(user);
 };
 User.statics.getTokenFromUser = function(user, { res }) {
   const maxAge = 3999999999;
   const date = Date.now() + maxAge;
 
-  res.cookie(COOKIE_TYPE_MAP.token, user.id, {
-    httpOnly: true,
-    expires: new Date(date),
-    maxAge
-  });
+  if (res && !res.headersSent) {
+    res.cookie(COOKIE_TYPE_MAP.token, user.id, {
+      httpOnly: true,
+      expires: new Date(date),
+      maxAge
+    });
+  }
 
   return user.id;
 };
@@ -242,11 +378,10 @@ User.pre('save', async function() {
 
     if (this.email !== this._confirmEmail) throw EMAILS_DO_NOT_MATCH;
 
-    if (await mongoose.models.User.findOne({ email: this.email }))
-      throw EMAIL_ALREADY_EXISTS;
+    if (await this.findOne({ email: this.email })) throw EMAIL_ALREADY_EXISTS;
 
     if (
-      await mongoose.models.User.findOne({
+      await this.findOne({
         userName: this.userName
       })
     )
@@ -271,13 +406,13 @@ User.methods.passwordsMatch = async function(password) {
 User.statics.findMe = async function(args, context) {
   if (!context?.req?.user.id) return null;
 
-  const user = await mongoose.models.User.findById(context.req.user.id);
+  const user = await this.findById(context.req.user.id);
 
-  return user;
+  return filterMeFields(user);
 };
 User.statics.getResetToken = async function({ email }) {
   const timeOut = Date.now() + 360000;
-  const user = await mongoose.models.User.findOne({ email });
+  const user = await this.findOne({ email });
 
   if (!user) throw NO_USER_BY_THAT_EMAIL;
 
@@ -301,7 +436,7 @@ User.statics.resetPassword = async function({
   if (password !== confirmPassword) throw PASSWORDS_DO_NOT_MATCH;
 
   const timeOut = Date.now();
-  const userTokenMatch = await mongoose.models.User.findOne({
+  const userTokenMatch = await this.findOne({
     'reset.token': token,
     'reset.timeOut': { $gte: timeOut }
   });
@@ -313,7 +448,7 @@ User.statics.resetPassword = async function({
   userTokenMatch.password = password;
   userTokenMatch.confirmPassword = confirmPassword;
   await userTokenMatch.save();
-  const user = mongoose.models.User.findByIdAndUpdate(
+  const user = this.findByIdAndUpdate(
     userTokenMatch.id,
     {
       $unset: { reset: '' },
@@ -324,7 +459,7 @@ User.statics.resetPassword = async function({
     }
   );
 
-  return user;
+  return filterOtherUserFields(user);
 };
 
 User.statics.getGravatarPhoto = async function(user, size = 1200) {

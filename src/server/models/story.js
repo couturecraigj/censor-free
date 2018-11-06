@@ -18,7 +18,7 @@ const Story = new Schema(
 );
 
 Story.statics.createStory = async function(args, context) {
-  const story = await mongoose.models.Story.create(args);
+  const story = await this.create(args);
   const searchable = await Searchable.createSearchable(args, story, context);
   const postNode = await PostNode.createPostNode(args, story, context);
 

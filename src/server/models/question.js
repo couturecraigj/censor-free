@@ -18,7 +18,7 @@ const Question = new Schema(
 );
 
 Question.statics.createQuestion = async function(args, context) {
-  const question = await mongoose.models.Question.create(args);
+  const question = await this.create(args);
   const postNode = await PostNode.createPostNode(args, question, context);
   const searchable = await Searchable.createSearchable(args, question, context);
 

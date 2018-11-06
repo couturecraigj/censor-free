@@ -25,7 +25,7 @@ Group.statics.createGroup = async function(args, context) {
   if (!args.title) throw new Error('Groups must have titles');
 
   const photo = await Photo.createPhoto({ imgUri: args.imgUri }, context);
-  const group = await mongoose.models.Group.create({
+  const group = await this.create({
     ...args,
     slug: slug(args.title),
     img: photo.id,

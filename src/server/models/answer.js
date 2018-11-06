@@ -28,7 +28,7 @@ const Answer = new Schema(
 );
 
 Answer.statics.createAnswer = async function(args, context) {
-  const answer = await mongoose.models.Answer.create(args);
+  const answer = await this.create(args);
   const postNode = await PostNode.createPostNode(args, answer, context);
   const searchable = await Searchable.createSearchable(args, answer, context);
 
@@ -40,10 +40,8 @@ Answer.statics.createAnswer = async function(args, context) {
 };
 
 Answer.statics.createLoader = () => {
-  mongoose.models.Answer.loader = new DataLoader(keys => {
-    const Model = mongoose.models.Answer;
-
-    return Promise.all(keys.map(key => Model.findById(key)));
+  this.loader = new DataLoader(keys => {
+    return Promise.all(keys.map(key => this.findById(key)));
   });
 };
 Answer.statics.clearLoader = () => {};
