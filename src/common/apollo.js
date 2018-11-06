@@ -43,16 +43,16 @@ export default (
           console.log(`[Network error]: ${networkError.stack}`);
       }),
       !ssrMode &&
-        setContext(async (_, { headers }) => {
+        setContext(async () => {
           const token = await window.localForage.getItem(COOKIE_TYPE_MAP.token);
           const csurfToken = await window.localForage.getItem(
             COOKIE_TYPE_MAP.csurfToken
           );
 
           return {
+            uri,
+            fetch,
             headers: {
-              ...headers,
-              'Access-Control-Allow-Credentials': true,
               authorization: token ? `Bearer ${token}` : '',
               'x-xsrf-token': csurfToken
             }
@@ -62,11 +62,10 @@ export default (
         uri,
         fetch,
         credentials: 'same-origin',
-        headers: ssrMode
-          ? {
-              ...headers
-            }
-          : undefined
+        headers: {
+          ...headers,
+          'Access-Control-Allow-Credentials': true
+        }
       })
     ].filter(v => v)
   );
