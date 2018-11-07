@@ -141,6 +141,7 @@ if (module === require.main) {
   const httpServer = require('http').createServer(app);
 
   app.get('apollo').installSubscriptionHandlers(httpServer);
+  require('./ws')(httpServer, app);
   httpServer.listen(app.get('port'), () => {
     // eslint-disable-next-line no-console
     console.info(`server listening on http://localhost:${app.get('port')}`);

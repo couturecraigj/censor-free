@@ -1,14 +1,13 @@
 import fs from 'fs';
 import User from './models/user';
 
-const io = require('socket.io')();
+/**
+ * TODO: Set this up so that it will run on another port but will be linked in this app for development
+ */
 
 export default (httpServer, app) => {
-  io.attach(httpServer, {
-    // pingInterval: 1000,
-    // pingTimeout: 500
-    // cookie: false
-  });
+  const io = require('socket.io')(httpServer);
+
   // io.use((socket, next) => {
   //   const handshake = socket.handshake;
 
@@ -24,6 +23,7 @@ export default (httpServer, app) => {
   //   console.log(socket.handshake);
   //   next();
   // });
+  // console.log('socket.io');
   io.on('connection', async socket => {
     // eslint-disable-next-line no-console
     console.log('a user connected');
@@ -64,8 +64,13 @@ export default (httpServer, app) => {
     });
     socket.on('disconnect', function() {
       // eslint-disable-next-line no-console
-      console.log('user disconnected');
+      console.log('user disconnected!');
     });
+  });
+  // console.log(httpServer);
+
+  httpServer.once('listening', () => {
+    app.set('io-port', httpServer.address().port);
   });
 
   app.set('io', io);

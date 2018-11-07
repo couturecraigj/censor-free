@@ -40,3 +40,4 @@
 | src/server/models/user.js | 65 | Setup Picasa Link
 | src/server/models/user.js | 471 | Create a Default Image to be loaded
 | src/server/models/video.js | 57 | Make it so that all these jobs are queued
+| src/server/ws.js | 5 | Set this up so that it will run on another port but will be linked in this app for development

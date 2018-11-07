@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import chalk from 'chalk';
+import http from 'http';
 import setup from './setup';
 import ws from './ws';
 import app from '.';
@@ -37,8 +38,19 @@ ${chalk.grey.bgBlackBright(
 function startServer() {
   return new Promise((resolve, reject) => {
     const httpServer = app.listen(app.get('port'));
+    const wsServer = http.createServer();
 
-    ws(httpServer, app);
+    ws(wsServer, app);
+
+    wsServer.listen(3002);
+
+    wsServer.once('error', err => {
+      if (err.code === 'EADDRINUSE') {
+        return reject(err);
+      }
+
+      reject(err);
+    });
     httpServer.once('error', err => {
       if (err.code === 'EADDRINUSE') {
         return reject(err);
@@ -46,13 +58,23 @@ function startServer() {
 
       reject(err);
     });
-
-    httpServer.once('listening', () => resolve(httpServer));
-  }).then(httpServer => {
+    Promise.all([
+      new Promise(resolve => {
+        httpServer.once('listening', () => resolve(httpServer));
+      }),
+      // wsServer
+      new Promise(resolve => {
+        wsServer.once('listening', () => resolve(wsServer));
+      })
+    ]).then(resolve);
+    // .then(() => resolve(httpServer));
+  }).then(([httpServer, wsServer]) => {
     if (!app.get('apollo').clientOnly)
       app.get('apollo').installSubscriptionHandlers(httpServer);
 
     const { port } = httpServer.address();
+
+    console.log(wsServer.address());
 
     console.info(
       completedFunction(
@@ -66,26 +88,27 @@ function startServer() {
     // Hot Module Replacement API
     if (module.hot) {
       let currentApp = app;
+      let currentWs = ws;
 
-      module.hot.accept('.', () => {
+      module.hot.accept(['.', './ws'], () => {
         httpServer.removeListener('request', currentApp);
+        wsServer.removeListener('request', currentWs);
+        // wsServer.removeListener('upgrade', currentWs);
 
-        import('.')
-          .then(({ default: nextApp }) => {
-            if (!currentApp.get('apollo').clientOnly)
-              currentApp.get('apollo').stop();
+        Promise.all([import('.'), import('./ws')])
+          .then(([{ default: nextApp }, { default: nextWs }]) => {
+            currentApp.get('apollo').stop();
+            currentApp.get('io').close(() => nextWs(wsServer, nextApp));
 
-            if (currentApp.get('io')) currentApp.get('io').stop();
-
-            ws(httpServer, nextApp);
-
+            currentWs = nextWs;
             currentApp = nextApp;
 
-            if (!app.get('apollo').clientOnly)
-              nextApp.get('apollo').installSubscriptionHandlers(httpServer);
+            nextApp.get('apollo').installSubscriptionHandlers(httpServer);
 
             setup(currentApp, httpServer);
             httpServer.on('request', currentApp);
+            wsServer.on('request', currentWs);
+            // wsServer.on('upgrade', currentWs);
 
             console.log('HttpServer reloaded!');
             console.info(

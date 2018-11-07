@@ -5,6 +5,7 @@ import uuid from 'uuid/v4';
 import path from 'path';
 import File from './file';
 import PostNode from './postNode';
+import User from './user';
 import { makeDirectory } from '../utils/fileSystem';
 import Searchable from './searchable';
 
@@ -29,6 +30,7 @@ const Photo = new Schema(
     kind: { type: String, default: 'Photo' },
     imgUri: { type: String },
     thumbnailUri: { type: String },
+    private: { type: Boolean, default: false },
     products: [Schema.Types.ObjectId]
   },
   {
@@ -62,63 +64,169 @@ const getThumbnailDimensions = ({ width, height }, size) => {
   };
 };
 
-Photo.statics.createPhoto = function(args, context) {
+Photo.statics.__createMobile = function(args, file, context) {
+  // console.log('MOBILE');
+  const { io, user, createWriteStream } = context.req;
+
+  return new Promise((resolve, reject) => {
+    try {
+      const nsp = io.of('/photo_create_mobile');
+
+      nsp.on('connection', async socket => {
+        // console.log('/photo_create_mobile', 'user connected');
+        const timeOut = setTimeout(() => resolve(null), 20000);
+
+        try {
+          // TODO: Only send this to the desired sockets to bypass the possibility of data getting sent to other clients when working in scale
+          const newUser = await User.setupUserFromSocket(socket, io);
+
+          if (newUser.id !== user.id) return;
+
+          const opts = [
+            socket,
+            {
+              readyMessage: 'FILE:streamDown$ready',
+              chunkMessage: 'FILE:streamDown$chunk'
+            }
+          ];
+          const writeStream = await createWriteStream(
+            file.id,
+            [file.fileName],
+            ...opts
+          );
+          const thumbnailWriteStream = await createWriteStream(
+            file.id + 'thumbnail',
+            ['thumbnail', file.fileName],
+            ...opts
+          );
+
+          file.readStream
+            .pipe(file.thumbnailTransformingStream)
+            .on('finish', async () => {
+              clearTimeout(timeOut);
+              socket.disconnect();
+              resolve(await this.finishCreate(args, file, context));
+            })
+            .pipe(thumbnailWriteStream)
+            .on('error', function() {
+              clearTimeout(timeOut);
+              reject();
+            });
+          file.readStream.pipe(writeStream);
+        } catch (error) {
+          reject(error);
+        }
+      });
+    } catch (error) {
+      reject(error);
+    }
+
+    if (user.sockets.length === 0) {
+      return reject(new Error('Could not find any open sockets for this User'));
+    }
+
+    user.sockets.forEach(socket =>
+      io.to(socket).emit('join namespace', '/photo_create_mobile')
+    );
+  });
+  // args.private = true;
+
+  // return new Promise(async (resolve, reject) => {
+  //   const writeStream = await createWriteStream(file.id, [file.fileName]);
+  //   const thumbnailWriteStream = await createWriteStream(file.id + 'tmbnl', [
+  //     'thumbnail',
+  //     file.fileName
+  //   ]);
+};
+Photo.statics.__createServer = function(args, file, context) {
+  const { user } = context.req;
+
   return new Promise(async (resolve, reject) => {
-    const file = await File.findOne({ uploadToken: args.imgUri });
-
-    const publicFullsizePath = path.join(context.req.user.id);
-    const publicThumbnailPath = path.join(context.req.user.id, 'thumbnail');
-
-    if (!fs.existsSync(file.finishedFileName)) throw PHOTO_DOES_NOT_EXIST;
-
-    const extension = file.finishedFileName.match(/(?:\.([^.]+))?$/gm)[0];
-    const readStream = fs.createReadStream(file.finishedFileName);
-    const fileName = uuid() + extension;
+    const publicFullsizePath = user.id;
+    const publicThumbnailPath = path.join(user.id, 'thumbnail');
 
     await makeDirectory(publicFullsizePath);
     await makeDirectory(publicThumbnailPath);
     const writeStream = fs.createWriteStream(
-      path.join(cwd, 'public', publicFullsizePath, fileName)
+      path.join(cwd, 'public', publicFullsizePath, file.fileName)
     );
     const thumbnailWriteStream = fs.createWriteStream(
-      path.join(cwd, 'public', publicThumbnailPath, fileName)
+      path.join(cwd, 'public', publicThumbnailPath, file.fileName)
     );
 
-    writeStream.on('finish', async () => {
-      fs.unlinkSync(file.finishedFileName);
-      const photo = await mongoose.models.Photo.create({
-        ...args,
-        imgUri: '/' + context.req.user.id + '/' + fileName,
-        thumbnailUri: '/' + context.req.user.id + '/thumbnail/' + fileName
+    file.readStream.pipe(writeStream);
+    file.readStream
+      .pipe(file.thumbnailTransformingStream)
+      .pipe(thumbnailWriteStream)
+      .on('finish', async () => {
+        resolve(await this.finishCreate(args, file, context));
+      })
+      .on('error', function() {
+        reject();
       });
-      const postNode = await PostNode.createPostNode(args, photo, context);
-      const searchable = await Searchable.createSearchable(
-        args,
-        photo,
-        context
-      );
+  });
+};
 
-      photo.postNode = postNode.id;
-      photo.searchable = searchable.id;
-      await photo.save();
+Photo.statics.createPhoto = function(args, context) {
+  return new Promise(async resolve => {
+    const file = await File.findOne({ uploadToken: args.imgUri });
 
-      resolve(photo);
-    });
-    writeStream.on('error', e => {
-      reject(e);
-    });
+    if (!file) throw File.NO_FILE_FOUND;
+
+    if (!fs.existsSync(file.finishedFileName)) throw PHOTO_DOES_NOT_EXIST;
+
+    const extension = file.finishedFileName.match(/(?:\.([^.]+))?$/gm)[0];
+
     const {
       width: thumbnailWidth,
       height: thumbnailHeight
     } = getThumbnailDimensions(file, 75);
-    const thumbnailTransformingStream = sharp().resize(
+
+    file.thumbnailTransformingStream = sharp().resize(
       thumbnailWidth,
       thumbnailHeight
     );
+    file.fileName = uuid() + extension;
+    file.readStream = fs.createReadStream(file.finishedFileName);
 
-    readStream.pipe(writeStream);
-    readStream.pipe(thumbnailTransformingStream).pipe(thumbnailWriteStream);
+    if (context.req.user.dataMode === 'Mobile')
+      return resolve(await this.__createMobile(args, file, context));
+
+    return resolve(await this.__createServer(args, file, context));
   });
+};
+
+Photo.statics.find_One = async function(args) {
+  // const { user } = context.req;
+
+  // if (user.dataMode === 'Mobile') return this.__findOneMobile(args, context);
+
+  return this.findOne(args);
+};
+
+Photo.statics.__findOneMobile = async function(args, context) {
+  const { requestPost } = context.req;
+
+  return requestPost({ kind: 'Photo', ...args }, context);
+};
+
+Photo.statics.finishCreate = async function(args, file, context) {
+  const photo = await this.create({
+    ...args,
+    ...file.toJSON(),
+    imgUri: '/' + context.req.user.id + '/' + file.fileName,
+    thumbnailUri: '/' + context.req.user.id + '/thumbnail/' + file.fileName
+  });
+  const postNode = await PostNode.createPostNode(args, photo, context);
+  const searchable = await Searchable.createSearchable(args, photo, context);
+
+  photo.postNode = postNode.id;
+  photo.searchable = searchable.id;
+
+  fs.unlinkSync(file.finishedFileName);
+  await file.remove();
+
+  return photo.save();
 };
 
 Photo.statics.getImageOfCertainSize = function(

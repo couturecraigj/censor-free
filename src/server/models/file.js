@@ -164,6 +164,84 @@ File.statics.combineChunks = function({ uploadToken }) {
   });
 };
 
+File.statics.socketUpload = function(socket, context) {
+  socket.on('FILE:upload#token', async (args, callback) => {
+    const file = await this.getUploadToken(args, context);
+
+    callback(file);
+  });
+  socket.on('FILE:upload#start', async ({ uploadToken }) => {
+    try {
+      const writeStream = await this.createFileInputStream({
+        uploadToken
+      });
+
+      socket.emit('FILE:upload$ready');
+      socket.on('FILE:upload#chunk', (chunk, callback) => {
+        writeStream.write(chunk);
+        callback();
+      });
+      writeStream.on('error', err => {
+        // eslint-disable-next-line no-console
+        console.error(err);
+        writeStream.end();
+      });
+      socket.on('FILE:upload#end', () => {
+        writeStream.end();
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      socket.emit('FILE:upload#error');
+    }
+  });
+};
+
+File.statics.createFileInputStream = async function({ uploadToken }) {
+  try {
+    const file = await this.findOne({ uploadToken });
+
+    if (!file) throw this.NO_FILE_FOUND;
+
+    file.streaming = true;
+
+    return file.save().then(
+      () =>
+        new Promise(async (resolve, reject) => {
+          try {
+            const file = await this.findOne({ uploadToken });
+
+            if (!file) throw this.NO_FILE_FOUND;
+
+            file.streaming = true;
+            await file.save();
+            const finishedFileName = file.path + '.' + file.extension;
+            const writeStream = fs.createWriteStream(finishedFileName);
+
+            writeStream.on('finish', async () => {
+              file.streaming = false;
+              file.finished = true;
+              file.finishedFileName = finishedFileName;
+              await file.save();
+            });
+
+            return resolve(writeStream);
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error(error);
+
+            return reject(error);
+          }
+        })
+    );
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error);
+
+    return null;
+  }
+};
+
 File.statics.edit = function() {};
 File.statics.addComment = function() {};
 
