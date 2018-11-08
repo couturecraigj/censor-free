@@ -12,6 +12,9 @@ import Searchable from './searchable';
 /**
  * TODO: Make sure that on every update modified User is adjusted
  * TODO: Make sure that user is required when updating or creating each photo/postnode
+ * TODO: Add Node-EXIF to get GEO and Manufacturer information from photo
+ * TODO: Add Imagemin to compress the images
+ * TODO: When saving the images locally use gunzip
  */
 
 const PHOTO_DOES_NOT_EXIST = new Error('Photo has not been uploaded');
@@ -65,8 +68,9 @@ const getThumbnailDimensions = ({ width, height }, size) => {
 };
 
 Photo.statics.__createMobile = function(args, file, context) {
-  // console.log('MOBILE');
   const { io, user, createWriteStream } = context.req;
+
+  args.private = true;
 
   return new Promise((resolve, reject) => {
     try {
@@ -100,19 +104,38 @@ Photo.statics.__createMobile = function(args, file, context) {
             ...opts
           );
 
-          file.readStream
+          // const largeReadStream = file.readStream.pipe(new PassThrough());
+          // const thumbnailReadStream = file.readStream.pipe(new PassThrough());
+          fs.createReadStream(file.finishedFileName)
             .pipe(file.thumbnailTransformingStream)
+            .pipe(thumbnailWriteStream)
             .on('finish', async () => {
               clearTimeout(timeOut);
-              socket.disconnect();
-              resolve(await this.finishCreate(args, file, context));
+              fs.createReadStream(file.finishedFileName)
+                .pipe(writeStream)
+                .on('finish', async () => {
+                  socket.disconnect();
+                  clearTimeout(timeOut);
+                  args.imgUri =
+                    '/api/photo/' + context.req.user.id + '/' + file.fileName;
+                  args.thumbnailUri =
+                    '/api/photo/' +
+                    context.req.user.id +
+                    '/thumbnail/' +
+                    file.fileName;
+                  const photo = await this.finishCreate(args, file, context);
+
+                  resolve(photo);
+                })
+                .on('error', function() {
+                  clearTimeout(timeOut);
+                  reject();
+                });
             })
-            .pipe(thumbnailWriteStream)
             .on('error', function() {
               clearTimeout(timeOut);
               reject();
             });
-          file.readStream.pipe(writeStream);
         } catch (error) {
           reject(error);
         }
@@ -129,14 +152,6 @@ Photo.statics.__createMobile = function(args, file, context) {
       io.to(socket).emit('join namespace', '/photo_create_mobile')
     );
   });
-  // args.private = true;
-
-  // return new Promise(async (resolve, reject) => {
-  //   const writeStream = await createWriteStream(file.id, [file.fileName]);
-  //   const thumbnailWriteStream = await createWriteStream(file.id + 'tmbnl', [
-  //     'thumbnail',
-  //     file.fileName
-  //   ]);
 };
 Photo.statics.__createServer = function(args, file, context) {
   const { user } = context.req;
@@ -159,6 +174,9 @@ Photo.statics.__createServer = function(args, file, context) {
       .pipe(file.thumbnailTransformingStream)
       .pipe(thumbnailWriteStream)
       .on('finish', async () => {
+        args.imgUri = '/' + context.req.user.id + '/' + file.fileName;
+        args.thumbnailUri =
+          '/' + context.req.user.id + '/thumbnail/' + file.fileName;
         resolve(await this.finishCreate(args, file, context));
       })
       .on('error', function() {
@@ -168,8 +186,11 @@ Photo.statics.__createServer = function(args, file, context) {
 };
 
 Photo.statics.createPhoto = function(args, context) {
-  return new Promise(async resolve => {
+  return new Promise(async (resolve, reject) => {
     const file = await File.findOne({ uploadToken: args.imgUri });
+
+    if (!fs.existsSync(file.finishedFileName))
+      return reject(File.NO_FILE_FOUND);
 
     if (!file) throw File.NO_FILE_FOUND;
 
@@ -196,10 +217,10 @@ Photo.statics.createPhoto = function(args, context) {
   });
 };
 
-Photo.statics.find_One = async function(args) {
-  // const { user } = context.req;
+Photo.statics.__findOne = async function(args, context) {
+  const { user } = context.req;
 
-  // if (user.dataMode === 'Mobile') return this.__findOneMobile(args, context);
+  if (user.dataMode === 'Mobile') return this.__findOneMobile(args, context);
 
   return this.findOne(args);
 };
@@ -211,22 +232,28 @@ Photo.statics.__findOneMobile = async function(args, context) {
 };
 
 Photo.statics.finishCreate = async function(args, file, context) {
-  const photo = await this.create({
-    ...args,
-    ...file.toJSON(),
-    imgUri: '/' + context.req.user.id + '/' + file.fileName,
-    thumbnailUri: '/' + context.req.user.id + '/thumbnail/' + file.fileName
-  });
-  const postNode = await PostNode.createPostNode(args, photo, context);
-  const searchable = await Searchable.createSearchable(args, photo, context);
+  try {
+    const photo = await this.create({
+      ...args,
+      ...file.toJSON()
+    });
+    const postNode = await PostNode.createPostNode(args, photo, context);
+    const searchable = await Searchable.createSearchable(args, photo, context);
 
-  photo.postNode = postNode.id;
-  photo.searchable = searchable.id;
+    photo.postNode = postNode.id;
+    photo.searchable = searchable.id;
 
-  fs.unlinkSync(file.finishedFileName);
-  await file.remove();
+    fs.unlinkSync(file.finishedFileName);
+    await file.remove();
+    await photo.save();
 
-  return photo.save();
+    return photo;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error);
+
+    return null;
+  }
 };
 
 Photo.statics.getImageOfCertainSize = function(

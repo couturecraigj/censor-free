@@ -301,14 +301,12 @@ User.statics.setupUserFromSocket = async function(socket, nameSpace) {
   const token =
     socket.handshake.headers['x-token'] || socket.handshake.query.token;
 
-  // socket.use((packet, next) => {
   if (token) {
     user = await this.getUserFromToken(token);
   }
 
   if (user) {
-    // eslint-disable-next-line no-console
-    user.addSocket(socket);
+    await user.addSocket(socket);
   }
 
   return user;

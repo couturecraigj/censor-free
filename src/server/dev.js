@@ -93,12 +93,18 @@ function startServer() {
       module.hot.accept(['.', './ws'], () => {
         httpServer.removeListener('request', currentApp);
         wsServer.removeListener('request', currentWs);
-        // wsServer.removeListener('upgrade', currentWs);
+        wsServer.removeListener('upgrade', currentWs);
 
         Promise.all([import('.'), import('./ws')])
           .then(([{ default: nextApp }, { default: nextWs }]) => {
             currentApp.get('apollo').stop();
-            currentApp.get('io').close(() => nextWs(wsServer, nextApp));
+            currentApp.get('io').close(() => {
+              wsServer = http.createServer();
+              delete currentApp.get('io');
+              console.log('CLOSING WS Server!');
+              nextWs(wsServer, nextApp);
+              wsServer.listen(3002);
+            });
 
             currentWs = nextWs;
             currentApp = nextApp;
@@ -108,7 +114,7 @@ function startServer() {
             setup(currentApp, httpServer);
             httpServer.on('request', currentApp);
             wsServer.on('request', currentWs);
-            // wsServer.on('upgrade', currentWs);
+            wsServer.on('upgrade', currentWs);
 
             console.log('HttpServer reloaded!');
             console.info(

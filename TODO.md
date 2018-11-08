@@ -6,6 +6,7 @@
 | src/common/components/VideoPlayer/index.jsx | 6 | Add a Broken Video Image when a video does not load
 | src/common/components/VideoPlayer/index.jsx | 7 | Make it so editing is a different bundle using React-Loadable
 | src/common/pages/Home/index.jsx | 10 | Make it so main pages gives a good overview
+| src/server/config/api/index.js | 27 | Look for the fastest socket
 | src/server/models/file.js | 7 | Integrate with AWS S3
 | src/server/models/file.js | 8 | Use Localstack in development to be confident with s3
 | src/server/models/object.js | 11 | Create a way to follow
@@ -14,7 +15,7 @@
 | src/server/models/object.js | 14 | Create a way to sold
 | src/server/models/photo.js | 13 | Make sure that on every update modified User is adjusted
 | src/server/models/photo.js | 14 | Make sure that user is required when updating or creating each photo/postnode
-| src/server/models/photo.js | 80 | Only send this to the desired sockets to bypass the possibility of data getting sent to other clients when working in scale
+| src/server/models/photo.js | 81 | Only send this to the desired sockets to bypass the possibility of data getting sent to other clients when working in scale
 | src/server/models/postNode.js | 15 | Create a way to like
 | src/server/models/postNode.js | 16 | Create a way to dislike
 | src/server/models/user.js | 43 | Make it so that Users can be listed as Invites
@@ -38,6 +39,6 @@
 | src/server/models/user.js | 63 | Setup Etsy Link
 | src/server/models/user.js | 64 | Setup Flickr Link
 | src/server/models/user.js | 65 | Setup Picasa Link
-| src/server/models/user.js | 471 | Create a Default Image to be loaded
+| src/server/models/user.js | 469 | Create a Default Image to be loaded
 | src/server/models/video.js | 57 | Make it so that all these jobs are queued
 | src/server/ws.js | 5 | Set this up so that it will run on another port but will be linked in this app for development

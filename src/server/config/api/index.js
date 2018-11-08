@@ -2,6 +2,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import File from '../../models/file';
+import User from '../../models/user';
 
 const app = express.Router();
 
@@ -19,6 +20,47 @@ app.get('/upload', async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
+});
+app.get('/photo/:userId*', async (req, res) => {
+  const user = await User.findById(req.params.userId);
+
+  // TODO: Look for the fastest socket
+  return new Promise(resolve => {
+    if (
+      !user.sockets.some(socket => {
+        if (req.io.of('/').connected && req.io.of('/').connected[socket]) {
+          const conn = req.io.of('/').connected[socket];
+
+          conn.emit(
+            'Photo:streamUp$ready',
+            req.params[0].split('/').filter(v => v),
+            ((req, res) => () {
+              conn.on('Photo:streamUp$chunk', (chunk, callback) => {
+                
+                res.write(Buffer.from(chunk, 'base64'));
+
+                return callback();
+              });
+              conn.on('Photo:streamUp$end', callback => {
+                callback();
+
+                return resolve(conn);
+              });
+            })(req, res)
+          );
+
+          return true;
+        }
+
+        return false;
+      })
+    )
+      return res.send('DONE');
+  }).then(socket => {
+    socket.removeAllListeners('Photo:streamUp$chunk');
+    socket.removeAllListeners('Photo:streamUp$end');
+    res.end();
+  });
 });
 
 app.post('/upload', bodyParser.json(), async (req, res, next) => {

@@ -1,5 +1,6 @@
 import cookieParser from 'cookie-parser';
 // import csrf from 'csurf';
+import through2 from 'through2';
 import compression from 'compression';
 import express from 'express';
 import apolloSchemaSetup from '../graphql/schema';
@@ -42,25 +43,48 @@ export default app => {
   app.use(routeCache.hitCache);
   app.use(onlyWhen(!SERVER_ONLY), async (req, res, next) => {
     try {
-      req.user = {
-        id: await (async () => {
-          const token = req.cookies.token;
-          const authorization = (req.headers.authorization || '').replace(
-            'Bearer ',
-            ''
-          );
+      req.user = await (async () => {
+        const token = req.cookies.token;
+        const authorization = (req.headers.authorization || '').replace(
+          'Bearer ',
+          ''
+        );
 
-          let userId;
+        let userId;
 
-          if (token || authorization) {
-            userId = await User.getUserIdFromToken(token || authorization, {
-              req,
-              res
-            });
-          }
+        if (token || authorization) {
+          userId = await User.getUserFromToken(token || authorization, {
+            req,
+            res
+          });
+        }
 
-          return userId;
-        })()
+        return userId;
+      })();
+      req.io = app.get('io');
+      req.createWriteStream = function(
+        id,
+        fileNameArray,
+        socket,
+        {
+          readyMessage = 'FILE:streamDown$ready',
+          chunkMessage = 'FILE:streamDown$chunk',
+          endMessage = 'FILE:streamDown$end'
+        }
+      ) {
+        return new Promise(resolve => {
+          socket.emit(readyMessage, id, fileNameArray, () => {
+            resolve(
+              through2(function transformFn(chunk, enc, callback) {
+                socket.emit(chunkMessage, id, chunk, callback);
+                // },
+                // function flushFn(cb) {
+                //   socket.emit(endMessage);
+                //   cb();
+              })
+            );
+          });
+        });
       };
       req.db = await dbPromise;
       next();

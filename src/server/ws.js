@@ -29,17 +29,15 @@ export default (httpServer, app) => {
     console.log('a user connected');
     let user;
 
-    // socket.use((packet, next) => {
-    if (socket.handshake.query.token)
-      user = await User.getUserFromToken(socket.handshake.query.token);
+    if (socket.handshake.query.token) {
+      user = await User.setupUserFromSocket(socket, io);
+    }
 
     if (user) {
       // eslint-disable-next-line no-console
       console.log(user);
     }
 
-    //   next();
-    // });
     const fileName = 'IMG_3912.mov';
 
     socket.on('graphql-urls', callback => {
@@ -62,16 +60,18 @@ export default (httpServer, app) => {
       });
       socket.on('end', () => writeStream.end());
     });
-    socket.on('disconnect', function() {
+    socket.on('disconnect', async function() {
+      await user.removeSocket(socket);
       // eslint-disable-next-line no-console
       console.log('user disconnected!');
     });
   });
-  // console.log(httpServer);
 
   httpServer.once('listening', () => {
     app.set('io-port', httpServer.address().port);
   });
+
+  if (app.get('io')) delete app.get('io');
 
   app.set('io', io);
 
