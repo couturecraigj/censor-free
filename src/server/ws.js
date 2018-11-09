@@ -33,10 +33,10 @@ export default (httpServer, app) => {
       user = await User.setupUserFromSocket(socket, io);
     }
 
-    if (user) {
-      // eslint-disable-next-line no-console
-      console.log(user);
-    }
+    // if (user) {
+    //   // eslint-disable-next-line no-console
+    //   console.log(user);
+    // }
 
     const fileName = 'IMG_3912.mov';
 

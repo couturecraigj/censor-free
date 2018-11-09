@@ -104,7 +104,19 @@ export default app => {
     debug: true
   });
 
-  server.applyMiddleware({ app });
+  server.applyMiddleware({
+    app,
+    cors: {
+      origin(origin, callback) {
+        if (['http://localhost:9080'].indexOf(origin) !== -1 || !origin) {
+          callback(null, origin);
+        } else {
+          callback(null, true);
+        }
+      },
+      credentials: true
+    }
+  });
 
   app.set('apollo', server);
 
