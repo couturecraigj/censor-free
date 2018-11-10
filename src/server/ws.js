@@ -1,4 +1,5 @@
 import fs from 'fs';
+import mongoose from 'mongoose';
 import User from './models/user';
 
 /**
@@ -74,6 +75,7 @@ export default (httpServer, app) => {
   if (app.get('io')) delete app.get('io');
 
   app.set('io', io);
+  mongoose.io = io;
 
   return io;
 };

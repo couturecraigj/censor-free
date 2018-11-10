@@ -38,11 +38,11 @@ app.get('/photo/:userId*', async (req, res) => {
             socket.removeAllListeners('Photo:streamUp$chunk');
             socket.removeAllListeners('Photo:streamUp$end');
 
+            if (!req.aborted) req.abort();
+
             return reject('ABORTED');
           };
           const onAbort = function onAbort() {
-            console.log('ABORTED!');
-
             // this.destroy();
             return aborting();
           };
@@ -158,13 +158,12 @@ app.get('/photo/:userId*', async (req, res) => {
       return;
     })
     .catch(e => {
-      console.log(e);
-
       if (e.emit) {
         return;
       }
 
       if (e.message) {
+        // eslint-disable-next-line no-console
         console.error(e);
 
         return res.send('ERROR');

@@ -8,7 +8,7 @@
 | src/common/pages/Home/index.jsx | 10 | Make it so main pages gives a good overview
 | src/server/config/api/index.js | 28 | Look for the fastest socket
 | src/server/config/api/index.js | 136 | Make it so that sends a default image when the user not connected d
-| src/server/config/api/index.js | 174 | Have a different Image to show based on reason
+| src/server/config/api/index.js | 173 | Have a different Image to show based on reason
 | src/server/models/file.js | 7 | Integrate with AWS S3
 | src/server/models/file.js | 8 | Use Localstack in development to be confident with s3
 | src/server/models/object.js | 11 | Create a way to follow
@@ -46,4 +46,4 @@
 | src/server/models/user.js | 65 | Setup Picasa Link
 | src/server/models/user.js | 469 | Create a Default Image to be loaded
 | src/server/models/video.js | 57 | Make it so that all these jobs are queued
-| src/server/ws.js | 5 | Set this up so that it will run on another port but will be linked in this app for development
+| src/server/ws.js | 6 | Set this up so that it will run on another port but will be linked in this app for development

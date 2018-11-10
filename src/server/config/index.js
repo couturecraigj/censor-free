@@ -68,8 +68,8 @@ export default app => {
         socket,
         {
           readyMessage = 'FILE:streamDown$ready',
-          chunkMessage = 'FILE:streamDown$chunk',
-          endMessage = 'FILE:streamDown$end'
+          chunkMessage = 'FILE:streamDown$chunk'
+          // endMessage = 'FILE:streamDown$end'
         }
       ) {
         return new Promise(resolve => {
