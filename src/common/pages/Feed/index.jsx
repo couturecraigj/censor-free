@@ -75,10 +75,9 @@ export default () => (
                 </div>
                 <div>{post.title}</div>
                 {post.imgUri && <img src={post.imgUri} alt={post.title} />}
-                {post.img &&
-                  post.img.imgUri && (
-                    <img src={post.img.imgUri} alt={post.title} />
-                  )}
+                {post.img && post.img.imgUri && (
+                  <img src={post.img.imgUri} alt={post.title} />
+                )}
                 <div>{post.description}</div>
               </Post>
             ))}

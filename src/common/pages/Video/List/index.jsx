@@ -57,10 +57,9 @@ export default () => (
               >
                 <Video key={video.id} value={video.title}>
                   <div>{video.title}</div>
-                  {video.img &&
-                    video.img.imgUri && (
-                      <img src={video.img.imgUri} alt={video.title} />
-                    )}
+                  {video.img && video.img.imgUri && (
+                    <img src={video.img.imgUri} alt={video.title} />
+                  )}
                   <div>{video.description}</div>
                 </Video>
               </Link>

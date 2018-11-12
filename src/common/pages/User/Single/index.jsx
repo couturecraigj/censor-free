@@ -53,10 +53,9 @@ const SingleUser = ({ match }) => (
             </Helmet>
             <User key={user.id} value={user.name}>
               <div>{user.userName}</div>
-              {user.img &&
-                user.img.imgUri && (
-                  <img src={user.img.imgUri} alt={user.name} />
-                )}
+              {user.img && user.img.imgUri && (
+                <img src={user.img.imgUri} alt={user.name} />
+              )}
               <div>{user.description}</div>
             </User>
           </Container>

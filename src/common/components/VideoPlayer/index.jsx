@@ -286,27 +286,26 @@ class VideoPlayer extends React.Component {
           >
             <track kind="captions" />
           </video>
-          {editing &&
-            !hide && (
-              // <Provider value={props}> */}
-              <VideoEditingControls
-                {...props}
-                duration={duration}
-                canvas={this.canvas}
-                value={value}
-                onChange={onEdit}
-                changeTime={this.handleTimeChange}
-                currentTime={currentTime}
-                onSubmit={onSubmit}
-                width={width}
-                height={height}
-              />
-              // </Provider> */}
-            )}
+          {editing && !hide && (
+            // <Provider value={props}> */}
+            <VideoEditingControls
+              {...props}
+              duration={duration}
+              canvas={this.canvas}
+              value={value}
+              onChange={onEdit}
+              changeTime={this.handleTimeChange}
+              currentTime={currentTime}
+              onSubmit={onSubmit}
+              width={width}
+              height={height}
+            />
+            // </Provider> */}
+          )}
 
-          {controls &&
-            !hide &&
-            !editing && <VideoControls video={this.video} />}
+          {controls && !hide && !editing && (
+            <VideoControls video={this.video} />
+          )}
         </div>
       </React.Fragment>
     );

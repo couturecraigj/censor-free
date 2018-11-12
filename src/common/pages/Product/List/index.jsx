@@ -59,10 +59,9 @@ export default () => (
                 >
                   <Product key={product.id} value={product.name}>
                     <div>{product.name}</div>
-                    {product.img &&
-                      product.img.imgUri && (
-                        <img src={product.img.imgUri} alt={product.name} />
-                      )}
+                    {product.img && product.img.imgUri && (
+                      <img src={product.img.imgUri} alt={product.name} />
+                    )}
                     <div>{product.description}</div>
                   </Product>
                 </Link>

@@ -56,10 +56,9 @@ export default () => (
               >
                 <User key={user.id} value={user.userName}>
                   <div>{user.userName}</div>
-                  {user.img &&
-                    user.img.imgUri && (
-                      <img src={user.img.imgUri} alt={user.userName} />
-                    )}
+                  {user.img && user.img.imgUri && (
+                    <img src={user.img.imgUri} alt={user.userName} />
+                  )}
                   <div>{user.description}</div>
                 </User>
               </Link>

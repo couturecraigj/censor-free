@@ -54,10 +54,9 @@ const SingleGroup = ({ match: { params } }) => (
             </Helmet>
             <Group key={group.id} value={group.title}>
               <div>{group.title}</div>
-              {group.img &&
-                group.img.imgUri && (
-                  <img src={group.img.imgUri} alt={group.title} />
-                )}
+              {group.img && group.img.imgUri && (
+                <img src={group.img.imgUri} alt={group.title} />
+              )}
               <div>{group.description}</div>
             </Group>
           </Container>

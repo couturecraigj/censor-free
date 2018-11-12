@@ -54,10 +54,9 @@ const SingleCompany = ({ match }) => (
             </Helmet>
             <Company key={company.id} value={company.name}>
               <div>{company.name}</div>
-              {company.img &&
-                company.img.imgUri && (
-                  <img src={company.img.imgUri} alt={company.name} />
-                )}
+              {company.img && company.img.imgUri && (
+                <img src={company.img.imgUri} alt={company.name} />
+              )}
               <div>{company.description}</div>
             </Company>
           </Container>
