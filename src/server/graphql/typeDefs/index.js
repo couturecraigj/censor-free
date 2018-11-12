@@ -4,12 +4,29 @@ import {
   POST_TYPE_ENUM,
   OBJECT_TYPE_ENUM
 } from '../../../common/types';
+import { typeDef as User } from '../types/User';
+import { typeDef as Product } from '../types/Product';
+import { typeDef as Company } from '../types/Company';
+import { typeDef as Group } from '../types/Group';
+import { typeDef as Authentication } from '../types/Authentication';
+import { typeDef as Thought } from '../types/Thought';
+import { typeDef as Story } from '../types/Story';
+import { typeDef as Review } from '../types/Review';
+import { typeDef as Question } from '../types/Question';
+import { typeDef as Video } from '../types/Video';
+import { typeDef as WebPage } from '../types/WebPage';
+import { typeDef as Photo } from '../types/Photo';
+import { typeDef as Tip } from '../types/Tip';
+import { typeDef as Comment } from '../types/Comment';
+import { typeDef as Answer } from '../types/Answer';
+import VideoFilterInput from '../inputs/VideoFilterInput';
+import CoordinatesInput from '../inputs/CoordinatesInput';
 
 const typeDefs = gql`
   # SCALARS
   scalar Date
   scalar Email
-  
+
   # DIRECTIVES
   directive @index(type: String) on FIELD_DEFINITION
   directive @unique on FIELD_DEFINITION
@@ -82,155 +99,15 @@ const typeDefs = gql`
     start: Int!
     end: Int!
   }
-  type Thought implements Node & PostNode & Searchable {
-    id: ID!
-    highlights: [Highlight]!
-    title: String! @index(type: "text")
-    description: String! @index(type: "text")
-    comments: [Comment]!
-    created: AlterationStamp!
-    modified: AlterationStamp
-  }
-  type Story implements Node & PostNode & Searchable {
-    id: ID!
-    highlights: [Highlight]!
-    title: String! @index(type: "text")
-    description: String! @index(type: "text")
-    comments: [Comment]!
-    excerpt: String!
-    created: AlterationStamp!
-    modified: AlterationStamp
-  }
-  type Review implements Node & PostNode & Searchable {
-    id: ID!
-    highlights: [Highlight]!
-    title: String! @index(type: "text")
-    description: String! @index(type: "text")
-    products: [Product!]!
-    comments: [Comment]!
-    score: Float!
-    created: AlterationStamp!
-    modified: AlterationStamp
-  }
-  type Question implements Node & PostNode & Searchable {
-    id: ID!
-    highlights: [Highlight]!
-    title: String! @index(type: "text")
-    description: String! @index(type: "text")
-    products: [Product!]
-    answers: [Answer]!
-    comments: [Comment]!
-    created: AlterationStamp!
-    modified: AlterationStamp
-  }
-  type Tip implements Node & PostNode & Searchable {
-    id: ID!
-    highlights: [Highlight]!
-    title: String! @index(type: "text")
-    description: String! @index(type: "text")
-    products: [Product!]
-    comments: [Comment]!
-    created: AlterationStamp!
-    modified: AlterationStamp
-  }
-  type Answer implements Node & CommentNode & PostNode & Searchable {
-    id: ID!
-    highlights: [Highlight]!
-    question: Question
-    title: String! @index(type: "text")
-    description: String! @index(type: "text")
-    comments: [Comment]!
-    created: AlterationStamp!
-    modified: AlterationStamp
-  }
-  type Comment implements Node & CommentNode {
-    id: ID!
-    highlights: [Highlight]!
-    parent: PostNode!
-    description: String! @index(type: "text")
-    created: AlterationStamp!
-    modified: AlterationStamp
-  }
-  type Photo implements Node & PostNode & Searchable {
-    id: ID!
-    highlights: [Highlight]!
-    title: String! @index(type: "text")
-    description: String! @index(type: "text")
-    comments: [Comment]!
-    height: Int
-    width: Int
-    imgUri: String!
-    created: AlterationStamp!
-    modified: AlterationStamp
-  }
-  type Video implements Node & PostNode & Searchable {
-    id: ID!
-    highlights: [Highlight]!
-    converted: Boolean
-    title: String! @index(type: "text")
-    description: String! @index(type: "text")
-    imgs: [Photo]
-    comments: [Comment]!
-    img: Photo
-    uri: String!
-    created: AlterationStamp!
-    modified: AlterationStamp
-  }
-  type WebPage implements Node & PostNode & Searchable {
-    id: ID!
-    highlights: [Highlight]!
-    title: String! @index(type: "text")
-    description: String! @index(type: "text")
-    comments: [Comment]!
-    imgs: [Photo]
-    img: Photo
-    uri: String! @index(type: "text") @unique
-    created: AlterationStamp!
-    modified: AlterationStamp
-  }
-  type Group implements Node & Searchable {
-    id: ID!
-    highlights: [Highlight]!
-    title: String! @index(type: "text")
-    description: String! @index(type: "text")
-    img: Photo
-    imgs: [Photo]
-  }
+  ${Thought} ${Answer} ${Story} ${Review} ${Photo} ${Question}
+  ${Product} ${Company} ${User} ${Tip} ${Comment} ${Video}
+  ${WebPage} ${Group} ${Authentication}
   type Save implements Node {
     id: ID!
     object: SavedRecord!
     img: Photo
   }
-  type Product implements Node & Object & Searchable {
-    id: ID!
-    highlights: [Highlight]!
-    name: String! @index(type: "text")
-    slug: String! @unique
-    description: String! @index(type: "text")
-    img: Photo
-    imgs: [Photo]
-    created: AlterationStamp!
-    modified: AlterationStamp
-  }
-  type Company implements Node & Object & Searchable {
-    id: ID!
-    highlights: [Highlight]!
-    slug: String! @unique
-    name: String! @index(type: "text")
-    img: Photo
-    imgs: [Photo]
-    description: String! @index(type: "text")
-    created: AlterationStamp!
-    modified: AlterationStamp
-  }
-  type User implements Node & Searchable & UserNode {
-    id: ID!
-    highlights: [Highlight]!
-    userName: String! @index(type: "text") @unique
-    email: String! @index(type: "text") @unique @lowerCase
-    img: Photo
-    imgs: [Photo]
-  }
+  
 
   type Me implements Node & UserNode {
     id: ID!
@@ -240,30 +117,8 @@ const typeDefs = gql`
     img: Photo
     imgs: [Photo]
   }
-
-  type Authentication {
-    token: String!
-    me: Me!
-  }
-
-  input CoordinatesInput {
-    fromTop: Int!
-    fromLeft: Int!
-    height: Int!
-    width: Int!
-    startTimeCode: Int
-    endTimeCode: Int
-  }
-
-  input VideoFilterInput {
-    type: FILTER_ENUM
-    startTimeCode: Int!
-    endTimeCode: Int!
-    width: Int
-    height: Int
-    coordinates: CoordinatesInput
-  }
-
+  ${VideoFilterInput}
+  ${CoordinatesInput}
   type Mutation {
     signUp(
       email: String!
@@ -301,16 +156,7 @@ const typeDefs = gql`
     addVideo(title: String!, description: String!, uploadToken: String!): Video
     addVideoFilters(
       id: ID!
-      sex: [VideoFilterInput]!
-      nudity: [VideoFilterInput]!
-      violence: [VideoFilterInput]!
-      frightening: [VideoFilterInput]!
-      weapons: [VideoFilterInput]!
-      gross: [VideoFilterInput]!
-      smoking: [VideoFilterInput]!
-      drugs: [VideoFilterInput]!
-      alcohol: [VideoFilterInput]!
-      language: [VideoFilterInput]!
+      filters: [VideoFilterInput]!
     ): Video
     addWebPage(title: String!): WebPage
   }
