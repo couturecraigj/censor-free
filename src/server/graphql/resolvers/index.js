@@ -17,12 +17,16 @@ import ObjectNode from '../../models/object';
 import Searchable from '../../models/searchable';
 import { COOKIE_TYPE_MAP } from '../../../common/types';
 import * as Types from '../types';
+import scalars from '../scalars';
+import enums from '../enums';
 
 const pubsub = new PubSub();
 
 const AUTHENTICATION_ERROR = new Error('Authentication Error');
 
 const resolvers = {
+  ...scalars,
+  ...enums,
   Subscription: {
     fileConversionProgress: {
       subscribe: withFilter(

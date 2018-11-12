@@ -3,6 +3,7 @@ import { ApolloServer } from 'apollo-server-express';
 import { graphql, introspectionQuery } from 'graphql';
 import fs from 'fs';
 import typeDefs from './typeDefs';
+import directives from './directives';
 import User from '../models/user';
 import mocks from './mocks';
 import resolvers from './resolvers';
@@ -29,6 +30,7 @@ export default app => {
     schema = makeExecutableSchema({
       typeDefs,
       resolvers,
+      schemaDirectives: directives,
       logger: {
         // eslint-disable-next-line no-console
         log: console.log
@@ -53,6 +55,7 @@ export default app => {
 
   const server = new ApolloServer({
     schema: __DEV__ ? schema : undefined,
+    schemaDirectives: __DEV__ ? undefined : directives,
     typeDefs: __DEV__ ? undefined : typeDefs,
     resolvers: __DEV__ ? undefined : resolvers,
     playground: __DEV__

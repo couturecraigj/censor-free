@@ -6,6 +6,14 @@ import {
 } from '../../../common/types';
 
 const typeDefs = gql`
+  # SCALARS
+  scalar Date
+  scalar Email
+  
+  # DIRECTIVES
+  directive @index(type: String) on FIELD_DEFINITION
+  directive @unique on FIELD_DEFINITION
+  directive @lowerCase on FIELD_DEFINITION
   # INTERFACES
   interface Node {
     id: ID!
@@ -77,8 +85,8 @@ const typeDefs = gql`
   type Thought implements Node & PostNode & Searchable {
     id: ID!
     highlights: [Highlight]!
-    title: String!
-    description: String!
+    title: String! @index(type: "text")
+    description: String! @index(type: "text")
     comments: [Comment]!
     created: AlterationStamp!
     modified: AlterationStamp
@@ -86,8 +94,8 @@ const typeDefs = gql`
   type Story implements Node & PostNode & Searchable {
     id: ID!
     highlights: [Highlight]!
-    title: String!
-    description: String!
+    title: String! @index(type: "text")
+    description: String! @index(type: "text")
     comments: [Comment]!
     excerpt: String!
     created: AlterationStamp!
@@ -96,8 +104,8 @@ const typeDefs = gql`
   type Review implements Node & PostNode & Searchable {
     id: ID!
     highlights: [Highlight]!
-    title: String!
-    description: String!
+    title: String! @index(type: "text")
+    description: String! @index(type: "text")
     products: [Product!]!
     comments: [Comment]!
     score: Float!
@@ -107,8 +115,8 @@ const typeDefs = gql`
   type Question implements Node & PostNode & Searchable {
     id: ID!
     highlights: [Highlight]!
-    title: String!
-    description: String!
+    title: String! @index(type: "text")
+    description: String! @index(type: "text")
     products: [Product!]
     answers: [Answer]!
     comments: [Comment]!
@@ -118,8 +126,8 @@ const typeDefs = gql`
   type Tip implements Node & PostNode & Searchable {
     id: ID!
     highlights: [Highlight]!
-    title: String!
-    description: String!
+    title: String! @index(type: "text")
+    description: String! @index(type: "text")
     products: [Product!]
     comments: [Comment]!
     created: AlterationStamp!
@@ -129,8 +137,8 @@ const typeDefs = gql`
     id: ID!
     highlights: [Highlight]!
     question: Question
-    title: String!
-    description: String!
+    title: String! @index(type: "text")
+    description: String! @index(type: "text")
     comments: [Comment]!
     created: AlterationStamp!
     modified: AlterationStamp
@@ -139,15 +147,15 @@ const typeDefs = gql`
     id: ID!
     highlights: [Highlight]!
     parent: PostNode!
-    description: String!
+    description: String! @index(type: "text")
     created: AlterationStamp!
     modified: AlterationStamp
   }
   type Photo implements Node & PostNode & Searchable {
     id: ID!
     highlights: [Highlight]!
-    title: String!
-    description: String!
+    title: String! @index(type: "text")
+    description: String! @index(type: "text")
     comments: [Comment]!
     height: Int
     width: Int
@@ -159,8 +167,8 @@ const typeDefs = gql`
     id: ID!
     highlights: [Highlight]!
     converted: Boolean
-    title: String!
-    description: String!
+    title: String! @index(type: "text")
+    description: String! @index(type: "text")
     imgs: [Photo]
     comments: [Comment]!
     img: Photo
@@ -171,20 +179,20 @@ const typeDefs = gql`
   type WebPage implements Node & PostNode & Searchable {
     id: ID!
     highlights: [Highlight]!
-    title: String!
-    description: String!
+    title: String! @index(type: "text")
+    description: String! @index(type: "text")
     comments: [Comment]!
     imgs: [Photo]
     img: Photo
-    uri: String!
+    uri: String! @index(type: "text") @unique
     created: AlterationStamp!
     modified: AlterationStamp
   }
   type Group implements Node & Searchable {
     id: ID!
     highlights: [Highlight]!
-    title: String!
-    description: String!
+    title: String! @index(type: "text")
+    description: String! @index(type: "text")
     img: Photo
     imgs: [Photo]
   }
@@ -196,9 +204,9 @@ const typeDefs = gql`
   type Product implements Node & Object & Searchable {
     id: ID!
     highlights: [Highlight]!
-    name: String!
-    slug: String!
-    description: String!
+    name: String! @index(type: "text")
+    slug: String! @unique
+    description: String! @index(type: "text")
     img: Photo
     imgs: [Photo]
     created: AlterationStamp!
@@ -207,19 +215,19 @@ const typeDefs = gql`
   type Company implements Node & Object & Searchable {
     id: ID!
     highlights: [Highlight]!
-    slug: String!
-    name: String!
+    slug: String! @unique
+    name: String! @index(type: "text")
     img: Photo
     imgs: [Photo]
-    description: String!
+    description: String! @index(type: "text")
     created: AlterationStamp!
     modified: AlterationStamp
   }
   type User implements Node & Searchable & UserNode {
     id: ID!
     highlights: [Highlight]!
-    userName: String!
-    email: String!
+    userName: String! @index(type: "text") @unique
+    email: String! @index(type: "text") @unique @lowerCase
     img: Photo
     imgs: [Photo]
   }
@@ -227,8 +235,8 @@ const typeDefs = gql`
   type Me implements Node & UserNode {
     id: ID!
     highlights: [Highlight]!
-    userName: String!
-    email: String!
+    userName: String! @index(type: "text") @unique
+    email: String! @index(type: "text") @unique @lowerCase
     img: Photo
     imgs: [Photo]
   }
